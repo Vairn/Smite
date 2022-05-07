@@ -52,3 +52,6 @@ Mkfile.old
 dkms.conf
 dh0/
 Build/
+SmitED/Editor/x64/
+SmitED/Editor/.vs
+SmitED/External/
