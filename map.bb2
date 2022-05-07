@@ -1,0 +1,11 @@
+;map.bb2
+
+Statement LoadMap{path.s}
+QAMIGA
+VWait 50; wait for disk activity
+BLITZ
+End Statement
+
+Statement GenerateMap{seed.w}
+
+End Statement

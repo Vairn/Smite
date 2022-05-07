@@ -1,0 +1,16 @@
+
+Statement LoadGame{path.s}
+QAMIGA
+SHARED player
+
+VWait 50; wait
+BLITZ
+End Statement
+
+Statement SaveGame{path.s}
+SHARED player
+QAMIGA
+VWait 250 ; longer wait for saving
+BLITZ
+End Statement
+

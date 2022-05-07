@@ -1,0 +1,85 @@
+; Smite Types
+NEWTYPE .Monster
+  name$
+  hp
+  xp
+  damage
+End NEWTYPE
+
+NEWTYPE .MonsterInstance
+  archetype.Monster
+  x
+  y
+  hp
+End NEWTYPE
+
+NEWTYPE .Character
+  name$
+  race
+  might
+  intelect
+  endurance
+  accuracy
+  speed
+  luck
+  hp
+  maxhp
+  sp
+  maxsp
+  xp
+  level[4] ; 0 fighter, 1 magic, 2 rogue
+  map
+  x
+  y
+  backpack[256]
+  equipment[16]
+  spellbook[16]
+ End NEWTYPE
+
+NEWTYPE .Item
+  name$
+  class
+  icon
+  modifier
+  bonus
+  modifier2
+End NEWTYPE
+
+NEWTYPE .LevelScript
+  lenght.w
+  elements.w[100]
+End NEWTYPE
+
+NEWTYPE .Level
+  name$
+  walldata[1024]
+  coldata[1024]
+  strings$[256]
+  
+End NEWTYPE 
+Dim GlobalFlaggs.b(128)
+Dim LevelFlags.b(32,32)
+Dim List currentScript.LevelScript(1024)
+DEFTYPE .Level currentLevel
+
+; Loaded items
+Dim List items.Item(256)
+Dim List monsters.Monster(16)
+Dim LIST aliveMonsters.MonsterInstance(32)
+DEFTYPE .Character player
+
+; Buffers
+#frontbuffer = 0
+#backbuffer = 1
+
+; Duneon Shapes
+#wallshapes = 0
+#doorshapes = 1
+#decorationshapes =2
+#monstershapes = 3
+
+#itemshapes = 5
+; gui
+#itemiconshapes = 10
+#guiShapes = 11
+

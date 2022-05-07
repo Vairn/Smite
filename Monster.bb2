@@ -1,0 +1,7 @@
+; Monsters.bb2
+
+Statement LoadMonsters{}
+    QAMIGA
+    VWait 50
+    BLITZ
+End Statement

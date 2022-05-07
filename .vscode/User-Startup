@@ -1,0 +1,35 @@
+; execute workbench patches startup, if it exists
+IF EXISTS S:WorkbenchPatches-Startup
+  Execute S:WorkbenchPatches-Startup
+ENDIF
+;BEGIN MUI
+IF EXISTS SYS:MUI
+   Assign >NIL: MUI: SYS:MUI
+   IF EXISTS MUI:Libs
+      Assign >NIL: ADD LIBS: MUI:Libs
+   EndIF
+   IF EXISTS MUI:Locale
+      Assign >NIL: ADD LOCALE: MUI:Locale
+   EndIF
+   C:Version >NIL: exec.library 39
+   IF NOT WARN
+      IF EXISTS MUI:Docs
+         IF EXISTS HELP:dummy
+         EndIF
+         Assign >NIL: ADD HELP: MUI:Docs
+      EndIF
+   EndIF
+EndIF
+;END MUI
+; execute kingcon startup, if it exists
+If Exists S:KingCON-Startup
+  Execute S:KingCON-Startup
+EndIF
+Assign Picasso96: "DH0:Storage/Picasso96"
+;BEGIN Blitz2
+ASSIGN Blitz2: SYS:Blitz2
+;END Blitz2
+;BEGIN Blitzlibs
+ASSIGN Blitzlibs: SYS:Blitz2/Blitzlibs
+;END Blitzlibs
+

@@ -1,0 +1,8 @@
+; Graphics.bb2
+
+Macro cycleBuffer
+Show `1
+`1 = 1-`1
+Use BitMap `1
+End Macro
+

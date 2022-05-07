@@ -1,0 +1,31 @@
+
+NoCli
+WBStartup
+
+DEFTYPE .b
+; Different parts of the Game has been split into different files.
+; Unfortunately Blitzbasic 2 doesn't have a workspace, OR any other modern ide feature, so you have To load them one by one.
+; Or use VSCode and a snazzy arexx script.
+INCLUDE "debug.bb2"
+INCLUDE "types.bb2"
+INCLUDE "fileaccess.bb2"
+;
+INCLUDE "Monster.bb2"
+INCLUDE "Map.bb2"
+INCLUDE "Graphics.bb2"
+INCLUDE "Title.bb2"
+INCLUDE "Menu.bb2"
+
+BLITZ
+
+BitMap #frontbuffer,320,256,5
+BitMap #backbuffer,320,256,5
+currentBuffer =0
+Slice 0,42,5
+Repeat
+!cycleBuffer{currentBuffer}
+Cls 0
+VWait
+
+Until Joyb(0)=1
+End

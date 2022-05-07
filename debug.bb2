@@ -1,0 +1,17 @@
+fmt$ = "BLITZ - Output value: %ld hex:($%lx)" + Chr$(10)
+
+Statement dbugprintstring{output$}
+  op$ = "BLITZ - "
+  op$ + output$ 
+  op$ + Chr$(10) ; Newline
+  Poke.l $bfff04, &op$
+End Statement
+
+
+Statement dbugprintval{value.l}
+  SHARED fmt$
+
+  Poke.l $bfff00, value
+  Poke.l $bfff00, value
+  Poke.l $bfff04, &fmt$
+End Statement
