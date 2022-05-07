@@ -1,3 +1,4 @@
+#include "../typeDefs.h"
 #include "CMazViewer.h"
 
 SmitED::CMazViewer::CMazViewer()

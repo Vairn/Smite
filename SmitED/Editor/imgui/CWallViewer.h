@@ -6,10 +6,10 @@
 
 namespace SmitED
 {
-	class CShapeViewer: public SmitED::CHexViewer
+	class CWallViewer : public SmitED::CHexViewer
 	{
 	public:
-		CShapeViewer();
+		CWallViewer();
 		void update() override;
 
 		virtual void OnDataSet(void);

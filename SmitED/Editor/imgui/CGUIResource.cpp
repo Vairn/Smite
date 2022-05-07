@@ -4,6 +4,8 @@
 #include "ImGuiWindow.h"
 #include "ImGuiManager.h"
 #include "CShapeViewer.h"
+#include "CWallViewer.h"
+
 #include <functional>
 #include "CMazViewer.h"
 #include <fstream>
@@ -66,8 +68,9 @@ struct typeLookup
 
 
 static const typeLookup fileTypes[] = {
-	ADDRESOURCE("32","Game Graphics", CShapeViewer),
-	ADDRESOURCE("anm","Game Anim Sprite", CShapeViewer),
+	ADDRESOURCE("maz","Level Data", CMazViewer),
+	ADDRESOURCE("SHP","Sprites", CShapeViewer),
+	ADDRESOURCE("WLL","Wall Data", CWallViewer)
 
 //ADDRESOURCE("CPS", "Compressed Picture Screen", CCPSViewer),
 //ADDRESOURCE("WSA", "Westwood Scripted Animated", CWSAViewer),

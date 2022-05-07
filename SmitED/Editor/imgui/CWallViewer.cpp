@@ -1,15 +1,15 @@
-#include "CShapeViewer.h"
+#include "CWallViewer.h"
 #include <imgui.h>
 #include <sstream>
 #define IMGUI_DEFINE_MATH_OPERATORS
 #include "imgui_internal.h"
 
-SmitED::CShapeViewer::CShapeViewer()
+SmitED::CWallViewer::CWallViewer()
 {
 	//currentShape = 0;
 }
 
-void SmitED::CShapeViewer::update()
+void SmitED::CWallViewer::update()
 {
 	begin();
 	if (ImGui::BeginTabBar("##tabs", ImGuiTabBarFlags_None))
@@ -40,7 +40,7 @@ void SmitED::CShapeViewer::update()
 	end();
 }
 
-void SmitED::CShapeViewer::OnDataSet()
+void SmitED::CWallViewer::OnDataSet()
 {
 	// Load the data in.
 

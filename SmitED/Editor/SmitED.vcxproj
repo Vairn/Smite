@@ -23,32 +23,32 @@
     <Keyword>Win32Proj</Keyword>
     <ProjectGuid>{99eb10b2-afdf-479b-a2a9-a6ac6fe35942}</ProjectGuid>
     <RootNamespace>SmitED</RootNamespace>
-    <WindowsTargetPlatformVersion>10.0.19041.0</WindowsTargetPlatformVersion>
+    <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
-    <PlatformToolset>v142</PlatformToolset>
+    <PlatformToolset>v143</PlatformToolset>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
-    <PlatformToolset>v142</PlatformToolset>
+    <PlatformToolset>v143</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
-    <PlatformToolset>v141</PlatformToolset>
+    <PlatformToolset>v143</PlatformToolset>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
-    <PlatformToolset>v141</PlatformToolset>
+    <PlatformToolset>v143</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
@@ -157,14 +157,15 @@
     <ClCompile Include="..\External\imgui\imgui_draw.cpp" />
     <ClCompile Include="..\External\imgui\imgui_tables.cpp" />
     <ClCompile Include="..\External\imgui\imgui_widgets.cpp" />
-    <ClCompile Include="..\sGFX.cpp" />
     <ClCompile Include="imgui\CGUIResource.cpp" />
     <ClCompile Include="imgui\CHexViewer.cpp" />
     <ClCompile Include="imgui\CMazViewer.cpp" />
     <ClCompile Include="imgui\CShapeViewer.cpp" />
+    <ClCompile Include="imgui\CWallViewer.cpp" />
     <ClCompile Include="imgui\ImGuiManager.cpp" />
     <ClCompile Include="imgui\ImGuiWindow.cpp" />
     <ClCompile Include="SmitED.cpp" />
+    <ClCompile Include="typeDefs.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\common.h" />
@@ -177,14 +178,15 @@
     <ClInclude Include="..\External\imgui\imstb_rectpack.h" />
     <ClInclude Include="..\External\imgui\imstb_textedit.h" />
     <ClInclude Include="..\External\imgui\imstb_truetype.h" />
-    <ClInclude Include="..\sGFX.h" />
     <ClInclude Include="imgui\CGUIResource.h" />
     <ClInclude Include="imgui\CHexViewer.h" />
     <ClInclude Include="imgui\CMazViewer.h" />
     <ClInclude Include="imgui\CShapeViewer.h" />
+    <ClInclude Include="imgui\CWallViewer.h" />
     <ClInclude Include="imgui\ImGuiManager.h" />
     <ClInclude Include="imgui\ImGuiWindow.h" />
     <ClInclude Include="imgui\portable-file-dialogs.h" />
+    <ClInclude Include="typeDefs.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

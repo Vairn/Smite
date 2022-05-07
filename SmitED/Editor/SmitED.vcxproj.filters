@@ -1,12 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
-    <ClCompile Include="imgui\CGUIResource.cpp" />
-    <ClCompile Include="imgui\CHexViewer.cpp" />
-    <ClCompile Include="imgui\CMazViewer.cpp" />
-    <ClCompile Include="imgui\CShapeViewer.cpp" />
-    <ClCompile Include="imgui\ImGuiManager.cpp" />
-    <ClCompile Include="imgui\ImGuiWindow.cpp" />
     <ClCompile Include="SmitED.cpp" />
     <ClCompile Include="..\External\imgui\imgui.cpp">
       <Filter>ImGUI</Filter>
@@ -26,18 +20,32 @@
     <ClCompile Include="..\External\imgui\backends\imgui_impl_glfw.cpp">
       <Filter>ImGUI</Filter>
     </ClCompile>
-    <ClCompile Include="..\sGFX.cpp">
+    <ClCompile Include="typeDefs.cpp">
       <Filter>libSmite</Filter>
+    </ClCompile>
+    <ClCompile Include="imgui\CGUIResource.cpp">
+      <Filter>windows</Filter>
+    </ClCompile>
+    <ClCompile Include="imgui\CHexViewer.cpp">
+      <Filter>windows</Filter>
+    </ClCompile>
+    <ClCompile Include="imgui\CMazViewer.cpp">
+      <Filter>windows</Filter>
+    </ClCompile>
+    <ClCompile Include="imgui\CShapeViewer.cpp">
+      <Filter>windows</Filter>
+    </ClCompile>
+    <ClCompile Include="imgui\CWallViewer.cpp">
+      <Filter>windows</Filter>
+    </ClCompile>
+    <ClCompile Include="imgui\ImGuiManager.cpp">
+      <Filter>windows</Filter>
+    </ClCompile>
+    <ClCompile Include="imgui\ImGuiWindow.cpp">
+      <Filter>windows</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="imgui\CGUIResource.h" />
-    <ClInclude Include="imgui\CHexViewer.h" />
-    <ClInclude Include="imgui\CMazViewer.h" />
-    <ClInclude Include="imgui\CShapeViewer.h" />
-    <ClInclude Include="imgui\ImGuiManager.h" />
-    <ClInclude Include="imgui\ImGuiWindow.h" />
-    <ClInclude Include="imgui\portable-file-dialogs.h" />
     <ClInclude Include="..\External\imgui\imconfig.h">
       <Filter>ImGUI</Filter>
     </ClInclude>
@@ -65,11 +73,35 @@
     <ClInclude Include="..\External\imgui\backends\imgui_impl_glfw.h">
       <Filter>ImGUI</Filter>
     </ClInclude>
-    <ClInclude Include="..\sGFX.h">
-      <Filter>libSmite</Filter>
-    </ClInclude>
     <ClInclude Include="..\common.h">
       <Filter>libSmite</Filter>
+    </ClInclude>
+    <ClInclude Include="typeDefs.h">
+      <Filter>libSmite</Filter>
+    </ClInclude>
+    <ClInclude Include="imgui\CGUIResource.h">
+      <Filter>windows</Filter>
+    </ClInclude>
+    <ClInclude Include="imgui\CHexViewer.h">
+      <Filter>windows</Filter>
+    </ClInclude>
+    <ClInclude Include="imgui\CMazViewer.h">
+      <Filter>windows</Filter>
+    </ClInclude>
+    <ClInclude Include="imgui\CShapeViewer.h">
+      <Filter>windows</Filter>
+    </ClInclude>
+    <ClInclude Include="imgui\CWallViewer.h">
+      <Filter>windows</Filter>
+    </ClInclude>
+    <ClInclude Include="imgui\ImGuiManager.h">
+      <Filter>windows</Filter>
+    </ClInclude>
+    <ClInclude Include="imgui\ImGuiWindow.h">
+      <Filter>windows</Filter>
+    </ClInclude>
+    <ClInclude Include="imgui\portable-file-dialogs.h">
+      <Filter>windows</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
