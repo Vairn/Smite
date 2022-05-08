@@ -1,4 +1,6 @@
-#include "../typeDefs.h"
+#include "../../libSmite/typeDefs.h"
+#include "../../libSmite/IScriptCommand.h"
+
 #include "CMazViewer.h"
 
 SmitED::CMazViewer::CMazViewer()
@@ -11,7 +13,7 @@ void SmitED::CMazViewer::update()
 	begin();
 	if (ImGui::BeginTabBar("##tabs", ImGuiTabBarFlags_None))
 	{
-		if (ImGui::BeginTabItem("Maze"))
+		if (ImGui::BeginTabItem("Maze 3D"))
 		{
 			ImGui::EndTabItem();
 		}
@@ -23,7 +25,7 @@ void SmitED::CMazViewer::update()
 		{
 			ImGui::EndTabItem();
 		}
-		if (ImGui::BeginTabItem("Maze"))
+		if (ImGui::BeginTabItem("Maze 2D"))
 		{
 			ImGui::EndTabItem();
 		}

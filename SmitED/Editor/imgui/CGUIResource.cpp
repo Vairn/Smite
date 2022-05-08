@@ -71,20 +71,8 @@ static const typeLookup fileTypes[] = {
 	ADDRESOURCE("maz","Level Data", CMazViewer),
 	ADDRESOURCE("SHP","Sprites", CShapeViewer),
 	ADDRESOURCE("WLL","Wall Data", CWallViewer)
-
-//ADDRESOURCE("CPS", "Compressed Picture Screen", CCPSViewer),
-//ADDRESOURCE("WSA", "Westwood Scripted Animated", CWSAViewer),
-//ADDRESOURCE("TIM", "Animation Script", CAnimationScriptViewer),
-//ADDRESOURCE("SHP", "Shapes", CShapeViewer),
-//ADDRESOURCE("UNK", "Unknown Resource", CHexViewer),
-//ADDRESOURCE("MAZ", "Level Maze", CMazViewer),
-//ADDRESOURCE("INI", "Level Ini", CMazViewer),
-//ADDRESOURCE("XXX", "Level Extra", CMazViewer),
-//ADDRESOURCE("INF", "Level Script", CMazViewer),
-//ADDRESOURCE("WLL", "Level Walls", CMazViewer),
-//ADDRESOURCE("CMZ", "Level CMZ", CMazViewer),
-
 };
+
 SmitED::CGUIResource::CGUIResource(const std::string& _workingFolder)
 	: SmitED::ImGuiWindow()
 {

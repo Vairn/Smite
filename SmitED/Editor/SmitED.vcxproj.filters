@@ -20,9 +20,6 @@
     <ClCompile Include="..\External\imgui\backends\imgui_impl_glfw.cpp">
       <Filter>ImGUI</Filter>
     </ClCompile>
-    <ClCompile Include="typeDefs.cpp">
-      <Filter>libSmite</Filter>
-    </ClCompile>
     <ClCompile Include="imgui\CGUIResource.cpp">
       <Filter>windows</Filter>
     </ClCompile>
@@ -43,6 +40,15 @@
     </ClCompile>
     <ClCompile Include="imgui\ImGuiWindow.cpp">
       <Filter>windows</Filter>
+    </ClCompile>
+    <ClCompile Include="..\libSmite\IScriptCommand.cpp">
+      <Filter>libSmite</Filter>
+    </ClCompile>
+    <ClCompile Include="..\libSmite\typeDefs.cpp">
+      <Filter>libSmite</Filter>
+    </ClCompile>
+    <ClCompile Include="..\libSmite\BlitzShape.cpp">
+      <Filter>libSmite</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -73,12 +79,6 @@
     <ClInclude Include="..\External\imgui\backends\imgui_impl_glfw.h">
       <Filter>ImGUI</Filter>
     </ClInclude>
-    <ClInclude Include="..\common.h">
-      <Filter>libSmite</Filter>
-    </ClInclude>
-    <ClInclude Include="typeDefs.h">
-      <Filter>libSmite</Filter>
-    </ClInclude>
     <ClInclude Include="imgui\CGUIResource.h">
       <Filter>windows</Filter>
     </ClInclude>
@@ -102,6 +102,18 @@
     </ClInclude>
     <ClInclude Include="imgui\portable-file-dialogs.h">
       <Filter>windows</Filter>
+    </ClInclude>
+    <ClInclude Include="..\libSmite\common.h">
+      <Filter>libSmite</Filter>
+    </ClInclude>
+    <ClInclude Include="..\libSmite\IScriptCommand.h">
+      <Filter>libSmite</Filter>
+    </ClInclude>
+    <ClInclude Include="..\libSmite\typeDefs.h">
+      <Filter>libSmite</Filter>
+    </ClInclude>
+    <ClInclude Include="..\libSmite\BlitzShape.h">
+      <Filter>libSmite</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
