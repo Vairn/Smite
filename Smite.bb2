@@ -16,16 +16,37 @@ INCLUDE "Graphics.bb2"
 INCLUDE "Title.bb2"
 INCLUDE "Menu.bb2"
 
-BLITZ
 
+
+AMIGA
 BitMap #frontbuffer,320,256,5
 BitMap #backbuffer,320,256,5
+
+
+InitPalette 0,16
+; macro as function to remove overhead of function calls. Hack I guess. but Speedy
+!loadWalls{"atlas.iff"}
+saveWallShapes{"wallset1"}
+
+BLITZ
+
 currentBuffer =0
 Slice 0,42,5
+Use Palette 0
+
 Repeat
 !cycleBuffer{currentBuffer}
-Cls 0
-VWait
+
+Cls 3
+;MOVE.w $0f0, $dff180
+IF currentBuffer = 0 
+    Blit 0,39,5
+Endif
+Blit 1,0,0
+Blit 2,201,0
+
+VWait 1
+MOVE.w $f00, $dff180
 
 Until Joyb(0)=1
 End

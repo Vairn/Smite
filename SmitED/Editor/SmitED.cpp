@@ -24,10 +24,7 @@ int main(int, char**)
 {
 	printf("Might and Magic ][ - Editor.\n");
 	printf("Debug Console V 0.1\n");
-	sBlitzShapes* balls = LoadShapes("D:\\development\\Amiga\\Smite\\dh0\\UBB21Plus\\examples\\simonsdemos\\balls.shapes");
-	sBlitzShapes* blocks = LoadShapes("D:\\development\\Amiga\\Smite\\dh0\\UBB21Plus\\examples\\simonsdemos\\blocks.shapes");
-	sBlitzShapes* shapes = LoadShapes("D:\\development\\Amiga\\Smite\\dh0\\UBB21Plus\\examples\\simonsdemos\\isoshapes");
-	exit(0);
+			
 	//glfwSetErrorCallback(glfw_error_callback);
 	if (!glfwInit())
 		return 1;

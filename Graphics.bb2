@@ -6,3 +6,24 @@ Show `1
 Use BitMap `1
 End Macro
 
+Macro loadWalls
+QAMIGA
+BitMap 2, 512,512,4
+LoadBitMap 2,`1
+LoadPalette 0, `1
+GetaShape 0,0, 350, 162,162
+GetaShape 1,0, 167, 39,180
+GetaShape 2,0, 167,39,180
+XFlip 2
+Free BitMap 2
+BLITZ
+End Macro
+
+Statement saveWallShapes{fileName$}
+QAMIGA
+swsPalette$ = fileName$ + ".wllpal" 
+swsShape$ = fileName$ + ".wllshp"
+ SaveShapes 0,2,swsShape$
+ SavePalette 0,swsPalette$  
+Blitz
+End Statement

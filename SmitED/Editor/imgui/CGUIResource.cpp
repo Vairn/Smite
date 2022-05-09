@@ -108,6 +108,7 @@ void SmitED::CGUIResource::update()
 	else
 	{
 		begin();
+
 		for (const auto& file : m_vecValidFiles)
 		{
 

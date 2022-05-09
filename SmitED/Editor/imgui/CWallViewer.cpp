@@ -33,7 +33,10 @@ void SmitED::CWallViewer::update()
 	
 		ImGui::EndTabBar();
 	}
-	
+	if (ImGui::Button("Import"))
+	{
+		
+	}
 
 	//ImGui::EndTabBar();
 	//memEdit->DrawContents(pData, uiDataSize);
@@ -43,6 +46,7 @@ void SmitED::CWallViewer::update()
 void SmitED::CWallViewer::OnDataSet()
 {
 	// Load the data in.
+
 
 }
 
