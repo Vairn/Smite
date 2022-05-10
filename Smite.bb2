@@ -6,15 +6,15 @@ DEFTYPE .b
 ; Different parts of the Game has been split into different files.
 ; Unfortunately Blitzbasic 2 doesn't have a workspace, OR any other modern ide feature, so you have To load them one by one.
 ; Or use VSCode and a snazzy arexx script.
-INCLUDE "debug.bb2"
-INCLUDE "types.bb2"
-INCLUDE "fileaccess.bb2"
+XINCLUDE "debug.bb2"
+XINCLUDE "types.bb2"
+XINCLUDE "fileaccess.bb2"
 ;
-INCLUDE "Monster.bb2"
-INCLUDE "Map.bb2"
-INCLUDE "Graphics.bb2"
-INCLUDE "Title.bb2"
-INCLUDE "Menu.bb2"
+XINCLUDE "Monster.bb2"
+XINCLUDE "Map.bb2"
+XINCLUDE "Graphics.bb2"
+XINCLUDE "Title.bb2"
+XINCLUDE "Menu.bb2"
 
 
 
@@ -25,7 +25,7 @@ BitMap #backbuffer,320,256,5
 
 InitPalette 0,16
 ; macro as function to remove overhead of function calls. Hack I guess. but Speedy
-!loadWalls{"atlas.iff"}
+loadWalls{"atlas.iff"}
 saveWallShapes{"wallset1"}
 
 BLITZ

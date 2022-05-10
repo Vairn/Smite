@@ -6,18 +6,18 @@ Show `1
 Use BitMap `1
 End Macro
 
-Macro loadWalls
+Statement loadWalls{fileName$}
 QAMIGA
 BitMap 2, 512,512,4
-LoadBitMap 2,`1
-LoadPalette 0, `1
+LoadBitMap 2,fileName$
+LoadPalette 0, fileName$
 GetaShape 0,0, 350, 162,162
 GetaShape 1,0, 167, 39,180
 GetaShape 2,0, 167,39,180
 XFlip 2
 Free BitMap 2
 BLITZ
-End Macro
+End Statement
 
 Statement saveWallShapes{fileName$}
 QAMIGA
