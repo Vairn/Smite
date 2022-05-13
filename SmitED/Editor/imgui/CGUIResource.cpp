@@ -108,7 +108,39 @@ void SmitED::CGUIResource::update()
 	else
 	{
 		begin();
+		if (ImGui::BeginMenu("New..."))
+		{
+			SmitED::CHexViewer* pViewer = nullptr;
 
+			if(ImGui::Selectable("Maze"))
+			{
+				pViewer = new CMazViewer();
+				pViewer->WindowName("New Maze");
+			}
+			
+			if (ImGui::Selectable("Wallset"))
+			{
+				pViewer = new CWallViewer();
+				pViewer->WindowName("New Wallset");
+			}
+			
+			if (ImGui::Selectable("Spriteset"))
+			{
+				pViewer = new CShapeViewer();
+				pViewer->WindowName("New Spriteset");
+			}
+			
+			if (ImGui::Selectable("GUI Layout"))
+			{
+
+			}
+
+			if (pViewer)
+			{
+				pOwner->AddWindowNextFrame(pViewer);
+			}
+			ImGui::EndMenu();
+		}
 		for (const auto& file : m_vecValidFiles)
 		{
 

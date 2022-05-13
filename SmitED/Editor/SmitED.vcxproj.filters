@@ -50,6 +50,7 @@
     <ClCompile Include="..\libSmite\BlitzShape.cpp">
       <Filter>libSmite</Filter>
     </ClCompile>
+    <ClCompile Include="..\libSmite\common.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\External\imgui\imconfig.h">

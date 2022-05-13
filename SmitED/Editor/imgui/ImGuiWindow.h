@@ -18,9 +18,9 @@ namespace SmitED
 		void SetManager(SmitED::ImGuiUIManager* pManager) { pOwner = pManager; }
 
 		virtual void SetData(std::string _sName, uint8_t* _pData, uint32_t _uiSize) {}
-		
-	protected:
 		void WindowName(std::string val) { sWindowName = val; }
+	protected:
+		
 		virtual bool begin();
 		void end();
 		bool show;
