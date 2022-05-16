@@ -552,6 +552,8 @@ bool SmitED::CWallViewer::ImportJson(const char* sFilename)
 				pTileInfo->screen[0] = windowWidth - pTileInfo->coords[2]- pTileInfo->screen[0];
 				m_wallSetTiles[id].emplace_back(pTileInfo);
 				pTileInfo->pFrame = FreeImage_Copy(pSrcImage, pTileInfo->coords[0], pTileInfo->coords[1], pTileInfo->coords[0] + pTileInfo->coords[2], pTileInfo->coords[1] + pTileInfo->coords[3]);
+				//pTileInfo->pFrame = FreeImage_ConvertTo32Bits(pTileInfo->pFrame);
+				//FreeImage_SetPalette()
 				FreeImage_FlipHorizontal(pTileInfo->pFrame);
 				pTileInfo->flip = true;
 				//index++;
@@ -623,29 +625,31 @@ void SmitED::CWallViewer::SaveTileset(std::string& result)
 		fout << GetPixelValue(palette[c].rgbBlue);
 	}
 
+	// fout = WriteBackground(fout);
+
 	fout << (uint8_t)m_wallSetTiles.size();
 	for (const auto &tileItr:m_wallSetTiles)
 	{
 		fout << (uint8_t)tileItr.second.size();
-		for(auto tile:tileItr.second)
+		for (auto tile : tileItr.second)
 		{
 			fout << GetTypeIndex(tile->sName);
 			fout << (int8_t)tile->location[0];
 			fout << (int8_t)tile->location[1];
-			int8_t s01 = tile->screen[0] ;
+			int8_t s01 = tile->screen[0];
 			int8_t s02 = (tile->screen[0] >> 8) & 0xFF;
-			int8_t s11 = tile->screen[1] ;
+			int8_t s11 = tile->screen[1];
 			int8_t s12 = (tile->screen[1] >> 8) & 0xFF;
-			int8_t c21 = tile->coords[2] ;
+			int8_t c21 = tile->coords[2];
 			int8_t c22 = (tile->coords[2] >> 8) & 0xFF;
-			int8_t c31 = tile->coords[3] ;
+			int8_t c31 = tile->coords[3];
 			int8_t c32 = (tile->coords[3] >> 8) & 0xFF;
 			//printf("%x, %x, %x, %x", s01, s02, s11, s12);
 			//printf("%x, %x, %x, %x", c21, c22, c31, c32);
 			fout << s02 << s01 << s12 << s11;
 			fout << c22 << c21 << c32 << c31;
 			if (!tile->flip)
-			{ 
+			{
 				for (int y = 0; y < tile->coords[3]; y++)
 				{
 					for (int x = 0; x < tile->coords[2]; x++)
@@ -660,7 +664,7 @@ void SmitED::CWallViewer::SaveTileset(std::string& result)
 			{
 				for (int y = 0; y < tile->coords[3]; y++)
 				{
-					for (int x = tile->coords[2]-1; x >= 0 ; x--)
+					for (int x = tile->coords[2] - 1; x >= 0; x--)
 					{
 						uint8_t idx = 0;
 						FreeImage_GetPixelIndex(pSrcImage, x + tile->coords[0], y + tile->coords[1], &idx);
@@ -668,31 +672,25 @@ void SmitED::CWallViewer::SaveTileset(std::string& result)
 					}
 				}
 			}
-
-			
 		}
-
-		
 	}
-		
 	fout.close();
 }
+
 
 uint8_t SmitED::CWallViewer::GetTypeIndex(std::string& typeStr)
 {
 	if (typeStr.compare("wall")==0)
 		return 1;
-	if (typeStr.compare("floor") == 0)
+	if (typeStr.compare("ground") == 0)
 		return 2;
 	if (typeStr.compare("ceiling") == 0)
 		return 3;
 	if (typeStr.compare("door") == 0)
 		return 4;
-	if (typeStr.compare("object") == 0)
-		return 5;
-
-
-	return 0;
+	
+	// all others are objects
+	return 5;
 }
 
 void SmitED::CWallViewer::OnDataSet()

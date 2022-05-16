@@ -55,6 +55,9 @@ namespace SmitED
 
 		std::map<int, std::vector<sWallSetTile*>> m_wallSetTiles;
 		void SaveTileset(std::string& result);
+
+		//std::ofstream WriteBackground(std::ofstream fout);
+
 		uint8_t GetTypeIndex(std::string& typeStr);
 	};
 
