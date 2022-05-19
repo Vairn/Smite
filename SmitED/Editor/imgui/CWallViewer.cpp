@@ -464,26 +464,31 @@ void SmitED::CWallViewer::update()
 
 void SmitED::CWallViewer::RenderBackground(FIBITMAP* pDst)
 {
-	for (const auto& tile : m_wallSetTiles[5])
+	for (const auto& tilesets : m_wallSetTiles)
 	{
-
-		//if (tlx == x && tly == y)
+		for (const auto tile : tilesets.second)
 		{
-			//FreeImage_Paste(pScreenImage, tile->pFrame, tile->screen[0], tile->screen[1],254);
-			for (int16_t py = 0; py < tile->coords[3]; py++)
+			auto idx = GetTypeIndex(tile->sName);
+			if (idx == 2 || idx==3)
+			//if (tlx == x && tly == y)
 			{
-				for (int16_t px = 0; px < tile->coords[2]; px++)
+				//FreeImage_Paste(pScreenImage, tile->pFrame, tile->screen[0], tile->screen[1],254);
+				for (int16_t py = 0; py < tile->coords[3]; py++)
 				{
-					RGBQUAD rgb;
-					FreeImage_GetPixelColor(tile->pFrame, px, py, &rgb);
-					if (rgb.rgbRed == 12 && rgb.rgbGreen == 34 && rgb.rgbBlue == 36) continue;
-					FreeImage_SetPixelColor(pDst, tile->screen[0] + px, tile->screen[1] + py, &rgb);
+					for (int16_t px = 0; px < tile->coords[2]; px++)
+					{
+						RGBQUAD rgb;
+						FreeImage_GetPixelColor(tile->pFrame, px, py, &rgb);
+						if (rgb.rgbRed == 12 && rgb.rgbGreen == 34 && rgb.rgbBlue == 36) continue;
+						FreeImage_SetPixelColor(pDst, tile->screen[0] + px, tile->screen[1] + py, &rgb);
+					}
 				}
 			}
 		}
 	}
+	/*
 	// ceiling;
-	for (const auto& tile : m_wallSetTiles[4])
+	for (const auto& tile : m_wallSetTiles[1])
 	{
 		for (int16_t py = 0; py < tile->coords[3]; py++)
 		{
@@ -498,6 +503,7 @@ void SmitED::CWallViewer::RenderBackground(FIBITMAP* pDst)
 			}
 		}
 	}
+	*/
 }
 
 bool SmitED::CWallViewer::ImportJson(const char* sFilename)
@@ -627,6 +633,23 @@ void SmitED::CWallViewer::SaveTileset(std::string& result)
 
 	// fout = WriteBackground(fout);
 
+	uint16_t tilecount = 0;
+
+	for (const auto& tileItr:m_wallSetTiles)
+	{
+		for (const auto&tile:tileItr.second)
+		{
+			auto idx = GetTypeIndex(tile->sName);
+			// ignore floors and ceilings
+			if (idx != 2 && idx != 3)
+				tilecount++;
+		}
+	}
+	int8_t t01 = tilecount;
+	int8_t t02 = (tilecount >> 8) & 0xFF;
+	fout << t02 << t01;
+
+
 	fout << (uint8_t)m_wallSetTiles.size();
 	for (const auto &tileItr:m_wallSetTiles)
 	{
@@ -644,8 +667,6 @@ void SmitED::CWallViewer::SaveTileset(std::string& result)
 			int8_t c22 = (tile->coords[2] >> 8) & 0xFF;
 			int8_t c31 = tile->coords[3];
 			int8_t c32 = (tile->coords[3] >> 8) & 0xFF;
-			//printf("%x, %x, %x, %x", s01, s02, s11, s12);
-			//printf("%x, %x, %x, %x", c21, c22, c31, c32);
 			fout << s02 << s01 << s12 << s11;
 			fout << c22 << c21 << c32 << c31;
 			if (!tile->flip)
