@@ -1,9 +1,17 @@
 ; Graphics.bb2
+XINCLUDE "debug.bb2"
+XINCLUDE "types.bb2"
 
 Macro cycleBuffer
-Show `1
+;Show `1
+
+DisplayBitMap 0,`1
 `1 = 1-`1
 Use BitMap `1
+
+UnBuffer `1
+;BitMapOutput `1
+;Locate 0,0
 End Macro
 
 Statement loadWalls{fileName$}
@@ -17,13 +25,171 @@ GetaShape 2,0, 167,39,180
 XFlip 2
 Free BitMap 2
 BLITZ
+BlitzKeys On
 End Statement
 
 Statement saveWallShapes{fileName$}
 QAMIGA
-swsPalette$ = fileName$ + ".wllpal" 
+swsPalette$ = fileName$ + ".wllpal"
 swsShape$ = fileName$ + ".wllshp"
  SaveShapes 0,2,swsShape$
- SavePalette 0,swsPalette$  
-Blitz
+ SavePalette 0,swsPalette$
+BLITZ
+End Statement
+
+#spriteBitmap = 4
+#bkgndBitmap = 5
+
+; only used in Building the game
+; final exe will use pre-processed assets.
+Statement ProcessWallset{filename$}
+SHARED walls()
+SHARED wallslookup()
+QAMIGA
+BitMap #spriteBitmap,320,256,5
+Use BitMap #spriteBitmap
+BitMap #bkgndBitmap,240,180,5
+
+wallFile.s = filename$+".wll"
+outfile.s = filename$ + ".wllshp"
+palfile.s = filename$ + ".wllpal"
+processed.s = filename$ + ".wllinf"
+dbugprintstring{wallFile.s}
+If ReadFile(0,wallFile.s)
+
+    ;Do your file handling here.
+    colourCount =0
+    wallsetCount = 0
+    tileCount =0
+    dummy.b =0
+    r.w =0
+    g.w = 0
+    b.w = 0
+    shapeIndex.w=2 ; skip 0,1 it is for the background
+    ReadMem 0, &dummy, 1
+    ReadMem 0, &dummy, 1
+    ReadMem 0, &dummy, 1
+    ReadMem 0, &colourCount,1
+    dbugprintval{colourCount}
+    InitPalette 1, colourCount
+    For c=1 To colourCount
+        ReadMem 0,&dummy,1
+        r = dummy
+        if r< 0 then r=256+r
+        ReadMem 0,&dummy,1
+        g = dummy 
+        if g< 0 then g=256+g
+        ReadMem 0,&dummy,1
+        b = dummy 
+        if b< 0 then b=256+b
+        dbugprintstring{"COL: "+Str$(c)+" R:" +Str$(r)+" G:" +Str$(g)+ "B:" +Str$(b)}
+        AGAPalRGB 1,c-1,r,g,b
+        ;AGAPalRGB 1,16+c-1,r,g,b
+     Next
+    
+    ;  disWidth.w =0
+    ;  disHeight.w = 0
+    ;  ReadMem 0,&disWidth,1
+    ;  ReadMem 0,&disHeight,1
+    ;  disWidth=240
+    ;  disHeight=180
+    ;  dbugprintstring{"W: "+ Str$(disWidth) + " H:" +Str$(disHeight)}
+    ; For y.w=0 To disHeight - 1
+    ;     For x.w=0 To disWidth -1
+    ;         idx.b =0
+    ;         ReadMem 0,&idx,1
+    ;         Plot x,y,idx
+    ;     Next
+    ; Next
+
+    ;shapeIndex+1
+
+     ;SavePalette 1, palname.s
+     ;Use Palette 1
+     totalTileCount.w = 0
+     ReadMem 0,&totalTileCount,2
+     dbugprintstring{"Wallset Count: "+Str$(totalTileCount)}
+     ;Dim List walls.Wallset(totalTileCount)
+
+     ReadMem 0,&wallsetCount, 1
+     dbugprintstring{"Wallset Count: "+Str$(wallsetCount)}
+     For w=1 To wallsetCount
+        ReadMem 0,&tileCount,1
+        dbugprintstring{"Tile Count: "+Str$(tileCount)}
+        For tile=1 To tileCount
+            dbugprintval{Loc(0)}
+            ReadMem 0, &walltype.b,1
+            ReadMem 0, &locationX.b,1 : ReadMem 0, &locationY.b,1
+            ReadMem 0, &screenX.w,2 : ReadMem 0, &screenY.w,2
+            ReadMem 0, &width.w,2 : ReadMem 0, &height.w,2
+            If walltype.b = 1 OR walltype.b = 4 OR walltype.b = 5 OR walltype.b = 0
+                If AddItem (walls())
+
+                    dbugprintval{Loc(0)}
+                    walls()\walltype = walltype.b
+                    walls()\locationX = locationX.b : walls()\locationY = locationY.b
+                    walls()\screenX = screenX.w : walls()\screenY = screenY.w
+                    walls()\width = width.w : walls()\height = height.w
+                    walls()\shapeIndex = shapeIndex
+                    ; LX.b = locationX+3
+                    ; LY.b = -locationY
+                    ; dbugprintstring{"LocX: " + str$(LX) + " LocY: " + str$(LY), " WMI:" + Str$(walltype.b)}
+                    
+                    ; wallslookup(LX, LY, walltype.b)\walltype = walltype.b
+                    ; wallslookup(LX, LY, walltype.b)\locationX = locationX.b 
+                    ; wallslookup(LX, LY, walltype.b)\locationY = locationY.b
+                    ; wallslookup(LX, LY, walltype.b)\screenX = screenX.w 
+                    ; wallslookup(LX, LY, walltype.b)\screenY = screenY.w
+                    ; wallslookup(LX, LY, walltype.b)\width = width.w 
+                    ; wallslookup(LX, LY, walltype.b)\height = height.w
+                    ; wallslookup(LX, LY, walltype.b)\shapeIndex = shapeIndex                   
+                    ;wallslookup(LX, LY, walltype.b)
+                EndIf
+            Endif
+        
+            offx.w =0
+            offy.w= 0
+            skipCol.b=-1
+            If walltype.b = 1 OR walltype.b = 4 OR walltype.b = 5
+            Use BitMap #spriteBitmap
+            Cls 0
+            Else
+            Use BitMap #bkgndBitmap
+            skipCol.b = 0
+            offx = screenX
+            offy = screenY
+            EndIf
+             dbugprintstring{"Wall Size: " + str$(width.w) + " Height:" + str$(height.w)}
+            For py.w=1 To height.w
+            ;dbugprintval{py.w}
+                For px.w=1 To width.w
+                    ;dbugprintval{px.w}
+                    ReadMem 0,&idx,1
+                    If idx <> skipCol
+                        Plot offx+px.w,offy+py.w,idx
+                    EndIf
+                Next
+            Next
+            If walltype.b = 1 OR walltype.b = 4 OR walltype.b = 5 OR walltype.b = 0
+                GetaShape shapeIndex,1, 1, width.w,height.w
+                shapeIndex+1
+            EndIf
+        Next
+
+     Next
+    CloseFile 0
+    Use BitMap #bkgndBitmap
+    GetaShape 0, 1,1,239,179 ; background frame 1
+    GetaShape 1, 1,1,239,179 ; background frame 2
+    XFlip 1                  ; fliping the background for when you walk or turn to make it look that you are moving
+
+    SaveShapes 0,shapeIndex,outfile.s
+    SavePalette 1, palfile.s
+    
+    Free BitMap #bkgndBitmap
+    Free BitMap #spriteBitmap
+Else
+    ;The file was not successfully opened. Do your error handling here.
+EndIf
+BLITZ
 End Statement

@@ -260,7 +260,7 @@ void SmitED::CWallViewer::update()
 					if (m_wallSetTiles.size() > 2)
 					{
 						//const auto & tile = m_wallSetTiles[1][iWall];
-						for (const auto& tile : m_wallSetTiles[1])
+						for (const auto& tile : m_wallSetTiles[2])
 						{
 
 							int tx = -tile->location[0];// *CMazeDr[iFacing].xs;
@@ -617,18 +617,19 @@ void SmitED::CWallViewer::ReadTileInfo(SmitED::sWallSetTile* pTileInfo, const st
 
 void SmitED::CWallViewer::SaveTileset(std::string& result)
 {
+	uint8_t cCount = 32;// FreeImage_GetColorsUsed(pSrcImage);
 	std::ofstream fout(result, std::ios_base::binary);
 	fout << "WLL";
-	fout << (uint8_t)16;
+	fout << (uint8_t)cCount;
 	auto palette = FreeImage_GetPalette(pSrcImage);
-	for (int c = 0; c < 16; c++)
+	for (int c = 0; c < cCount; c++)
 	{
-		//fout << int8_t(ceil(palette[c].rgbRed / 17));
-		//fout << int8_t(ceil(palette[c].rgbGreen / 17));
-		//fout << int8_t(ceil(palette[c].rgbBlue / 17));
-		fout << GetPixelValue(palette[c].rgbRed);
-		fout << GetPixelValue(palette[c].rgbGreen);
-		fout << GetPixelValue(palette[c].rgbBlue);
+		fout << int8_t(ceil(palette[c].rgbRed ));
+		fout << int8_t(ceil(palette[c].rgbGreen ));
+		fout << int8_t(ceil(palette[c].rgbBlue));
+		//fout << GetPixelValue(palette[c].rgbRed);
+		//fout << GetPixelValue(palette[c].rgbGreen);
+		//fout << GetPixelValue(palette[c].rgbBlue);
 	}
 
 	// fout = WriteBackground(fout);

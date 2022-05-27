@@ -1,0 +1,17 @@
+; un used codes
+;   locationX = (CMazePos(i)\xDelta) + 3
+;   locationY = -CMazePos(i)\yDelta
+;   tx.b =-wallslookup(locationX, locationY, wmi.b)\locationX
+;   ty.b= wallslookup(locationX, locationY, wmi.b)\locationY
+;   dbugprintstring{"LocX: " + str$(locationX) + " LocY: " + str$(locationY)}
+;   dbugprintstring{"LocX: " + str$(tx) + " LocY: " + str$(ty) + " " + STR$(wmi.b)}
+;   if (tx = CMazePos(i)\xDelta and ty = CMazePos(i)\yDelta)
+;     dbugprintstring{"Drawing"}
+;     shapeIndex.b = wallslookup(locationX, locationY, wmi.b)\shapeIndex
+;     screenX.w = wallslookup(locationX, locationY, wmi.b)\screenX
+;     screenY.w = wallslookup(locationX, locationY, wmi.b)\screenY
+;     Blit shapeIndex.b, screenX.w, screenY.w 
+    
+    
+;   EndIf
+

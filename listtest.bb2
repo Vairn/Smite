@@ -1,0 +1,109 @@
+NEWTYPE .listitem
+  value.w
+  pre.l
+  nxt.l
+End NEWTYPE
+
+
+DEFTYPE .listitem *currentitem
+
+
+Function.l newlistitem{}
+  SHARED *currentitem
+
+  result.l = AllocMem_ (SizeOf .listitem, 0)
+
+  If result
+    *newitem.listitem = result
+    If *currentitem
+      *prev.listitem = *currentitem
+      *newitem\nxt = *prev\nxt
+      *newitem\pre = *currentitem
+      *prev\nxt = result
+      *currentitem = result
+
+    Else
+      *newitem\pre = 0
+      *newitem\nxt = 0
+    End If
+  End If
+
+
+  Function Return result
+End Function
+
+
+Function.l nextlistitem{}
+  SHARED *currentitem
+  result.l = 0
+
+  If *currentitem
+    result = *currentitem\nxt
+    If result
+      *currentitem = result
+    End If
+  End If
+  Function Return result
+End Function
+
+
+Function.l prevlistitem{}
+  SHARED *currentitem
+  result.l = 0
+
+  If *currentitem
+    result = *currentitem\pre
+    If result
+      *currentitem = result
+    End If
+  End If
+  Function Return result
+End Function
+
+
+Function.l firstlistitem{}
+  SHARED *currentitem
+  result.l = 0
+
+  While prevlistitem{}
+  End While
+
+  result = *currentitem
+  Function Return result
+End Function
+
+
+Function.l lastlistitem{}
+  SHARED *currentitem
+  result.l = 0
+
+  While nextlistitem{}
+  End While
+
+  result = *currentitem
+  Function Return result
+End Function
+
+
+; ***
+
+
+For i.w = 1 To 10
+
+  *currentitem = newlistitem{}
+  If *currentitem
+    *currentitem\value = i * 10
+  End If
+
+Next i
+
+
+If firstlistitem{}
+  NPrint *currentitem\value
+
+  While nextlistitem{}
+    NPrint *currentitem\value
+  End While
+End If
+
+End

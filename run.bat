@@ -25,6 +25,8 @@ set project_files[5]=Graphics.bb2
 set project_files[6]=Menu.bb2
 set project_files[7]=Title.bb2
 set project_files[8]=debug.bb2
+set project_files[9]=listtest.bb2
+set project_files[10]=PlayerActions.bb2
 
 :: Set the WinUAE folder.
 :: WinUAE folder must end with a backslash (\)
@@ -88,7 +90,7 @@ del cmd.txt
 
 :: Run the ARexx script
 ::WinUAEArexx blitzbasic2 1000 !filelist!
-start "" "%winuae_folder%%winuae_exe%" -f %winuae_config% -s use_gui=no
+::start "" "%winuae_folder%%winuae_exe%" -f %winuae_config% 
 :: Bring WinUAE to front
 BringToFront "WinUAE"
 

@@ -6,6 +6,21 @@ NEWTYPE .Monster
   damage
 End NEWTYPE
 
+NEWTYPE .Wallset
+  id.w
+  locationX.b
+  locationY.b
+  screenX.w
+  screenY.w
+  width.w
+  height.w
+  walltype.b 
+  shapeIndex.w
+End NEWTYPE
+
+
+
+
 NEWTYPE .MonsterInstance
   archetype.Monster
   x
@@ -52,25 +67,51 @@ End NEWTYPE
 
 NEWTYPE .Level
   name$
-  walldata[1024]
-  coldata[1024]
+  walldata.b[1024]
+  coldata.b[1024]
   strings$[256]
   
 End NEWTYPE 
+
+NEWTYPE .MazeDir
+  xs.b
+  ys.b
+End NEWTYPE
+
+NEWTYPE .MazePos
+  xDelta.b
+  yDelta.b
+  facing.b
+End NEWTYPE
+
+; Arrays
 Dim GlobalFlaggs.b(128)
 Dim LevelFlags.b(32,32)
+Dim CMazeDr.MazeDir(4)
+Dim CMazePos.MazePos(18)
+; there are upto 32 different wall decorations
+Dim wallslookup.Wallset(6,4,32)
+; Lists 
 Dim List currentScript.LevelScript(1024)
-DEFTYPE .Level currentLevel
+dim List walls.Wallset(255)
 
-; Loaded items
 Dim List items.Item(256)
 Dim List monsters.Monster(16)
 Dim LIST aliveMonsters.MonsterInstance(32)
-DEFTYPE .Character player
+
+; Pointers
+DEFTYPE .Character *player
+DEFTYPE .Level *currentLevel
+; Other variables
+playerLoc.w = ((1 & $1f) * 32) + (1 & $1F)
+playerFacing.b = 0
+bkgindex.b=0
 
 ; Buffers
 #frontbuffer = 0
 #backbuffer = 1
+#backgroundImage = 2
+#guiframe = 3
 
 ; Duneon Shapes
 #wallshapes = 0
@@ -83,3 +124,10 @@ DEFTYPE .Character player
 #itemiconshapes = 10
 #guiShapes = 11
 
+; screen flags
+#eightbitplanes = $08
+#smoothscrolling = $10
+#dualplayfields = $20
+#lores = $000
+#fetchmode3 = $3000
+#agacolors = $10000

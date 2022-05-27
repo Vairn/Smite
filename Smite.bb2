@@ -16,37 +16,96 @@ XINCLUDE "Graphics.bb2"
 XINCLUDE "Title.bb2"
 XINCLUDE "Menu.bb2"
 
-
+XINCLUDE "PlayerActions.bb2"
 
 AMIGA
-BitMap #frontbuffer,320,256,5
-BitMap #backbuffer,320,256,5
-
-
-InitPalette 0,16
-; macro as function to remove overhead of function calls. Hack I guess. but Speedy
-loadWalls{"atlas.iff"}
-saveWallShapes{"wallset1"}
-
+gosub initDemoMode:
+;InitCopList CopList#,ypos,height, type,sprites,colors,customs
+InitCopList 0,44,200,$10005,8,256,0
 BLITZ
+Mouse On
 
 currentBuffer =0
-Slice 0,42,5
-Use Palette 0
+; slices for now, maybe use the display lib later
+;Slice 0,42,5
 
-Repeat
+;Use Palette 1
+ResetList walls()
+CreateDisplay 0
+DisplayPalette 0,1
 !cycleBuffer{currentBuffer}
+Cls 0
+drawView{}
 
-Cls 3
-;MOVE.w $0f0, $dff180
-IF currentBuffer = 0 
-    Blit 0,39,5
-Endif
-Blit 1,0,0
-Blit 2,201,0
+!cycleBuffer{currentBuffer}
+Cls 0
+drawView{}
+mx.w = 0
+my.w = 0
+MouseArea 0,0,320,256
+;Pointer 0,0
+Repeat
+;'cls 0
+!cycleBuffer{currentBuffer}
+;DisplaySprite 0,0,mx.w,my.w,0
+; test for player movement
+gosub handlePlayerActions:
 
-VWait 1
-MOVE.w $f00, $dff180
+;dbugprintstring {"Mouse X" + str$(mX) + " Mouse Y:" + str$(my)}
+
+if doRedraw > 0
+;!cycleBuffer{currentBuffer}
+;Cls 0
+Boxf 0,0,240,180, 0
+drawView{}
+doRedraw-1
+endif
+VWait 
+
 
 Until Joyb(0)=1
 End
+
+initDemoMode:
+
+    ; Create a front and back buffer of 32 colours
+    BitMap #frontbuffer,320,256,8
+    BitMap #backbuffer,320,256,8
+    Buffer #backbuffer, 10000
+    Buffer #frontbuffer, 10000
+    ; init our palette
+    InitPalette 0,16
+
+    DEFTYPE .Wallset currentWallset
+
+    ; These populate the two arrays needed to draw the scene
+    preFillFacing{}
+    preFillPosData{}
+
+    ; Demo map for development
+    *currentLevel = MakeDemoMap{}
+    ; Process and load in a wallset.
+    ; Final build will have all assets pre-processed.
+
+    ProcessWallset{"factory2"}
+    dbugprintstring{"Wallset Loaded"}
+
+;    GetaSprite 0,5
+
+return
+
+handlePlayerActions:
+    if handleMovementKeys{}
+        playerFacing = playerFacing MOD 4
+        doRedraw = 2
+        ; draw the view if required
+    endif
+
+    action.b =  handleButtons{}
+    if action = 1 ; we moved
+        playerFacing = playerFacing MOD 4
+        doRedraw = 2
+    endif
+    if action = 2 ; done something in main window.
+    endif
+return

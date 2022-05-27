@@ -1,0 +1,88 @@
+
+XINCLUDE "debug.bb2"
+XINCLUDE "types.bb2"
+
+; Movement Commands
+
+Function .w mazeMove{originalPos.w, dir.b}
+    Shared *currentLevel.Level
+    shared bkgindex
+	x.b=0
+    y.b=0
+	x = originalPos.w MOD 32;
+	y = originalPos.w/32;div(int(pos), 32).quot;
+	dbugprintstring{ str$(x) + " " + str$(y)}
+
+    Select dir.b
+        Case 0
+            y-1
+        case 1
+            x+1
+        case 2
+            y+1
+        case 3
+            x-1
+        Default
+    End Select
+    newPos.w = ((y & $1f) * 32) + (x & $1F) 
+    ;long newPos = ((y & 0x1f) * 32) + (x & 0x1F);
+
+	wmi.b = *currentLevel\walldata[newPos]
+	if (wmi = 1)
+		function return originalPos;
+	end if
+    dbugprintstring{ str$(x) + " " + str$(y)}
+	bkgindex+1
+    bkgindex = bkgindex Mod 2
+    function return newPos;
+End Function
+
+
+Function .b handleMovementKeys{}
+Shared playerLoc.w, playerFacing.b
+shared bkgindex
+realFacing.b = 0
+
+if RawStatus ($4C) ; Up
+    realFacing.b= (playerFacing.b) MOD 4
+    playerLoc.w =  mazeMove{playerLoc.w, realFacing.b} ; Up Arrow
+    Function Return True
+EndIf
+if RawStatus ($4D) ; Down
+    realFacing.b= (playerFacing.b+2) MOD 4
+    playerLoc.w =  mazeMove{playerLoc.w, realFacing.b} ; Up Arrow
+    Function Return True
+EndIf
+if RawStatus ($4F) ; Left
+    playerFacing.b-1
+    bkgindex+1
+    bkgindex = bkgindex Mod 2
+    ;playerLoc.w =  mazeMove{playerLoc.w, realFacing.b} ; Up Arrow
+    Function Return True
+EndIf
+if RawStatus ($4E) ; Right
+    playerFacing.b+1
+    bkgindex+1
+    bkgindex = bkgindex Mod 2
+    ;realFacing.b= (playerFacing.b+1) MOD 4
+    ;playerLoc.w =  mazeMove{playerLoc.w, realFacing.b} ; Up Arrow
+    Function Return True
+EndIf
+    function return 0
+End Function
+
+function handleButtons {}
+    ; where in the screen are we.
+    ; this changes where we are.
+    Gosub mainWindow:
+
+    function return 0
+
+    mainWindow:
+    
+    Return
+    lowerWindow:
+    return
+    invent:
+    return
+End Function
