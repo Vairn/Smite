@@ -54,6 +54,10 @@
 ;  FE   <>
 ;  FF   =
 
+; All script functions read from the VM stack
+; most of them need a few extra vars parsed into them
+
+
 Statement RunScript{sc.LevelScript, offset.w}
 ; No Op
 

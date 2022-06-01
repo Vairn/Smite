@@ -11,7 +11,7 @@ Function .w mazeMove{originalPos.w, dir.b}
     y.b=0
 	x = originalPos.w MOD 32;
 	y = originalPos.w/32;div(int(pos), 32).quot;
-	dbugprintstring{ str$(x) + " " + str$(y)}
+	;dbugprintstring{ str$(x) + " " + str$(y)}
 
     Select dir.b
         Case 0
@@ -31,7 +31,7 @@ Function .w mazeMove{originalPos.w, dir.b}
 	if (wmi = 1)
 		function return originalPos;
 	end if
-    dbugprintstring{ str$(x) + " " + str$(y)}
+    ;dbugprintstring{ str$(x) + " " + str$(y)}
 	bkgindex+1
     bkgindex = bkgindex Mod 2
     function return newPos;

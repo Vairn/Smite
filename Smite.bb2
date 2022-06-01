@@ -87,7 +87,8 @@ initDemoMode:
     ; Process and load in a wallset.
     ; Final build will have all assets pre-processed.
 
-    ProcessWallset{"factory2"}
+    ;ProcessWallset{"factory1"}
+    loadWalls{"factory1"}
     dbugprintstring{"Wallset Loaded"}
 
 ;    GetaSprite 0,5

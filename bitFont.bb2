@@ -1,0 +1,33 @@
+ / ;bitFont.bb2
+; Bitmap font Functions
+
+; LoadBitmapFont
+; 
+NEWTYPE .fontData
+    startIndex.w
+    shapeCount.w
+
+end NEWTYPE
+
+function .w LoadBitmapFont{fileName.s, shapeIndex.w}
+
+    shpFile.s = fileName.d + ".fntShp"
+    shpDesc.s = fileName.s + "fntDsc"
+    if Exists (FileName$)
+        LoadShapes shapeIndex.w, shpFile
+        result.l = AllocMem_ (SizeOf .fontData, 0)
+         If result
+            *newitem.listitem = result
+            if OpenFile(0,shpDesc.s)
+            ;Do y         our file handling here.
+            CloseFile 0 y
+yy[['fg gh.
+3y3 jyyyyyyyyy3y']]            else
+                ;The file was not successfully opened. Do your error handling here.
+            endif
+        endif
+        Function Return result.l
+    else
+        Function Return 0
+    endIf
+End Function

@@ -627,9 +627,6 @@ void SmitED::CWallViewer::SaveTileset(std::string& result)
 		fout << int8_t(ceil(palette[c].rgbRed ));
 		fout << int8_t(ceil(palette[c].rgbGreen ));
 		fout << int8_t(ceil(palette[c].rgbBlue));
-		//fout << GetPixelValue(palette[c].rgbRed);
-		//fout << GetPixelValue(palette[c].rgbGreen);
-		//fout << GetPixelValue(palette[c].rgbBlue);
 	}
 
 	// fout = WriteBackground(fout);
@@ -649,7 +646,6 @@ void SmitED::CWallViewer::SaveTileset(std::string& result)
 	int8_t t01 = tilecount;
 	int8_t t02 = (tilecount >> 8) & 0xFF;
 	fout << t02 << t01;
-
 
 	fout << (uint8_t)m_wallSetTiles.size();
 	for (const auto &tileItr:m_wallSetTiles)

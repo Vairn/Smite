@@ -42,13 +42,13 @@ NEWTYPE .Character
   sp
   maxsp
   xp
-  level[4] ; 0 fighter, 1 magic, 2 rogue
+  level[4] ; 0 fighter, 1 magic, 2 rogue ; 3 other
   map
   x
   y
-  backpack[256]
-  equipment[16]
-  spellbook[16]
+  backpack[256] ; items held
+  equipment[16] ; items equiped
+  spellbook[16] ; spells
  End NEWTYPE
 
 NEWTYPE .Item
@@ -90,10 +90,10 @@ Dim LevelFlags.b(32,32)
 Dim CMazeDr.MazeDir(4)
 Dim CMazePos.MazePos(18)
 ; there are upto 32 different wall decorations
-Dim wallslookup.Wallset(6,4,32)
+;Dim wallslookup.Wallset(6,4,32)
 ; Lists 
-Dim List currentScript.LevelScript(1024)
-dim List walls.Wallset(255)
+;Dim List currentScript.LevelScript(1024)
+dim List walls.Wallset(100)
 
 Dim List items.Item(256)
 Dim List monsters.Monster(16)
@@ -118,6 +118,9 @@ bkgindex.b=0
 #doorshapes = 1
 #decorationshapes =2
 #monstershapes = 3
+
+#spriteBitmap = 4
+#bkgndBitmap = 5
 
 #itemshapes = 5
 ; gui

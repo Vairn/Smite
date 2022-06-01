@@ -14,31 +14,6 @@ UnBuffer `1
 ;Locate 0,0
 End Macro
 
-Statement loadWalls{fileName$}
-QAMIGA
-BitMap 2, 512,512,4
-LoadBitMap 2,fileName$
-LoadPalette 0, fileName$
-GetaShape 0,0, 350, 162,162
-GetaShape 1,0, 167, 39,180
-GetaShape 2,0, 167,39,180
-XFlip 2
-Free BitMap 2
-BLITZ
-BlitzKeys On
-End Statement
-
-Statement saveWallShapes{fileName$}
-QAMIGA
-swsPalette$ = fileName$ + ".wllpal"
-swsShape$ = fileName$ + ".wllshp"
- SaveShapes 0,2,swsShape$
- SavePalette 0,swsPalette$
-BLITZ
-End Statement
-
-#spriteBitmap = 4
-#bkgndBitmap = 5
 
 ; only used in Building the game
 ; final exe will use pre-processed assets.
@@ -66,9 +41,13 @@ If ReadFile(0,wallFile.s)
     g.w = 0
     b.w = 0
     shapeIndex.w=2 ; skip 0,1 it is for the background
+    ; these just read the 3 letter acronym
     ReadMem 0, &dummy, 1
     ReadMem 0, &dummy, 1
     ReadMem 0, &dummy, 1
+    
+    ; read the colour count
+
     ReadMem 0, &colourCount,1
     dbugprintval{colourCount}
     InitPalette 1, colourCount
@@ -185,11 +164,82 @@ If ReadFile(0,wallFile.s)
 
     SaveShapes 0,shapeIndex,outfile.s
     SavePalette 1, palfile.s
+
+    ; Write the data for the walls that we can load it faster next time.
+    if OpenFile(0,processed.s)
+        ;Do your file handling here.
+        sizeWall.w = SizeOf .Wallset
+        ResetList walls()
+        count.w =0;
+        while(NextItem (walls()))
+            count+1
+        wend
+
+        ; write number of tiles
+        WriteMem 0,&count.w,2
+
+        ResetList walls()
+        
+       While(NextItem (walls()))
+            WriteMem 0, walls(), sizeWall.w
+        wend
+
+        CloseFile 0
+    else
+        ;The file was not successfully opened. Do your error handling here.
+    endif
+
     
     Free BitMap #bkgndBitmap
     Free BitMap #spriteBitmap
 Else
     ;The file was not successfully opened. Do your error handling here.
 EndIf
+BLITZ
+End Statement
+
+
+
+Statement loadWalls{filename$}
+shared walls()
+QAMIGA
+sizeWall.w = SizeOf .Wallset
+
+shapefile.s = filename$ + ".wllshp"
+palfile.s = filename$ + ".wllpal"
+processed.s = filename$ + ".wllinf"
+
+dbugprintstring {"Loading - Palette: " + palfile.s}
+LoadPalette 1, palfile.s
+dbugprintstring {"Loading - Shapes: " + shapefile.s}
+LoadShapes 0,shapefile.s
+
+dbugprintstring {"Loading - WallData: " + processed.s}
+if ReadFile(0, processed.s)
+    ;Do your file handling here.
+    count.w =0
+    ReadMem 0, &count.w,2
+    ResetList walls()
+    for idx.w=0 to count.w
+        AddItem walls() 
+        ReadMem 0, walls(), sizeWall.w
+    next
+    CloseFile 0
+    ResetList walls()
+else
+    ProcessWallset{filename$}
+    ;The file was not successfully opened. Do your error handling here.
+endif
+
+BLITZ
+BlitzKeys On
+End Statement
+
+Statement saveWallShapes{fileName$}
+QAMIGA
+swsPalette$ = fileName$ + ".wllpal"
+swsShape$ = fileName$ + ".wllshp"
+ SaveShapes 0,2,swsShape$
+ SavePalette 0,swsPalette$
 BLITZ
 End Statement
