@@ -25,7 +25,7 @@ set project_files[5]=Graphics.bb2
 set project_files[6]=Menu.bb2
 set project_files[7]=Title.bb2
 set project_files[8]=debug.bb2
-set project_files[9]=listtest.bb2
+set project_files[9]=bitfont.bb2
 set project_files[10]=PlayerActions.bb2
 
 :: Set the WinUAE folder.

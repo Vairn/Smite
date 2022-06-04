@@ -1,33 +1,60 @@
- / ;bitFont.bb2
+;bitFont.bb2
 ; Bitmap font Functions
 
 ; LoadBitmapFont
 ; 
+
+XINCLUDE "types.bb2"
+
 NEWTYPE .fontData
     startIndex.w
     shapeCount.w
-
 end NEWTYPE
 
-function .w LoadBitmapFont{fileName.s, shapeIndex.w}
+function .b LoadBitmapFont{fileName.s}
+     QAMIGA
 
-    shpFile.s = fileName.d + ".fntShp"
-    shpDesc.s = fileName.s + "fntDsc"
-    if Exists (FileName$)
+    shapeIndex.w = #fontShapeStart
+
+    iffFile.s = fileName.s + ".iff"
+    ;shpDesc.s = fileName.s + "fntDsc"
+    shpFile.s = fileName.s + ".fntShp"
+
+    if Exists (shpFile)
         LoadShapes shapeIndex.w, shpFile
-        result.l = AllocMem_ (SizeOf .fontData, 0)
-         If result
-            *newitem.listitem = result
-            if OpenFile(0,shpDesc.s)
-            ;Do y         our file handling here.
-            CloseFile 0 y
-yy[['fg gh.
-3y3 jyyyyyyyyy3y']]            else
-                ;The file was not successfully opened. Do your error handling here.
-            endif
-        endif
-        Function Return result.l
+        Function Return -1
     else
+        ILBMinfo iffFile.s
+        BitMap 3, ILBMWidth,ILBMHeight,ILBMDepth
+        LoadBitMap 3,iffFile.s
+        Use BitMap 3
+        for y=0 to (ILBMHeight/8) -1
+            for x=0 to (ILBMWidth/8) -1
+                GetaShape shapeIndex.w, x*8, y*8, 8,8
+                shapeIndex+1
+            Next ; x
+        Next ; y
+        SaveShapes #fontShapeStart, shapeIndex.w, shpFile.s 
+        Function Return -1
+    endif
         Function Return 0
-    endIf
+
+    BLITZ
 End Function
+
+Statement drawBitmapText{scX.w, scY.w, strtext.s}
+    shared currentBuffer
+    strLen.w = Len (strtext.s)
+    
+    if strLen = 0 then Statement Return
+
+    for c =1 to strLen.w
+        ascii.w = Asc(Mid$(strtext.s,c,1))
+        if ascii.w = 10
+            scY + 8
+        endif
+
+        ascii-31 ; string font starts from the space character
+        BBlit currentBuffer,#fontShapeStart + ascii.w, scX.w + (c*8), scY
+    next
+End Statement

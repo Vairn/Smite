@@ -110,14 +110,16 @@ bkgindex.b=0
 ; Buffers
 #frontbuffer = 0
 #backbuffer = 1
+#blitbuffer = 0
 #backgroundImage = 2
 #guiframe = 3
 
 ; Duneon Shapes
 #wallshapes = 0
-#doorshapes = 1
-#decorationshapes =2
-#monstershapes = 3
+#doorshapes = 100
+#decorationshapes =200
+#monstershapes = 300
+#fontShapeStart = 400
 
 #spriteBitmap = 4
 #bkgndBitmap = 5

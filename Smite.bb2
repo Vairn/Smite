@@ -1,4 +1,3 @@
-
 NoCli
 WBStartup
 
@@ -9,14 +8,13 @@ DEFTYPE .b
 XINCLUDE "debug.bb2"
 XINCLUDE "types.bb2"
 XINCLUDE "fileaccess.bb2"
-;
 XINCLUDE "Monster.bb2"
 XINCLUDE "Map.bb2"
 XINCLUDE "Graphics.bb2"
 XINCLUDE "Title.bb2"
 XINCLUDE "Menu.bb2"
-
 XINCLUDE "PlayerActions.bb2"
+XINCLUDE "bitfont.bb2"
 
 AMIGA
 gosub initDemoMode:
@@ -33,6 +31,7 @@ currentBuffer =0
 ResetList walls()
 CreateDisplay 0
 DisplayPalette 0,1
+
 !cycleBuffer{currentBuffer}
 Cls 0
 drawView{}
@@ -45,9 +44,12 @@ my.w = 0
 MouseArea 0,0,320,256
 ;Pointer 0,0
 Repeat
-;'cls 0
+VWait
+mx.w = MouseX
+my.w = MouseY
+
 !cycleBuffer{currentBuffer}
-;DisplaySprite 0,0,mx.w,my.w,0
+
 ; test for player movement
 gosub handlePlayerActions:
 
@@ -60,19 +62,19 @@ Boxf 0,0,240,180, 0
 drawView{}
 doRedraw-1
 endif
-VWait 
 
-
+drawBitmapText{mx.w, my.w, "MOUSE"}
 Until Joyb(0)=1
 End
 
 initDemoMode:
 
-    ; Create a front and back buffer of 32 colours
+    ; Create a front and back buffer of 256 colours
     BitMap #frontbuffer,320,256,8
     BitMap #backbuffer,320,256,8
-    Buffer #backbuffer, 10000
-    Buffer #frontbuffer, 10000
+    Buffer #frontbuffer, 13684
+    Buffer #backbuffer, 13684
+    
     ; init our palette
     InitPalette 0,16
 
@@ -90,6 +92,7 @@ initDemoMode:
     ;ProcessWallset{"factory1"}
     loadWalls{"factory1"}
     dbugprintstring{"Wallset Loaded"}
+    res.b = LoadBitmapFont{"font8x8"}
 
 ;    GetaSprite 0,5
 
