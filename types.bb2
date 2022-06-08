@@ -51,6 +51,42 @@ NEWTYPE .Character
   spellbook[16] ; spells
  End NEWTYPE
 
+ NEWTYPE .GameData
+  player.Character
+  playerLocation.w
+  playerFacing.b
+  globalFlags.l[32]
+ End NEWTYPE
+
+NEWTYPE .VirtualMachine
+  
+	scriptData.b  ; byte code for the script
+  scriptSize.w  ; size of the script, makes it easy to delete, and know if it is trying to jmp to far.
+
+	abortScript.b ; abort flag
+
+	abortAfterSubroutine.w ; about after subrouting flag
+	dlgResult.w ; what index was selected in the last dialogue box
+	preventRest.b ; cam we sleep now?
+
+	lastScriptFunc.w ; last fun run
+	lastScriptFlags.w ; last flag set 
+
+	subroutineStack.b ; stack for subroutines
+	subroutineStackPos.w ; where we return too
+
+	flagTable.l[18]      ; global flags
+
+	stack.w[30]          ; vm stack
+	stackIndex.w;        ; stack pointer
+
+	activeCharacter.b    ; active character, will always be 1 for my life sucks.
+
+End NEWTYPE
+
+DEFTYPE .VirtualMachine *vm
+DEFTYPE .GameData *gameData
+
 NEWTYPE .Item
   name$
   class
@@ -58,11 +94,6 @@ NEWTYPE .Item
   modifier
   bonus
   modifier2
-End NEWTYPE
-
-NEWTYPE .LevelScript
-  lenght.w
-  elements.w[100]
 End NEWTYPE
 
 NEWTYPE .Level
@@ -85,8 +116,7 @@ NEWTYPE .MazePos
 End NEWTYPE
 
 ; Arrays
-Dim GlobalFlaggs.b(128)
-Dim LevelFlags.b(32,32)
+
 Dim CMazeDr.MazeDir(4)
 Dim CMazePos.MazePos(18)
 ; there are upto 32 different wall decorations

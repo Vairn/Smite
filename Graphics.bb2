@@ -63,28 +63,8 @@ If ReadFile(0,wallFile.s)
         if b< 0 then b=256+b
         dbugprintstring{"COL: "+Str$(c)+" R:" +Str$(r)+" G:" +Str$(g)+ "B:" +Str$(b)}
         AGAPalRGB 1,c-1,r,g,b
-        ;AGAPalRGB 1,16+c-1,r,g,b
      Next
-    
-    ;  disWidth.w =0
-    ;  disHeight.w = 0
-    ;  ReadMem 0,&disWidth,1
-    ;  ReadMem 0,&disHeight,1
-    ;  disWidth=240
-    ;  disHeight=180
-    ;  dbugprintstring{"W: "+ Str$(disWidth) + " H:" +Str$(disHeight)}
-    ; For y.w=0 To disHeight - 1
-    ;     For x.w=0 To disWidth -1
-    ;         idx.b =0
-    ;         ReadMem 0,&idx,1
-    ;         Plot x,y,idx
-    ;     Next
-    ; Next
 
-    ;shapeIndex+1
-
-     ;SavePalette 1, palname.s
-     ;Use Palette 1
      totalTileCount.w = 0
      ReadMem 0,&totalTileCount,2
      dbugprintstring{"Wallset Count: "+Str$(totalTileCount)}
@@ -227,19 +207,8 @@ if ReadFile(0, processed.s)
     CloseFile 0
     ResetList walls()
 else
-    ProcessWallset{filename$}
-    ;The file was not successfully opened. Do your error handling here.
+    ProcessWallset{filename$}    
 endif
 
-BLITZ
-BlitzKeys On
-End Statement
-
-Statement saveWallShapes{fileName$}
-QAMIGA
-swsPalette$ = fileName$ + ".wllpal"
-swsShape$ = fileName$ + ".wllshp"
- SaveShapes 0,2,swsShape$
- SavePalette 0,swsPalette$
 BLITZ
 End Statement

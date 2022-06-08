@@ -172,6 +172,7 @@
     <ClCompile Include="imgui\CWallViewer.cpp" />
     <ClCompile Include="imgui\ImGuiManager.cpp" />
     <ClCompile Include="imgui\ImGuiWindow.cpp" />
+    <ClCompile Include="imgui\TextEditor.cpp" />
     <ClCompile Include="SmitED.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -196,6 +197,7 @@
     <ClInclude Include="imgui\ImGuiManager.h" />
     <ClInclude Include="imgui\ImGuiWindow.h" />
     <ClInclude Include="imgui\portable-file-dialogs.h" />
+    <ClInclude Include="imgui\TextEditor.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

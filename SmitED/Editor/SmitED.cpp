@@ -45,7 +45,7 @@ int main(int, char**)
 	//glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);            // 3.0+ only
 #endif
 	
-	GLFWwindow* window = glfwCreateWindow(1280, 720, "SmitED", NULL, NULL);
+	GLFWwindow* window = glfwCreateWindow(1440, 800, "SmitED", NULL, NULL);
 	if (window == NULL)
 		return 1;
 	glfwMakeContextCurrent(window);

@@ -51,6 +51,9 @@
       <Filter>libSmite</Filter>
     </ClCompile>
     <ClCompile Include="..\libSmite\common.cpp" />
+    <ClCompile Include="imgui\TextEditor.cpp">
+      <Filter>windows</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\External\imgui\imconfig.h">
@@ -115,6 +118,9 @@
     </ClInclude>
     <ClInclude Include="..\libSmite\BlitzShape.h">
       <Filter>libSmite</Filter>
+    </ClInclude>
+    <ClInclude Include="imgui\TextEditor.h">
+      <Filter>windows</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

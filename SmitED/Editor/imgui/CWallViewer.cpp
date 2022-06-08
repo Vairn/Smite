@@ -676,7 +676,7 @@ void SmitED::CWallViewer::SaveTileset(std::string& result)
 						FreeImage_GetPixelIndex(pSrcImage, x + tile->coords[0], y + tile->coords[1], &idx);
 						fout << idx;
 					}
-				}0
+				}
 			}
 			else
 			{

@@ -19,6 +19,8 @@ protected:
 	char m_cCommandCode;
 	char m_cOpCode;
 	unsigned int m_uiOffset;
+
+	
 };
 
 class CScriptSetWall : public IScriptCommand

@@ -18,15 +18,16 @@ set project_path_on_amiga=BLITZPROJECTS:/smite/
 :: All project filenames must end with "_asc" and have the extension ".bb2".
 set project_files[0]=smite.bb2
 set project_files[1]=types.bb2
-set project_files[2]=FileAccess.bb2
-set project_files[3]=Map.bb2
-set project_files[4]=Monster.bb2
-set project_files[5]=Graphics.bb2
-set project_files[6]=Menu.bb2
-set project_files[7]=Title.bb2
-set project_files[8]=debug.bb2
-set project_files[9]=bitfont.bb2
-set project_files[10]=PlayerActions.bb2
+set project_files[2]=Map.bb2
+set project_files[3]=script.bb2
+set project_files[4]=Graphics.bb2
+set project_files[5]=Menu.bb2
+set project_files[6]=Title.bb2
+set project_files[7]=debug.bb2
+set project_files[8]=bitfont.bb2
+set project_files[9]=PlayerActions.bb2
+set project_files[10]=Monster.bb2
+set project_files[11]=FileAccess.bb2
 
 :: Set the WinUAE folder.
 :: WinUAE folder must end with a backslash (\)

@@ -10,7 +10,13 @@ End Statement
 Statement SaveGame{path.s}
 SHARED player
 QAMIGA
-VWait 250 ; longer wait for saving
+VWait 150 ; longer wait for saving
 BLITZ
 End Statement
 
+Statement SaveLevelFlags{path.s}
+Shared LevelFlags()
+QAMIGA
+VWait 150  ; longer wait for saving
+Blitz
+End Statement

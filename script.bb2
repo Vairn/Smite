@@ -1,9 +1,8 @@
 ; Game Script Commands
- ;COMMANDS USED IN EVENT SCRIPTS
- ; ==============================
-
+;COMMANDS USED IN EVENT SCRIPTS
+; ==============================
 ;  E6   ENCOUNTER
-;  E7   IDENTIFY_ITEMS
+;  E7   IDENTIFYITEMS
 ;  E8   TURN
 ;  E9   LAUNCHER
 ;  EA   ADD_ITEM
@@ -28,10 +27,8 @@
 ;  FE   CHANGE_WALL
 ;  FF   SET_WALL
 
-
- ; IF () BLOCK PARAMETERS
- ; ======================
-
+; IF () BLOCK PARAMETERS
+; ======================
 ;  DA   PARTY_VISIBLE
 ;  DB   ROLL_DICE
 ;  DC   HAS_CLASS
@@ -58,7 +55,132 @@
 ; most of them need a few extra vars parsed into them
 
 
-Statement RunScript{sc.LevelScript, offset.w}
-; No Op
+Statement RunScript{sc.b}
+SHARED *vm, *player
+
+End Statement
+
+Statement doSetwall{sc.b}
+SHARED *vm, *player
+
+End Statement
+
+Statement doChangeWall{sc.b}
+SHARED *vm, *player
+
+End Statement
+
+Statement doOpenDoor{sc.b}
+SHARED *vm, *player
+
+End Statement
+
+Statement doCloseDoor{sc.b}
+SHARED *vm, *player
+
+End Statement
+
+Statement doAddMonster{sc.b}
+SHARED *vm, *player
+
+End Statement
+
+Statement doTeleport{sc.b}
+SHARED *vm, *player
+
+End Statement
+
+Statement doStealItem{sc.b}
+SHARED *vm, *player
+
+End Statement
+
+Statement doMessage{sc.b}
+SHARED *vm, *player
+
+End Statement
+
+Statement doSetFlag{sc.b}
+SHARED *vm, *player
+
+End Statement
+
+Statement doSound{sc.b}
+SHARED *vm, *player
+
+End Statement
+
+Statement doClearFlag{sc.b}
+SHARED *vm, *player
+
+End Statement
+
+Statement doEncounter{sc.b}
+SHARED *vm, *player
+
+End Statement
+
+Statement doIdentify_items{sc.b}
+SHARED *vm, *player
+
+End Statement
+
+Statement doTurn{sc.b}
+SHARED *vm, *player
+
+End Statement
+
+Statement doLauncher{sc.b}
+SHARED *vm, *player
+
+End Statement
+
+Statement doAddItem{sc.b}
+SHARED *vm, *player
+
+End Statement
+
+Statement doGiveXp{sc.b}
+SHARED *vm, *player
+
+End Statement
+
+Statement doChangeLevel{sc.b}
+SHARED *vm, *player
+
+End Statement
+
+Statement doRemoveItem{sc.b}
+SHARED *vm, *player
+
+End Statement
+
+Statement doIf{sc.b}
+SHARED *vm, *player
+
+End Statement
+
+Statement doGosub{sc.b}
+SHARED *vm, *player
+
+End Statement
+
+Statement doReturn{sc.b}
+SHARED *vm, *player
+
+End Statement
+
+Statement doEnd{sc.b}
+SHARED *vm, *player
+
+End Statement
+
+Statement doGoto{sc.b}
+SHARED *vm, *player
+
+End Statement
+
+Statement doDamage{sc.b}
+SHARED *vm, *player
 
 End Statement

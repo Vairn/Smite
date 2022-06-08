@@ -19,7 +19,7 @@ void SmitED::ImGuiWindow::update()
 
 bool SmitED::ImGuiWindow::begin()
 {
-	return ImGui::Begin(sWindowName.c_str(), &show);
+	return ImGui::Begin(sWindowName.c_str(), &show, ImGuiWindowFlags_MenuBar);
 }
 
 void SmitED::ImGuiWindow::end()

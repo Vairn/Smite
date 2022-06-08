@@ -71,6 +71,9 @@ struct sMaze
 {
 public:
 	sMaze();
+
+	void saveToFile(std::string& sFilename);
+
 	// bits 12 34 56 78 
 	//		N  E  S  W
 	uint8_t walldata[1024];
@@ -82,4 +85,6 @@ public:
 	std::vector<sMosterInstance> monsters;
 	std::vector<uint8_t> script;
 	std::vector<std::string> decompiledScript;
+
+	
 };
