@@ -5,12 +5,55 @@
 
 #define IMGUI_DEFINE_MATH_OPERATORS
 #include "imgui_internal.h"
+CScriptRoutine* SmitED::CMazViewer::m_pScriptCompiler = nullptr;
+int SmitED::CMazViewer::instance = 1;
 SmitED::CMazViewer::CMazViewer()
 {
 	pTextEditor = new TextEditor();
-	auto lang = TextEditor::LanguageDefinition::CPlusPlus();
+	auto lang = LangSmyte();
 	pTextEditor->SetLanguageDefinition(lang);
 	pMaz = new sMaze();
+	instance++;
+	WindowName("Maze "+ std::to_string(instance));
+	if (m_pScriptCompiler == nullptr)
+	{
+		m_pScriptCompiler = new CScriptRoutine();
+
+		m_pScriptCompiler->addCommand(ENCOUNTER, "Encounter", 1, &encodeEncounter, &decodeEncounter);
+		m_pScriptCompiler->addCommand(IDENTIFY_ITEMS, "IdentifyItems", 2, &encodeIdentifyItems, &decodeIdentifyItems);
+		m_pScriptCompiler->addCommand(TURN, "Turn", 2, &encodeTurn, &decodeTurn);
+		m_pScriptCompiler->addCommand(LAUNCHER, "Launcher", 5, &encodeLauncher, &decodeLauncher);
+		m_pScriptCompiler->addCommand(ADD_ITEM, "AddItem", 4, &encodeAddItem, &decodeAddItem);
+		m_pScriptCompiler->addCommand(GIVE_XP, "GiveXp", 1, &encodeGiveXp, &decodeGiveXp);
+		m_pScriptCompiler->addCommand(CHANGE_LEVEL, "ChangeLevel", 3, &encodeChangeLevel, &decodeChangeLevel);
+		m_pScriptCompiler->addCommand(REMOVE_ITEM, "RemoveItem", 2, &encodeRemoveItem, &decodeRemoveItem);
+		m_pScriptCompiler->addCommand(IF, "If", -1, &encodeIf, &decodeIf);
+		m_pScriptCompiler->addCommand(GOSUB, "Gosub", 2, &encodeGosub, &decodeGosub);
+		m_pScriptCompiler->addCommand(RETURN, "Return", 0, &encodeReturn, &decodeReturn);
+		m_pScriptCompiler->addCommand(END, "End", 0, &encodeEnd, &decodeEnd);
+		m_pScriptCompiler->addCommand(GOTO, "Goto", 1, &encodeGoto, &decodeGoto);
+		m_pScriptCompiler->addCommand(DAMAGE, "Damage", 2, &encodeDamage, &decodeDamage);
+		m_pScriptCompiler->addCommand(CLEAR_FLAG, "ClearFlag", 1, &encodeClearFlag, &decodeClearFlag);
+		m_pScriptCompiler->addCommand(SOUND, "Sound", 2, &encodeSound, &decodeSound);
+		m_pScriptCompiler->addCommand(SET_FLAG, "SetFlag", 1, &encodeSetFlag, &decodeSetFlag);
+		m_pScriptCompiler->addCommand(MESSAGE, "Message", 2, &encodeMessage, &decodeMessage);
+		m_pScriptCompiler->addCommand(STEAL_ITEM, "StealItem", 4, &encodeStealItem, &decodeStealItem);
+		m_pScriptCompiler->addCommand(TELEPORT, "Teleport", 5, &encodeTeleport, &decodeTeleport);
+		m_pScriptCompiler->addCommand(ADD_MONSTER, "AddMonster", 14, &encodeAddMonster, &decodeAddMonster);
+		m_pScriptCompiler->addCommand(CLOSE_DOOR, "CloseDoor", 2, &encodeCloseDoor, &decodeCloseDoor);
+		m_pScriptCompiler->addCommand(OPEN_DOOR, "OpenDoor", 2, &encodeOpenDoor, &decodeOpenDoor);
+		m_pScriptCompiler->addCommand(CHANGE_WALL, "ChangeWall", 4, &encodeChangeWall, &decodeChangeWall);
+		m_pScriptCompiler->addCommand(SET_WALL, "SetWall", 4, &encodeSetWall, &decodeSetWall);
+	}
+	/*
+	AddItem(1, 10,10, 5)
+	GiveXp(1000)
+	SetFlag(10)
+	Sound(1,2)
+	OpenDoor(10,10)
+	SetWall(12,12,4,1)
+
+*/
 }
 
 void SmitED::CMazViewer::update()
@@ -26,96 +69,7 @@ void SmitED::CMazViewer::update()
 	{
 		if (ImGui::BeginTabItem("Maze 2D"))
 		{
-			ImGuiIO& io = ImGui::GetIO();
-			ImDrawList* draw_list = ImGui::GetWindowDrawList();
-			ImVec2 sp = ImGui::GetCursorScreenPos();
-			ImVec2 canvas_sz = ImVec2(32 * 15, 32 * 15);
-			ImGui::InvisibleButton("canvas", canvas_sz, ImGuiButtonFlags_MouseButtonLeft | ImGuiButtonFlags_MouseButtonRight);
-			const bool is_hovered = ImGui::IsItemHovered(); // Hovered
-			const bool is_active = ImGui::IsItemActive();   // Held
-			const ImVec2 origin(sp.x, sp.y); // Lock scrolled origin
-			const ImVec2 mouse_pos_in_canvas(io.MousePos.x - origin.x, io.MousePos.y - origin.y);
-			int mapX = 0;
-			int mapY = 0;
-			if (is_hovered)
-			{
-				//points.push_back(mouse_pos_in_canvas);
-				//points.push_back(mouse_pos_in_canvas);
-				//adding_line = true;
-				mapX = mouse_pos_in_canvas.x / 15;
-				mapY = mouse_pos_in_canvas.y / 15;
-				if (mapX < 32)
-				{
-					int offset = mapY * 32 + mapX;
-
-					if (ImGui::IsMouseDown(ImGuiMouseButton_Left))
-						pMaz->walldata[offset] = 0b01010101;
-					if (ImGui::IsMouseDown(ImGuiMouseButton_Middle))
-						pMaz->walldata[offset] = 0b10101010;
-					if (ImGui::IsMouseDown(ImGuiMouseButton_Right))
-						pMaz->walldata[offset] = 0x00;
-
-				}
-			}
-
-			draw_list->AddRectFilled(sp+ImVec2(0, 0), sp+ImVec2(32*15, 32*15), 0xf0343434);
-			for (int y = 0; y < 32; y++)
-			{
-				for (int x = 0; x < 32; x++)
-				{
-					int offset = (y * 32) + x;
-					int wmi = pMaz->walldata[offset];
-					uint8_t n, s, e, w;
-					uint32_t colN, colS, colE, colW;
-					colN = colE = colS = colW = 0x7f7f7f7f;
-
-					n = 0b00000011 & (wmi);
-					e = 0b00000011 & (wmi >> 2);
-					s = 0b00000011 & (wmi >> 4);
-					w = 0b00000011 & (wmi >> 6);
-					int16_t drawDoor = 0x0000;
-					if (n == 1)	colN = 0xFFFFFFFF;
-					if (e == 1)	colE = 0xFFFFFFFF;
-					if (s == 1)	colS = 0xFFFFFFFF;
-					if (w == 1)	colW = 0xFFFFFFFF;
-
-					if (n == 2) { colN = 0xFF7f7f7f; drawDoor += 0x01; }
-					if (e == 2) { colE = 0xFF7f7f7f; drawDoor += 0x02; }
-					if (s == 2) { colS = 0xFF7f7f7f; drawDoor += 0x04; }
-					if (w == 2) { colW = 0xFF7f7f7f;  drawDoor += 0x08; }
-
-					if (n == 3)	colN = 0xFF7f7fFF;
-					if (e == 3)	colE = 0xFF7f7fFF;
-					if (s == 3)	colS = 0xFF7f7fFF;
-					if (w == 3)	colW = 0xFF7f7fFF;
-
-
-					draw_list->AddLine(sp + ImVec2(x* 15, y* 15), sp + ImVec2((x + 1)* 15, y* 15), colN, 1);					
-					draw_list->AddLine(sp + ImVec2(x* 15, y* 15), sp + ImVec2((x* 15), (1 + y)* 15), colE, 1);				
-					draw_list->AddLine(sp + ImVec2(x* 15, (1 + y)* 15), sp + ImVec2(((1 + x)* 15), (1+y)* 15), colS, 1);					
-					draw_list->AddLine(sp + ImVec2((1 + x)* 15, y* 15), sp + ImVec2(((1 + x)* 15), (1 + y)* 15), colW, 1);
-					
-					ImVec2 dl = ImVec2(4, -5);
-					ImVec2 dr = ImVec2(-4, 5);
-
-					if (drawDoor & 0x01)
-						draw_list->AddRect(dl + sp + ImVec2(x * 15, y * 15), dr + sp + ImVec2((x + 1) * 15, y * 15), colN);
-					if (drawDoor & 0x02)
-						draw_list->AddRect(dr + sp + ImVec2(x * 15, y * 15), dl + sp + ImVec2((x * 15), (1 + y) * 15), colE);
-					if (drawDoor & 0x04)
-						draw_list->AddRect(dl + sp + ImVec2(x * 15, (1 + y) * 15), dr + sp + ImVec2(((1 + x) * 15), (1 + y) * 15), colS);
-					if (drawDoor & 0x08)
-						draw_list->AddRect(dr + sp + ImVec2((1 + x) * 15, y * 15), dl + sp + ImVec2(((1 + x) * 15), (1 + y) * 15), colW);
-
-					//auto p = pCPS->_pal._data[pCPS->_bitmap->pData[y * 320 + x]];
-					//U32 col = p.r << 24 | p.g << 16 | p.b << 8 | 0x0F;
-					//draw_list->AddRectFilled(sp + st, sp + ed, col);
-					//draw_list->AddLine(sp, sp+ImVec2(20,30), col);
-					
-				}
-			}
-			
-			//ImGui::Dummy(ImVec2(65*15, 32*15));
+			DrawMaze2D();
 			
 			ImGui::EndTabItem();
 		}
@@ -142,7 +96,6 @@ void SmitED::CMazViewer::update()
 
 		if (ImGui::BeginTabItem("HexView"))
 		{
-
 			memEdit->DrawContents(pData, uiDataSize);
 		}
 
@@ -150,6 +103,149 @@ void SmitED::CMazViewer::update()
 	}
 	//memEdit->DrawContents(pData, uiDataSize);
 	end();
+}
+
+void SmitED::CMazViewer::DrawMaze2D()
+{
+	ImGuiIO& io = ImGui::GetIO();
+	ImDrawList* draw_list = ImGui::GetWindowDrawList();
+	ImVec2 sp = ImGui::GetCursorScreenPos();
+	ImVec2 canvas_sz = ImVec2(32 * 15, 32 * 15);
+	ImGui::InvisibleButton("canvas", canvas_sz, ImGuiButtonFlags_MouseButtonLeft | ImGuiButtonFlags_MouseButtonRight);
+	const bool is_hovered = ImGui::IsItemHovered(); // Hovered
+	const bool is_active = ImGui::IsItemActive();   // Held
+	const ImVec2 origin(sp.x, sp.y); // Lock scrolled origin
+	const ImVec2 mouse_pos_in_canvas(io.MousePos.x - origin.x, io.MousePos.y - origin.y);
+	int mapX = 0;
+	int mapY = 0;
+	if (is_hovered)
+	{
+		//points.push_back(mouse_pos_in_canvas);
+		//points.push_back(mouse_pos_in_canvas);
+		//adding_line = true;
+		mapX = mouse_pos_in_canvas.x / 15;
+		mapY = mouse_pos_in_canvas.y / 15;
+		if (mapX < 32)
+		{
+			int offset = mapY * 32 + mapX;
+
+			if (ImGui::IsMouseDown(ImGuiMouseButton_Right))
+				PlaceWall(offset);
+
+			if (ImGui::IsMouseDown(ImGuiMouseButton_Middle))
+				PlaceDoor(offset);
+			if (ImGui::IsMouseDown(ImGuiMouseButton_Left))
+				PlaceBlank(offset);
+
+		}
+	}
+
+	draw_list->AddRectFilled(sp + ImVec2(0, 0), sp + ImVec2(32 * 15, 32 * 15), 0xf0343434);
+	for (int y = 0; y < 32; y++)
+	{
+		for (int x = 0; x < 32; x++)
+		{
+			int offset = (y * 32) + x;
+
+			uint8_t n, s, e, w;
+			uint32_t colN, colS, colE, colW;
+			colN = colE = colS = colW = 0x7f7f7f7f;
+
+			n = 0b00000011 & (pMaz->walldata[offset][0]);
+			e = 0b00000011 & (pMaz->walldata[offset][1]);
+			s = 0b00000011 & (pMaz->walldata[offset][2]);
+			w = 0b00000011 & (pMaz->walldata[offset][3]);
+			int16_t drawDoor = 0x0000;
+			if (n != 0 && e != 0 && s != 0 && w != 0)
+			{
+				ImVec2 st = ImVec2(float(x) * 15, float(y) * 15);
+				ImVec2 ed = ImVec2(float(x + 1) * 15, float(y + 1) * 15);
+				draw_list->AddRectFilled(sp + st, sp + ed, 0xFF7F7F7F);
+			}
+			else
+			{
+				if (n == 1)	colN = 0xFFFFFFFF;
+				if (e == 1)	colE = 0xFFFFFFFF;
+				if (s == 1)	colS = 0xFFFFFFFF;
+				if (w == 1)	colW = 0xFFFFFFFF;
+
+				if (n == 2)	colN = 0xFF7f7fFF;
+				if (e == 2)	colE = 0xFF7f7fFF;
+				if (s == 2)	colS = 0xFF7f7fFF;
+				if (w == 2)	colW = 0xFF7f7fFF;
+
+				if (n == 3) { colN = 0xFF7f7f7f; drawDoor += 0x01; }
+				if (e == 3) { colE = 0xFF7f7f7f; drawDoor += 0x02; }
+				if (s == 3) { colS = 0xFF7f7f7f; drawDoor += 0x04; }
+				if (w == 3) { colW = 0xFF7f7f7f;  drawDoor += 0x08; }
+
+
+
+
+				draw_list->AddLine(sp + ImVec2(float(x) * 15, float(y) * 15), sp + ImVec2((float(x) + 1) * 15, float(y) * 15), colN, 1);
+				draw_list->AddLine(sp + ImVec2(float(x) * 15, float(y) * 15), sp + ImVec2((float(x) * 15), (1 + float(y)) * 15), colE, 1);
+				draw_list->AddLine(sp + ImVec2(float(x) * 15, (1 + float(y)) * 15), sp + ImVec2(((1 + float(x)) * 15), (1 + float(y)) * 15), colS, 1);
+				draw_list->AddLine(sp + ImVec2((1 + float(x)) * 15, float(y) * 15), sp + ImVec2(((1 + float(x)) * 15), (1 + float(y)) * 15), colW, 1);
+
+				ImVec2 dl = ImVec2(4, -5);
+				ImVec2 dr = ImVec2(-4, 5);
+
+				if (drawDoor & 0x01)
+					draw_list->AddRect(dl + sp + ImVec2(float(x) * 15, float(y) * 15), dr + sp + ImVec2((float(x) + 1) * 15, float(y) * 15), colN);
+				if (drawDoor & 0x02)
+					draw_list->AddRect(dr + sp + ImVec2(float(x) * 15, float(y) * 15), dl + sp + ImVec2((float(x) * 15), (1 + float(y)) * 15), colE);
+				if (drawDoor & 0x04)
+					draw_list->AddRect(dl + sp + ImVec2(float(x) * 15, (1 + float(y)) * 15), dr + sp + ImVec2(((1 + float(x)) * 15), (1 + float(y)) * 15), colS);
+				if (drawDoor & 0x08)
+					draw_list->AddRect(dr + sp + ImVec2((1 + float(x)) * 15, float(y) * 15), dl + sp + ImVec2(((1 + float(x)) * 15), (1 + float(y)) * 15), colW);
+
+				//auto p = pCPS->_pal._data[pCPS->_bitmap->pData[float(y) * 320 + float(x)]];
+				//U32 col = p.r << 24 | p.g << 16 | p.b << 8 | 0x0F;
+				//draw_list->AddRectFilled(sp + st, sp + ed, col);
+				//draw_list->AddLine(sp, sp+ImVec2(20,30), col);
+			}
+		}
+	}
+	ImGui::Text("Words and stuff");
+	//ImGui::Dummy(ImVec2(65*15, 32*15));
+}
+
+
+void SmitED::CMazViewer::PlaceBlank(int offset)
+{
+	
+	pMaz->walldata[offset][0] = 0x00;
+	pMaz->walldata[offset][1] = 0x00;
+	pMaz->walldata[offset][2] = 0x00;
+	pMaz->walldata[offset][3] = 0x00;
+	
+}
+
+
+void SmitED::CMazViewer::PlaceDoor(int offset)
+{
+	pMaz->walldata[offset][0] = 0x03;
+	pMaz->walldata[offset][1] = 0x03;
+	pMaz->walldata[offset][2] = 0x03;
+	pMaz->walldata[offset][3] = 0x03;	
+}
+
+void SmitED::CMazViewer::PlaceWall(int offset)
+{
+	if (offset % 2)
+	{
+		pMaz->walldata[offset][0] = 0x01;
+		pMaz->walldata[offset][1] = 0x02;
+		pMaz->walldata[offset][2] = 0x01;
+		pMaz->walldata[offset][3] = 0x02;
+	}
+	else
+	{
+		pMaz->walldata[offset][0] = 0x02;
+		pMaz->walldata[offset][1] = 0x01;
+		pMaz->walldata[offset][2] = 0x02;
+		pMaz->walldata[offset][3] = 0x01;
+	}
 }
 
 void SmitED::CMazViewer::DrawMenuBar()
@@ -161,9 +257,16 @@ void SmitED::CMazViewer::DrawMenuBar()
 			if (ImGui::MenuItem("Compile"))
 			{
 				auto textToSave = pTextEditor->GetText();
-				/// save text....
-				//m_pScriptOwner->GetAttribute("Script")->SetRawValueAs<std::string>(textToSave);
-				//pEditorAttribute->SetRawValueAs<std::string>(textToSave);
+				std::vector<CScriptRoutine::sError > vecErrors;
+				m_pScriptCompiler->Compile(textToSave, vecErrors);
+				if (!vecErrors.empty())
+				{
+					// we had errors
+				}
+				else
+				{
+					//pTextEditor->SetE
+				}
 			}
 			std::vector<std::string> filters = { "Python Script", "*.py" };
 			if (ImGui::MenuItem("Load from File"))
@@ -225,8 +328,106 @@ void SmitED::CMazViewer::DrawMenuBar()
 	}
 }
 
+inline void SmitED::CMazViewer::DoFileDialog_Open()
+{
+	if (open_file && open_file->ready())
+	{
+		auto result = open_file->result();
+		if (!result.empty())
+		{
+			//ns::debug::write_line("Opened File %s", result[0].c_str());
+			std::ifstream ifs;
+			ifs.open(result[0], std::ifstream::in);
+			if (ifs.is_open())
+			{
+
+
+				std::ostringstream streamOut;
+				streamOut << ifs.rdbuf();
+
+				//m_sScriptText = streamOut.str(); ifs.close();
+				//m_pTextEditor->SetText(m_sScriptText);
+			}
+		}
+		//std::cout << "Opened file " << result[0] << "\n";
+		open_file = nullptr;
+	}
+}
+
+inline void SmitED::CMazViewer::DoFileDialog_Save()
+{
+	if (save_file && save_file->ready())
+	{
+		auto result = save_file->result();
+		if (!result.empty())
+		{
+			//m_sScriptText = m_pTextEditor->GetText();
+			//ns::debug::write_line("Saved File %s", result.c_str());
+			std::stringstream sOut;
+			std::ofstream ofsFile;
+			ofsFile.open(result.c_str(), std::ofstream::out);
+			//ofsFile.write(m_sScriptText.c_str(), m_sScriptText.size());
+
+			if (ofsFile.fail())
+			{
+				//ns::debug::write_line("Error writing to file: %s", result.c_str());
+				ofsFile.clear();
+			}
+
+			ofsFile.close();
+		}
+		//std::cout << "Opened file " << result[0] << "\n";
+		save_file = nullptr;
+	}
+}
+
+inline const TextEditor::LanguageDefinition& SmitED::CMazViewer::LangSmyte()
+{
+	static bool inited = false;
+	static TextEditor::LanguageDefinition langDef;
+	if (!inited)
+	{
+		static const char* const keywords[] = {
+			"If" ,"Gosub" ,"Return" ,"End" ,"Goto", "ClearFlag" ,"SetFlag", "PartyVisible", "RollDice", "HasClass", "HasRace", "TriggerFlag", "PointerItem", "WallSide", "PartyDirection", "ElseGoto", "LevelFlag", "GlobalFlag", "PartyOnPos", "MonstersOnPos", "ItemsOnPos", "WallNumber", "Or", "And", "Greaterthan", "Lessthan", "Notequal", "Equal" };
+
+		for (auto& k : keywords)
+			langDef.mKeywords.insert(k);
+
+		 static const char* const identifiers[] = {
+			"Encounter" ,"IdentifyItems" ,"Turn" ,"Launcher" ,"AddItem" ,"GiveXp" ,"ChangeLevel" ,"RemoveItem" ,"Damage" ,"Sound" ,"Message" ,"StealItem" ,"Teleport" ,"AddMonster" ,"CloseDoor" ,"OpenDoor" ,"ChangeWall" ,"SetWall"
+		 };
+		 for (auto& k : identifiers)
+		 {
+		 	TextEditor::Identifier id;
+		 	id.mDeclaration = "Built-in function";
+		 	langDef.mIdentifiers.insert(std::make_pair(std::string(k), id));
+		 }
+
+		langDef.mTokenRegexStrings.push_back(std::make_pair<std::string, TextEditor::PaletteIndex>("L?\\\"(\\\\.|[^\\\"])*\\\"", TextEditor::PaletteIndex::String));
+		langDef.mTokenRegexStrings.push_back(std::make_pair<std::string, TextEditor::PaletteIndex>("\\\'[^\\\']*\\\'", TextEditor::PaletteIndex::String));
+		langDef.mTokenRegexStrings.push_back(std::make_pair<std::string, TextEditor::PaletteIndex>("0[xX][0-9a-fA-F]+[uU]?[lL]?[lL]?", TextEditor::PaletteIndex::Number));
+		langDef.mTokenRegexStrings.push_back(std::make_pair<std::string, TextEditor::PaletteIndex>("[+-]?([0-9]+([.][0-9]*)?|[.][0-9]+)([eE][+-]?[0-9]+)?[fF]?", TextEditor::PaletteIndex::Number));
+		langDef.mTokenRegexStrings.push_back(std::make_pair<std::string, TextEditor::PaletteIndex>("[+-]?[0-9]+[Uu]?[lL]?[lL]?", TextEditor::PaletteIndex::Number));
+		langDef.mTokenRegexStrings.push_back(std::make_pair<std::string, TextEditor::PaletteIndex>("[a-zA-Z_][a-zA-Z0-9_]*", TextEditor::PaletteIndex::Identifier));
+		langDef.mTokenRegexStrings.push_back(std::make_pair<std::string, TextEditor::PaletteIndex>("[\\[\\]\\{\\}\\!\\%\\^\\&\\*\\(\\)\\-\\+\\=\\~\\|\\<\\>\\?\\/\\;\\,\\.]", TextEditor::PaletteIndex::Punctuation));
+
+		langDef.mCommentStart = "/*";
+		langDef.mCommentEnd = "*/";
+		langDef.mSingleLineComment = "//";
+
+		langDef.mCaseSensitive = true;
+		langDef.mAutoIndentation = false;
+
+		langDef.mName = "Symte Script";
+
+		inited = true;
+	}
+	return langDef;
+}
+
 void SmitED::CMazViewer::OnDataSet()
 {
+	// load in a maze and decrypt the script.
 
 }
 

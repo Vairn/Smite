@@ -164,6 +164,7 @@
     <ClCompile Include="..\libSmite\BlitzShape.cpp" />
     <ClCompile Include="..\libSmite\common.cpp" />
     <ClCompile Include="..\libSmite\IScriptCommand.cpp" />
+    <ClCompile Include="..\libSmite\ScriptEncodeDecode.cpp" />
     <ClCompile Include="..\libSmite\typeDefs.cpp" />
     <ClCompile Include="imgui\CGUIResource.cpp" />
     <ClCompile Include="imgui\CHexViewer.cpp" />

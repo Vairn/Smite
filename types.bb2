@@ -124,6 +124,8 @@ Dim CMazePos.MazePos(18)
 ; Lists 
 ;Dim List currentScript.LevelScript(1024)
 dim List walls.Wallset(100)
+DEFTYPE .Wallset *wallsPtr
+wallSetCount.w = 0
 
 Dim List items.Item(256)
 Dim List monsters.Monster(16)

@@ -1,7 +1,11 @@
 #pragma once
 #include <vector>
 #include <string>
+#include <fstream>
+#include <sstream>
 
+#include <filesystem>
+#include <minmax.h>
 enum eCommands
 {
 	ENCOUNTER = 0xE6,   
@@ -31,6 +35,7 @@ enum eCommands
 	SET_WALL = 0xFF,   
 
 };
+
 
 enum eIfParams
 {
@@ -74,11 +79,10 @@ public:
 
 	void saveToFile(std::string& sFilename);
 
-	// bits 12 34 56 78 
-	//		N  E  S  W
-	uint8_t walldata[1024];
-	uint8_t coldata[1024];
-
+	
+	//	0: N  1:E  2:S  3:W
+	uint8_t walldata[1024][4];
+	
 	uint8_t globalflags[128];
 	uint8_t levelflags[128];
 	std::vector<sMonster> monArchetype;

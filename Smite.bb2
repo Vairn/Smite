@@ -63,7 +63,7 @@ drawView{}
 doRedraw-1
 endif
 
-drawBitmapText{mx.w, my.w, "MOUSE"}
+;drawBitmapText{mx.w, my.w, "MOUSE"}
 Until Joyb(0)=1
 End
 
@@ -91,11 +91,7 @@ initDemoMode:
 
     ;ProcessWallset{"factory1"}
     loadWalls{"factory1"}
-    dbugprintstring{"Wallset Loaded"}
     res.b = LoadBitmapFont{"font8x8"}
-
-;    GetaSprite 0,5
-
 return
 
 handlePlayerActions:

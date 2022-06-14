@@ -54,6 +54,9 @@
     <ClCompile Include="imgui\TextEditor.cpp">
       <Filter>windows</Filter>
     </ClCompile>
+    <ClCompile Include="..\libSmite\ScriptEncodeDecode.cpp">
+      <Filter>libSmite</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\External\imgui\imconfig.h">

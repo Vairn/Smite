@@ -1,11 +1,9 @@
 #include "typeDefs.h"
-#include <fstream>
-#include <filesystem>
-#include <minmax.h>
+
 sMaze::sMaze()
 {
-	memset(walldata, 0, 1024);
-	memset(coldata, 0, 1024);
+	memset(walldata, 0, 1024*4);
+	
 	memset(globalflags, 0, 128);
 	memset(levelflags, 0, 128);
 	script.clear();
@@ -15,7 +13,21 @@ sMaze::sMaze()
 		for (int x = 0; x < 32; x++)
 		{
 			int offset = (y * 32) + x;
-			if (y == 0)
+			if (offset % 2)
+			{
+				walldata[offset][0] = 0x01;
+				walldata[offset][1] = 0x02;
+				walldata[offset][2] = 0x01;
+				walldata[offset][3] = 0x02;
+			}
+			else
+			{
+				walldata[offset][0] = 0x02;
+				walldata[offset][1] = 0x01;
+				walldata[offset][2] = 0x02;
+				walldata[offset][3] = 0x01;
+			}
+			/*if (y == 0)
 				walldata[offset] += 0b00000001;
 				
 			if (x==0)
@@ -25,7 +37,7 @@ sMaze::sMaze()
 				walldata[offset] += 0b00010000;
 
 			if (x == 31)
-				walldata[offset] += 0b01000000;
+				walldata[offset] += 0b01000000;*/
 		}
 	}
 }
@@ -38,15 +50,11 @@ void sMaze::saveToFile(std::string& sFilename)
 	// level walls
 	for (int i=0; i < 1024; i++)
 	{
-		fout << (uint8_t)walldata[i];
+		fout << (uint8_t)walldata[i][0];
+		fout << (uint8_t)walldata[i][1];
+		fout << (uint8_t)walldata[i][2];
+		fout << (uint8_t)walldata[i][3];
 	}
-
-	// levels collision data
-	for (int i=0; i < 1024; i++)
-	{
-		fout << (uint8_t)coldata[i];
-	}
-
 
 	// write the size of the script
 	{

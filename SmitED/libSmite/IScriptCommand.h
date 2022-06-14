@@ -1,28 +1,112 @@
 #pragma once
 #include <string>
 #include <vector>
+#include <functional>
+
+
+
+void encodeEncounter(std::string, uint8_t**);
+void decodeEncounter(std::string, uint8_t*);
+
+void encodeIdentifyItems(std::string, uint8_t**);
+void decodeIdentifyItems(std::string, uint8_t*);
+
+void encodeTurn(std::string, uint8_t**);
+void decodeTurn(std::string, uint8_t*);
+
+void encodeLauncher(std::string, uint8_t**);
+void decodeLauncher(std::string, uint8_t*);
+
+void encodeAddItem(std::string, uint8_t**);
+void decodeAddItem(std::string, uint8_t*);
+
+void encodeGiveXp(std::string, uint8_t**);
+void decodeGiveXp(std::string, uint8_t*);
+
+void encodeChangeLevel(std::string, uint8_t**);
+void decodeChangeLevel(std::string, uint8_t*);
+
+void encodeRemoveItem(std::string, uint8_t**);
+void decodeRemoveItem(std::string, uint8_t*);
+
+void encodeIf(std::string, uint8_t**);
+void decodeIf(std::string, uint8_t*);
+
+void encodeGosub(std::string, uint8_t**);
+void decodeGosub(std::string, uint8_t*);
+
+void encodeReturn(std::string, uint8_t**);
+void decodeReturn(std::string, uint8_t*);
+
+void encodeEnd(std::string, uint8_t**);
+void decodeEnd(std::string, uint8_t*);
+
+void encodeGoto(std::string, uint8_t**);
+void decodeGoto(std::string, uint8_t*);
+
+void encodeDamage(std::string, uint8_t**);
+void decodeDamage(std::string, uint8_t*);
+
+void encodeClearFlag(std::string, uint8_t**);
+void decodeClearFlag(std::string, uint8_t*);
+
+void encodeSound(std::string, uint8_t**);
+void decodeSound(std::string, uint8_t*);
+
+void encodeSetFlag(std::string, uint8_t**);
+void decodeSetFlag(std::string, uint8_t*);
+
+void encodeMessage(std::string, uint8_t**);
+void decodeMessage(std::string, uint8_t*);
+
+void encodeStealItem(std::string, uint8_t**);
+void decodeStealItem(std::string, uint8_t*);
+
+void encodeTeleport(std::string, uint8_t**);
+void decodeTeleport(std::string, uint8_t*);
+
+void encodeAddMonster(std::string, uint8_t**);
+void decodeAddMonster(std::string, uint8_t*);
+
+void encodeCloseDoor(std::string, uint8_t**);
+void decodeCloseDoor(std::string, uint8_t*);
+
+void encodeOpenDoor(std::string, uint8_t**);
+void decodeOpenDoor(std::string, uint8_t*);
+
+void encodeChangeWall(std::string, uint8_t**);
+void decodeChangeWall(std::string, uint8_t*);
+
+void encodeSetWall(std::string, uint8_t**);
+void decodeSetWall(std::string, uint8_t*);
+
 
 class IScriptCommand
 {
 public:
 	IScriptCommand(void);
+	IScriptCommand(const std::string& sName, const uint8_t cmdId, int paramaterSize, std::function<void(std::string, uint8_t**)> encoder, std::function<void(std::string, uint8_t*)> decoder);
 	virtual ~IScriptCommand(void);
 
-	virtual bool Run(float dt) = 0;
+	virtual bool Run(float dt);
 
-	virtual bool BuildFromData(char* pSriptData) = 0;
-	virtual bool BuildFromString(std::string sScriptData) =0;
-	virtual unsigned int SaveToData(char **pScriptData) = 0;
+	std::string BuildFromData(uint8_t* pSriptData);
+	bool BuildFromString(std::string sScriptData, uint8_t** pBytes);
 
-	virtual const std::string& WriteToString(void) = 0;
+	const std::string& GetCommandName() { return m_sName; }
+	
+	const uint8_t GetCommandCode() { return m_cCommandCode; }
 protected:
-	char m_cCommandCode;
+	std::string m_sName;
+	uint8_t m_cCommandCode;
 	char m_cOpCode;
 	unsigned int m_uiOffset;
-
+	uint8_t m_uiCmdSize;
+	std::function<void(std::string, uint8_t**)> m_Encoder;
+	std::function<void(std::string, uint8_t*)> m_Decoder;
 	
 };
-
+/*
 class CScriptSetWall : public IScriptCommand
 {
 public:
@@ -502,15 +586,26 @@ public:
 
 	virtual const std::string& WriteToString(void);
 
-};
+};*/
 
 class CScriptRoutine
 {
 public:
+	struct sError
+	{
+		int line;
+		std::string sError;
+	};
+
 	CScriptRoutine(void);
 	virtual ~CScriptRoutine(void);
 
 	bool Run(float dt);
+	int Compile(std::string sScript, std::vector<sError>& vecResults);
+	bool addCommand(const uint8_t cmdId, const std::string& sName, int paramaterSize, std::function<void(std::string, uint8_t **)> encoder, std::function<void(std::string, uint8_t*)>decoder);
+protected:
+	IScriptCommand* isKeyword(const std::string& line);
+
 private:
 	std::vector<IScriptCommand*> m_vecCommands;
 };

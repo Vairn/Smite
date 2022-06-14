@@ -54,133 +54,137 @@
 ; All script functions read from the VM stack
 ; most of them need a few extra vars parsed into them
 
+Function .b stackValue(src.w,offset.b)
+    SHARED *vm
+    function return -1;
+End Function
 
-Statement RunScript{sc.b}
+Statement RunScript{}
 SHARED *vm, *player
 
 End Statement
 
-Statement doSetwall{sc.b}
+Statement doSetwall{}
 SHARED *vm, *player
 
 End Statement
 
-Statement doChangeWall{sc.b}
+Statement doChangeWall{}
 SHARED *vm, *player
 
 End Statement
 
-Statement doOpenDoor{sc.b}
+Statement doOpenDoor{}
 SHARED *vm, *player
 
 End Statement
 
-Statement doCloseDoor{sc.b}
+Statement doCloseDoor{}
 SHARED *vm, *player
 
 End Statement
 
-Statement doAddMonster{sc.b}
+Statement doAddMonster{}
 SHARED *vm, *player
 
 End Statement
 
-Statement doTeleport{sc.b}
+Statement doTeleport{}
 SHARED *vm, *player
 
 End Statement
 
-Statement doStealItem{sc.b}
+Statement doStealItem{}
 SHARED *vm, *player
 
 End Statement
 
-Statement doMessage{sc.b}
+Statement doMessage{}
 SHARED *vm, *player
 
 End Statement
 
-Statement doSetFlag{sc.b}
+Statement doSetFlag{}
 SHARED *vm, *player
 
 End Statement
 
-Statement doSound{sc.b}
+Statement doSound{}
 SHARED *vm, *player
 
 End Statement
 
-Statement doClearFlag{sc.b}
+Statement doClearFlag{}
 SHARED *vm, *player
 
 End Statement
 
-Statement doEncounter{sc.b}
+Statement doEncounter{}
 SHARED *vm, *player
 
 End Statement
 
-Statement doIdentify_items{sc.b}
+Statement doIdentify_items{}
 SHARED *vm, *player
 
 End Statement
 
-Statement doTurn{sc.b}
+Statement doTurn{}
 SHARED *vm, *player
 
 End Statement
 
-Statement doLauncher{sc.b}
+Statement doLauncher{}
 SHARED *vm, *player
 
 End Statement
 
-Statement doAddItem{sc.b}
+Statement doAddItem{}
 SHARED *vm, *player
 
 End Statement
 
-Statement doGiveXp{sc.b}
+Statement doGiveXp{}
 SHARED *vm, *player
 
 End Statement
 
-Statement doChangeLevel{sc.b}
+Statement doChangeLevel{}
 SHARED *vm, *player
 
 End Statement
 
-Statement doRemoveItem{sc.b}
+Statement doRemoveItem{}
 SHARED *vm, *player
 
 End Statement
 
-Statement doIf{sc.b}
+Statement doIf{}
 SHARED *vm, *player
 
 End Statement
 
-Statement doGosub{sc.b}
+Statement doGosub{}
 SHARED *vm, *player
 
 End Statement
 
-Statement doReturn{sc.b}
+Statement doReturn{}
 SHARED *vm, *player
 
 End Statement
 
-Statement doEnd{sc.b}
+Statement doEnd{}
 SHARED *vm, *player
 
 End Statement
 
-Statement doGoto{sc.b}
+Statement doGoto{}
 SHARED *vm, *player
 
 End Statement
 
-Statement doDamage{sc.b}
+Statement doDamage{}
 SHARED *vm, *player
 
 End Statement

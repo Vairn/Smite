@@ -1,5 +1,7 @@
-#include <imgui.h>
-#include <backends/imgui_impl_opengl3.h>
+7#include <imgui.h> 
+0..
+..
+45#include <backends/imgui_impl_opengl3.h>
 #include <backends/imgui_impl_glfw.h>
 #include <stdio.h>
 #include <iostream>
@@ -22,7 +24,8 @@ static void glfw_error_callback(int error, const char* description)
 
 int main(int, char**)
 {
-	printf("Might and Magic ][ - Editor.\n");
+	printf("Smite - Editor.\n");
+	printf("Blitz Basic Game Jam 2022 editon.\n");
 	printf("Debug Console V 0.1\n");
 			
 	//glfwSetErrorCallback(glfw_error_callback);

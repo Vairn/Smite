@@ -1,15 +1,50 @@
 #include "IScriptCommand.h"
 
+#include <boost/tokenizer.hpp>
 //////////////////////////////////////////////////////////////////////////
 
 IScriptCommand::IScriptCommand(void)
 {
 }
 
+IScriptCommand::IScriptCommand(const std::string& sName, const uint8_t cmdId, int paramaterSize, std::function<void(std::string, uint8_t**)> encoder, std::function<void(std::string, uint8_t*)> decoder)
+{
+	m_cCommandCode = cmdId;
+	m_sName = sName;
+	m_uiCmdSize = paramaterSize;
+	m_Encoder = encoder;
+	m_Decoder = decoder;
+}
+
 IScriptCommand::~IScriptCommand(void)
 {
 }
+bool IScriptCommand::Run(float dt)
+{
+	return false;
+}
+std::string IScriptCommand::BuildFromData(uint8_t* pSriptData)
+{
+	if (m_Decoder)
+	{
+		std::string sScriptCommand;
+		m_Decoder(sScriptCommand, pSriptData);
+		return sScriptCommand;
+	}
 
+	return "";
+}
+bool IScriptCommand::BuildFromString(std::string sScriptData, uint8_t** pBytes)
+{
+	//uint8_t *pBytes;
+	if (m_Encoder)
+	{
+		m_Encoder(sScriptData, pBytes);
+		return true;
+	}
+	return false;
+}
+/*
 //////////////////////////////////////////////////////////////////////////
 
 CScriptSetWall::CScriptSetWall( void )
@@ -1004,3 +1039,68 @@ const std::string& CScriptSpecialWinPics::WriteToString( void )
 {
 	throw std::exception("The method or operation is not implemented.");
 }
+*/
+
+CScriptRoutine::CScriptRoutine(void)
+{
+	m_vecCommands.clear();
+}
+
+CScriptRoutine::~CScriptRoutine(void)
+{
+	m_vecCommands.clear();
+}
+
+bool CScriptRoutine::Run(float dt)
+{
+	return false;
+}
+
+int CScriptRoutine::Compile(std::string sScript, std::vector<sError>& vecResults)
+{
+	using namespace boost;
+	vecResults.clear();
+	std::string sNewLine;
+	char_separator<char> sep("\n");
+	tokenizer<char_separator<char>> tokens(sScript, sep);
+
+	for (auto line : tokens) {
+		sNewLine = line;
+		IScriptCommand* cmd = isKeyword(line);
+		if(cmd != nullptr)
+		{
+			uint8_t* pCmdBytes;
+			cmd->BuildFromString(line, &pCmdBytes);
+			
+		}
+	}
+	// returns 0 on success, or the amount of errors it detected;
+	return vecResults.size();
+}
+
+bool CScriptRoutine::addCommand(const uint8_t cmdId, const std::string& sName, int paramaterSize, std::function<void(std::string, uint8_t**)> encoder, std::function<void(std::string, uint8_t*)> decoder)
+{
+	IScriptCommand* pNewCommand = new IScriptCommand(sName, cmdId, paramaterSize, encoder, decoder);
+	
+	m_vecCommands.emplace_back(pNewCommand);
+	return true;
+}
+
+inline IScriptCommand* CScriptRoutine::isKeyword(const std::string& line)
+{
+	using namespace boost;
+
+	char_separator<char> lineSep(" \t(,)");
+	tokenizer<char_separator<char>> lineWords(line, lineSep);
+
+	for (auto& word : lineWords) {
+		for (auto pCommand : m_vecCommands)
+		{
+			if (word.compare(pCommand->GetCommandName()) == 0)
+				return pCommand;
+		}
+	}
+
+	return nullptr;
+}
+
