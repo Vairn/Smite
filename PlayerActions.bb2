@@ -91,7 +91,9 @@ function handleButtons {}
 
     mainWindow:
     ; find where in the main zone we have clicked.
-    if JoyB(0)=1 then gameEnd = 1
+    if mx < 5 and my < 5
+        if JoyB(0)=1 then gameEnd = 1
+    endif
     goto done:
 
     lowerWindow:
@@ -143,7 +145,7 @@ function handleButtons {}
     ; 65,190
     if mx > 65 and my > 190
         if mx < 88 and my < 230
-            drawBitmapText{20, 232, "BATTERY LEVEL"}
+            drawBitmapText{5, 240,  "BATTERY LEVEL 00"}
         endif
     endif
     ; 88, 230
