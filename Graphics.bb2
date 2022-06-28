@@ -14,6 +14,14 @@ UnBuffer `1
 ;Locate 0,0
 End Macro
 
+Statement LoadFrame{filename$}
+QAMIGA
+
+ILBMinfo filename$
+BitMap  #guiframe, 320,256,8
+LoadBitMap #guiframe, filename$,1
+BLITZ
+End Statement
 
 ; only used in Building the game
 ; final exe will use pre-processed assets.
@@ -21,6 +29,7 @@ Statement ProcessWallset{filename$}
 SHARED walls()
 SHARED wallslookup()
 QAMIGA
+cMod.b = 16
 BitMap #spriteBitmap,320,256,5
 Use BitMap #spriteBitmap
 BitMap #bkgndBitmap,240,180,5
@@ -50,7 +59,7 @@ If ReadFile(0,wallFile.s)
 
     ReadMem 0, &colourCount,1
     dbugprintval{colourCount}
-    InitPalette 1, colourCount
+    InitPalette 1, 64
     For c=1 To colourCount
         ReadMem 0,&dummy,1
         r = dummy
@@ -62,7 +71,7 @@ If ReadFile(0,wallFile.s)
         b = dummy 
         if b< 0 then b=256+b
         dbugprintstring{"COL: "+Str$(c)+" R:" +Str$(r)+" G:" +Str$(g)+ "B:" +Str$(b)}
-        AGAPalRGB 1,c-1,r,g,b
+        AGAPalRGB 1,c-1,r*cMod,g*cMod,b*cMod
      Next
 
      totalTileCount.w = 0
@@ -190,7 +199,7 @@ palfile.s = filename$ + ".wllpal"
 processed.s = filename$ + ".wllinf"
 
 dbugprintstring {"Loading - Palette: " + palfile.s}
-LoadPalette 1, palfile.s
+LoadPalette 1, palfile.s,32
 dbugprintstring {"Loading - Shapes: " + shapefile.s}
 LoadShapes 0,shapefile.s
 

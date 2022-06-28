@@ -184,7 +184,6 @@ void SmitED::ImGuiUIManager::update()
 
 	next_windows.clear();
 
-
 	bool show = true;
 	ImGui_ImplOpenGL3_NewFrame();
 	ImGui_ImplGlfw_NewFrame();
@@ -277,11 +276,12 @@ void SmitED::ImGuiUIManager::updateWindows()
 	if (ImGui::BeginMainMenuBar()) {
 		if (ImGui::BeginMenu("File"))
 		{
-			ImGui::MenuItem("New Project", "N", false, false);
-			//std::vector<std::string> filters = { "Pixile Script", "*.pxl *.pxj", "Pixile Archive", "*.pxz" };
-			//ImGui::PushItemFlag(ImGuiItemFlags_Disabled, (bool)open_file);
-			
-			
+			if (ImGui::MenuItem("New Project", "N", false, true))
+				//std::vector<std::string> filters = { "Pixile Script", "*.pxl *.pxj", "Pixile Archive", "*.pxz" };
+				//ImGui::PushItemFlag(ImGuiItemFlags_Disabled, (bool)open_file);
+			{
+				AddWindow(new CGUIResource(""));
+			}
 			if (ImGui::MenuItem("Open Project", "O", false, true))
 			{
 				//open_file = std::make_shared<pfd::open_file>("Choose file", "C:\\", filters);

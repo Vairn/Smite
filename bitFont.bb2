@@ -55,6 +55,6 @@ Statement drawBitmapText{scX.w, scY.w, strtext.s}
         endif
 
         ascii-31 ; string font starts from the space character
-        BBlit currentBuffer,#fontShapeStart + ascii.w, scX.w + (c*8), scY,%00000001
+        BBlit currentBuffer,#fontShapeStart + ascii.w, scX.w + ((c-1)*8), scY,%000000
     next
 End Statement

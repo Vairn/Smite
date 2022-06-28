@@ -19,7 +19,7 @@ SmitED::CMazViewer::CMazViewer()
 	{
 		m_pScriptCompiler = new CScriptRoutine();
 
-		m_pScriptCompiler->addCommand(ENCOUNTER, "Encounter", 1, &encodeEncounter, &decodeEncounter);
+		/*m_pScriptCompiler->addCommand(ENCOUNTER, "Encounter", 1, nullptr, nullptr);
 		m_pScriptCompiler->addCommand(IDENTIFY_ITEMS, "IdentifyItems", 2, &encodeIdentifyItems, &decodeIdentifyItems);
 		m_pScriptCompiler->addCommand(TURN, "Turn", 2, &encodeTurn, &decodeTurn);
 		m_pScriptCompiler->addCommand(LAUNCHER, "Launcher", 5, &encodeLauncher, &decodeLauncher);
@@ -43,15 +43,44 @@ SmitED::CMazViewer::CMazViewer()
 		m_pScriptCompiler->addCommand(CLOSE_DOOR, "CloseDoor", 2, &encodeCloseDoor, &decodeCloseDoor);
 		m_pScriptCompiler->addCommand(OPEN_DOOR, "OpenDoor", 2, &encodeOpenDoor, &decodeOpenDoor);
 		m_pScriptCompiler->addCommand(CHANGE_WALL, "ChangeWall", 4, &encodeChangeWall, &decodeChangeWall);
-		m_pScriptCompiler->addCommand(SET_WALL, "SetWall", 4, &encodeSetWall, &decodeSetWall);
+		m_pScriptCompiler->addCommand(SET_WALL, "SetWall", 4, &encodeSetWall, &decodeSetWall);*/
+
+		m_pScriptCompiler->addCommand(ENCOUNTER, "Encounter", 1, nullptr, nullptr);
+		m_pScriptCompiler->addCommand(IDENTIFY_ITEMS, "IdentifyItems", 2, nullptr, nullptr);
+		m_pScriptCompiler->addCommand(TURN, "Turn", 2, nullptr, nullptr);
+		m_pScriptCompiler->addCommand(LAUNCHER, "Launcher", 5, nullptr, nullptr);
+		m_pScriptCompiler->addCommand(ADD_ITEM, "AddItem", 4, nullptr, nullptr);
+		m_pScriptCompiler->addCommand(GIVE_XP, "GiveXp", 1, nullptr, nullptr);
+		m_pScriptCompiler->addCommand(CHANGE_LEVEL, "ChangeLevel", 3, nullptr, nullptr);
+		m_pScriptCompiler->addCommand(REMOVE_ITEM, "RemoveItem", 2, nullptr, nullptr);
+		m_pScriptCompiler->addCommand(IF, "If", -1, nullptr, nullptr);
+		m_pScriptCompiler->addCommand(GOSUB, "Gosub", 2, nullptr, nullptr);
+		m_pScriptCompiler->addCommand(RETURN, "Return", 0, nullptr, nullptr);
+		m_pScriptCompiler->addCommand(END, "End", 0, nullptr, nullptr);
+		m_pScriptCompiler->addCommand(GOTO, "Goto", 1, nullptr, nullptr);
+		m_pScriptCompiler->addCommand(DAMAGE, "Damage", 2, nullptr, nullptr);
+		m_pScriptCompiler->addCommand(CLEAR_FLAG, "ClearFlag", 1, nullptr, nullptr);
+		m_pScriptCompiler->addCommand(SOUND, "Sound", 2, nullptr, nullptr);
+		m_pScriptCompiler->addCommand(SET_FLAG, "SetFlag", 1, nullptr, nullptr);
+		m_pScriptCompiler->addCommand(MESSAGE, "Message", 2, nullptr, nullptr);
+		m_pScriptCompiler->addCommand(STEAL_ITEM, "StealItem", 4, nullptr, nullptr);
+		m_pScriptCompiler->addCommand(TELEPORT, "Teleport", 5, nullptr, nullptr);
+		m_pScriptCompiler->addCommand(ADD_MONSTER, "AddMonster", 14, nullptr, nullptr);
+		m_pScriptCompiler->addCommand(CLOSE_DOOR, "CloseDoor", 2, nullptr, nullptr);
+		m_pScriptCompiler->addCommand(OPEN_DOOR, "OpenDoor", 2, nullptr, nullptr);
+		m_pScriptCompiler->addCommand(CHANGE_WALL, "ChangeWall", 4, nullptr, nullptr);
+		m_pScriptCompiler->addCommand(SET_WALL, "SetWall", 4, nullptr, nullptr);
 	}
 	/*
 	AddItem(1, 10,10, 5)
-	GiveXp(1000)
-	SetFlag(10)
-	Sound(1,2)
-	OpenDoor(10,10)
-	SetWall(12,12,4,1)
+Message(1, "It is very Dusty Here")
+GiveXp(1000)
+SetFlag(10)
+Message(1, "Going Down...")
+Sound(1,2)
+OpenDoor(10,10)
+Message(1, "Going Down...")
+SetWall(12,12,4,1)
 
 */
 }

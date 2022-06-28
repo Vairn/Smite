@@ -78,8 +78,17 @@ SmitED::CGUIResource::CGUIResource(const std::string& _workingFolder)
 {
 		
 	sWorkingFolder = _workingFolder;
-	bLoading = true;
-	fileList = std::filesystem::directory_iterator(sWorkingFolder);
+	
+	if (!_workingFolder.empty())
+	{
+		bLoading = true;
+
+		fileList = std::filesystem::directory_iterator(sWorkingFolder);
+	}
+	else
+	{
+		bLoading = false;
+	}
 
 	WindowName("Resources");
 }

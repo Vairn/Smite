@@ -80,7 +80,7 @@ void decodeChangeWall(std::string, uint8_t*);
 void encodeSetWall(std::string, uint8_t**);
 void decodeSetWall(std::string, uint8_t*);
 
-
+class CScriptRoutine;
 class IScriptCommand
 {
 public:
@@ -90,8 +90,8 @@ public:
 
 	virtual bool Run(float dt);
 
-	std::string BuildFromData(uint8_t* pSriptData);
-	bool BuildFromString(std::string sScriptData, uint8_t** pBytes);
+	std::string BuildFromData(uint8_t* pSriptData, CScriptRoutine* pScriptRoutine = nullptr);
+	bool BuildFromString(std::string sScriptData, uint8_t** pBytes, CScriptRoutine* pScriptRoutine = nullptr);
 
 	const std::string& GetCommandName() { return m_sName; }
 	
@@ -104,6 +104,7 @@ protected:
 	uint8_t m_uiCmdSize;
 	std::function<void(std::string, uint8_t**)> m_Encoder;
 	std::function<void(std::string, uint8_t*)> m_Decoder;
+	
 	
 };
 /*
@@ -603,11 +604,14 @@ public:
 	bool Run(float dt);
 	int Compile(std::string sScript, std::vector<sError>& vecResults);
 	bool addCommand(const uint8_t cmdId, const std::string& sName, int paramaterSize, std::function<void(std::string, uint8_t **)> encoder, std::function<void(std::string, uint8_t*)>decoder);
+	int16_t AddStringToStringTable(std::string sString);
 protected:
 	IScriptCommand* isKeyword(const std::string& line);
 
 private:
 	std::vector<IScriptCommand*> m_vecCommands;
+	std::vector<std::string> m_vecStringTable;
+	std::vector<uint8_t> m_vecScriptData;
 };
 
 class CScriptDecompiler

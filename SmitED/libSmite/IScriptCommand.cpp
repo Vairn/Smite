@@ -3,6 +3,7 @@
 #include <boost/tokenizer.hpp>
 //////////////////////////////////////////////////////////////////////////
 
+
 IScriptCommand::IScriptCommand(void)
 {
 }
@@ -23,7 +24,7 @@ bool IScriptCommand::Run(float dt)
 {
 	return false;
 }
-std::string IScriptCommand::BuildFromData(uint8_t* pSriptData)
+std::string IScriptCommand::BuildFromData(uint8_t* pSriptData, CScriptRoutine* pScriptRoutine)
 {
 	if (m_Decoder)
 	{
@@ -31,16 +32,72 @@ std::string IScriptCommand::BuildFromData(uint8_t* pSriptData)
 		m_Decoder(sScriptCommand, pSriptData);
 		return sScriptCommand;
 	}
+	else
+	{
+		// default Decoder.
+	}
 
 	return "";
 }
-bool IScriptCommand::BuildFromString(std::string sScriptData, uint8_t** pBytes)
+bool IScriptCommand::BuildFromString(std::string sScriptData, uint8_t** ppBytes, CScriptRoutine* pScriptRoutine)
 {
-	//uint8_t *pBytes;
+	using namespace boost;
+	uint8_t *pBytes = new uint8_t[m_uiCmdSize + 1];
+	pBytes[0] = m_cCommandCode;
 	if (m_Encoder)
 	{
-		m_Encoder(sScriptData, pBytes);
+		m_Encoder(sScriptData, ppBytes);
 		return true;
+	}
+	else
+	{
+		size_t start = 0;
+		size_t nextQuote = 0;
+		while (nextQuote = sScriptData.find('\"', start), nextQuote != std::string::npos)
+		{
+			size_t endQuote = sScriptData.find('\"', nextQuote + 1);
+			if (endQuote == std::string::npos)
+			{
+				throw std::logic_error("Unmatched quotes");
+			}
+
+		//	PrintUnquoted(sspace.substr(start, nextQuote - start));
+		//	std::cout << sspace.substr(nextQuote, endQuote - nextQuote + 1) << std::endl;
+			auto sMessage = sScriptData.substr(nextQuote, endQuote - nextQuote + 1);
+			auto lookupID = pScriptRoutine->AddStringToStringTable(sMessage);
+			sScriptData.replace(nextQuote, endQuote - nextQuote + 1, std::to_string(lookupID));
+			start = endQuote + 1;
+		}
+		// default encoder.
+		char_separator<char> lineSep(" \t(,)"); 
+		tokenizer<char_separator<char>> lineWords(sScriptData, lineSep); 
+		int i = 0; 
+		for (auto word : lineWords)
+		{
+			printf("%s\n", word);
+			if (i != 0)
+			{
+				if (isdigit(word[0]))
+				{
+					// Number
+					pBytes[i] = atoi(word.c_str());
+				}
+				
+			}
+			i++;
+		}
+		printf("%s \n", sScriptData.c_str());
+		for (int i = 0; i < m_uiCmdSize + 1; i++)
+		{
+			printf("%02x", pBytes[i]);
+		}
+		printf("\n");
+
+		delete[] pBytes;
+		
+		return true;
+
+		
 	}
 	return false;
 }
@@ -1070,7 +1127,7 @@ int CScriptRoutine::Compile(std::string sScript, std::vector<sError>& vecResults
 		if(cmd != nullptr)
 		{
 			uint8_t* pCmdBytes;
-			cmd->BuildFromString(line, &pCmdBytes);
+			cmd->BuildFromString(line, &pCmdBytes, this);
 			
 		}
 	}
@@ -1084,6 +1141,22 @@ bool CScriptRoutine::addCommand(const uint8_t cmdId, const std::string& sName, i
 	
 	m_vecCommands.emplace_back(pNewCommand);
 	return true;
+}
+
+int16_t CScriptRoutine::AddStringToStringTable(std::string sString)
+{
+	int index = 0;
+	for (auto sStr : m_vecStringTable)
+	{
+		if (sStr.compare(sString) == 0)
+		{
+			return index;
+		}
+		index++;
+	}
+	m_vecStringTable.emplace_back(sString);
+	return m_vecStringTable.size() - 1;
+	
 }
 
 inline IScriptCommand* CScriptRoutine::isKeyword(const std::string& line)

@@ -207,7 +207,12 @@ int32_t mazeMove(int32_t pos, int32_t dir)
 SmitED::CWallViewer::CWallViewer()
 {
 	//currentShape = 0;
-	createPaletteTable();
+	//createPaletteTable();
+}
+
+SmitED::CWallViewer::~CWallViewer()
+{
+	printf("Death Becomes Me");
 }
 
 void SmitED::CWallViewer::update()
@@ -257,55 +262,58 @@ void SmitED::CWallViewer::update()
 					// floor;
 					//RenderBackground();
 					//continue;
-					if (m_wallSetTiles.size() > 2)
+					for (const auto& tilesets : m_wallSetTiles)
 					{
-						//const auto & tile = m_wallSetTiles[1][iWall];
-						for (const auto& tile : m_wallSetTiles[2])
+						for (const auto tile : tilesets.second)
 						{
-
-							int tx = -tile->location[0];// *CMazeDr[iFacing].xs;
-							int ty = tile->location[1];// *CMazeDr[iFacing].ys;
-							//if ((iFacing % 2) != 0)
-							//{
-							//	tx *= -1;// CMazeDr[iFacing].ys;
-								// ty *= -1;//CMazeDr[iFacing].xs;
-							//}
-							//else
-							//{
-								//ty *= -1;// CMazeDr[iFacing].ys;
-							//}
-							if (tx == CMazePos[i].xDelta && ty == CMazePos[i].yDelta)
+							auto idx = GetTypeIndex(tile->sName);
+							if (idx != 2 && idx != 3)
 							{
-								//printf("%d, %d\n", tx, ty);
-								//FreeImage_Paste(pScreenImage, tile->pFrame, tile->screen[0], tile->screen[1],254);
-								for (int16_t py = 0; py < tile->coords[3]; py++)
+
+								int tx = -tile->location[0];// *CMazeDr[iFacing].xs;
+								int ty = tile->location[1];// *CMazeDr[iFacing].ys;
+								//if ((iFacing % 2) != 0)
+								//{
+								//	tx *= -1;// CMazeDr[iFacing].ys;
+									// ty *= -1;//CMazeDr[iFacing].xs;
+								//}
+								//else
+								//{
+									//ty *= -1;// CMazeDr[iFacing].ys;
+								//}
+								if (tx == CMazePos[i].xDelta && ty == CMazePos[i].yDelta)
 								{
-									for (int16_t px = 0; px < tile->coords[2]; px++)
+									//printf("%d, %d\n", tx, ty);
+									//FreeImage_Paste(pScreenImage, tile->pFrame, tile->screen[0], tile->screen[1],254);
+									for (int16_t py = 0; py < tile->coords[3]; py++)
 									{
-										RGBQUAD rgb;
-										FreeImage_GetPixelColor(tile->pFrame, px, py, &rgb);
-										if (rgb.rgbRed == 12 && rgb.rgbGreen == 34 && rgb.rgbBlue == 36) continue;
-										FreeImage_SetPixelColor(pScreenImage, tile->screen[0] + px, tile->screen[1] + py, &rgb);
+										for (int16_t px = 0; px < tile->coords[2]; px++)
+										{
+											RGBQUAD rgb;
+											FreeImage_GetPixelColor(tile->pFrame, px, py, &rgb);
+											if (rgb.rgbRed == 0 && rgb.rgbGreen == 0 && rgb.rgbBlue == 0) continue;
+											FreeImage_SetPixelColor(pScreenImage, tile->screen[0] + px, tile->screen[1] + py, &rgb);
+										}
 									}
 								}
+								//tx *= -1;
+								////if (tx == x && ty == y)
+								//{
+								//	FreeImage_FlipHorizontal(tile->pFrame);
+								//	//FreeImage_Paste(pScreenImage, tile->pFrame, tile->screen[0], tile->screen[1],254);
+								//	for (int16_t py = 0; py < tile->coords[3]; py++)
+								//	{
+								//		for (int16_t px = 0; px < tile->coords[2]; px++)
+								//		{
+								//			RGBQUAD rgb;
+								//			FreeImage_GetPixelColor(tile->pFrame, px, py, &rgb);
+								//			if (rgb.rgbRed == 4 && rgb.rgbGreen == 58 && rgb.rgbBlue == 132) continue;
+								//			FreeImage_SetPixelColor(pScreenImage, (240-tile->coords[2] - tile->screen[0]) + px, tile->screen[1] + py, &rgb);
+								//		}
+								//	}
+								//	FreeImage_FlipHorizontal(tile->pFrame);
+								//}
 							}
-							//tx *= -1;
-							////if (tx == x && ty == y)
-							//{
-							//	FreeImage_FlipHorizontal(tile->pFrame);
-							//	//FreeImage_Paste(pScreenImage, tile->pFrame, tile->screen[0], tile->screen[1],254);
-							//	for (int16_t py = 0; py < tile->coords[3]; py++)
-							//	{
-							//		for (int16_t px = 0; px < tile->coords[2]; px++)
-							//		{
-							//			RGBQUAD rgb;
-							//			FreeImage_GetPixelColor(tile->pFrame, px, py, &rgb);
-							//			if (rgb.rgbRed == 4 && rgb.rgbGreen == 58 && rgb.rgbBlue == 132) continue;
-							//			FreeImage_SetPixelColor(pScreenImage, (240-tile->coords[2] - tile->screen[0]) + px, tile->screen[1] + py, &rgb);
-							//		}
-							//	}
-							//	FreeImage_FlipHorizontal(tile->pFrame);
-							//}
 						}
 					}
 					//DrawWall(wmi, i);
@@ -479,7 +487,8 @@ void SmitED::CWallViewer::RenderBackground(FIBITMAP* pDst)
 					{
 						RGBQUAD rgb;
 						FreeImage_GetPixelColor(tile->pFrame, px, py, &rgb);
-						if (rgb.rgbRed == 12 && rgb.rgbGreen == 34 && rgb.rgbBlue == 36) continue;
+						if (rgb.rgbRed == 0 && rgb.rgbGreen == 0 && rgb.rgbBlue == 0) continue; 
+						//if (rgb.rgbRed == 12 && rgb.rgbGreen == 34 && rgb.rgbBlue == 36) continue;
 						FreeImage_SetPixelColor(pDst, tile->screen[0] + px, tile->screen[1] + py, &rgb);
 					}
 				}
@@ -617,7 +626,7 @@ void SmitED::CWallViewer::ReadTileInfo(SmitED::sWallSetTile* pTileInfo, const st
 
 void SmitED::CWallViewer::SaveTileset(std::string& result)
 {
-	uint8_t cCount = 32;// FreeImage_GetColorsUsed(pSrcImage);
+	uint8_t cCount = 32 ;// FreeImage_GetColorsUsed(pSrcImage);
 	std::ofstream fout(result, std::ios_base::binary);
 	fout << "WLL";
 	fout << (uint8_t)cCount;

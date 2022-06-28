@@ -13,13 +13,13 @@ XINCLUDE "Map.bb2"
 XINCLUDE "Graphics.bb2"
 XINCLUDE "Title.bb2"
 XINCLUDE "Menu.bb2"
-XINCLUDE "PlayerActions.bb2"
-XINCLUDE "bitfont.bb2"
 
+XINCLUDE "bitfont.bb2"
+XINCLUDE "PlayerActions.bb2"
 AMIGA
 gosub initDemoMode:
 ;InitCopList CopList#,ypos,height, type,sprites,colors,customs
-InitCopList 0,44,200,$10005,8,256,0
+InitCopList 0,44,256,$10008,8,256,0
 BLITZ
 Mouse On
 
@@ -34,10 +34,13 @@ DisplayPalette 0,1
 
 !cycleBuffer{currentBuffer}
 Cls 0
+BlockScroll 0,0,320,256,0,0,#guiframe
+;ShowBitMap #guiframe
 drawView{}
 
 !cycleBuffer{currentBuffer}
 Cls 0
+BlockScroll 0,0,320,256,0,0,#guiframe
 drawView{}
 mx.w = 0
 my.w = 0
@@ -56,15 +59,12 @@ gosub handlePlayerActions:
 ;dbugprintstring {"Mouse X" + str$(mX) + " Mouse Y:" + str$(my)}
 
 if doRedraw > 0
-;!cycleBuffer{currentBuffer}
-;Cls 0
-Boxf 0,0,240,180, 0
-drawView{}
-doRedraw-1
+    drawView{}    
+    doRedraw-1
 endif
 
-;drawBitmapText{mx.w, my.w, "MOUSE"}
-Until Joyb(0)=1
+;drawBitmapText{mx.w, my.w, "X"}
+Until gameEnd
 End
 
 initDemoMode:
@@ -90,8 +90,10 @@ initDemoMode:
     ; Final build will have all assets pre-processed.
 
     ;ProcessWallset{"factory1"}
+    LoadFrame{"playfield2.iff"}
     loadWalls{"factory1"}
     res.b = LoadBitmapFont{"font8x8"}
+
 return
 
 handlePlayerActions:

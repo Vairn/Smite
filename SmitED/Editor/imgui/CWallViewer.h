@@ -30,6 +30,7 @@ namespace SmitED
 	{
 	public:
 		CWallViewer();
+		virtual ~CWallViewer();
 		void update() override;
 
 		void RenderBackground(FIBITMAP* pDst);

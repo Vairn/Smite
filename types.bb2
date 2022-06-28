@@ -146,7 +146,7 @@ bkgindex.b=0
 #backgroundImage = 2
 #guiframe = 3
 
-; Duneon Shapes
+; Dungeon Shapes
 #wallshapes = 0
 #doorshapes = 100
 #decorationshapes =200
@@ -168,3 +168,12 @@ bkgindex.b=0
 #lores = $000
 #fetchmode3 = $3000
 #agacolors = $10000
+
+
+; Game States
+#gs_title = %00001
+#gs_intro = %00010
+#gs_mainmenu = %0100
+#gs_game = %01000
+#gs_paused = %10000
+gameEnd = 0

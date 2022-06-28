@@ -31,5 +31,3 @@ ASSIGN Blitz2: SYS:Blitz2
 ;END Blitz2
 ;BEGIN Blitzlibs
 ASSIGN Blitzlibs: SYS:Blitz2/Blitzlibs
-;END Blitzlibs
-

@@ -159,15 +159,18 @@ void decodeDamage(std::string sLine, uint8_t* pBytes) {}
 
 void encodeClearFlag(std::string sLine, uint8_t** ppBytes)
 { 
+	uint8_t* pBytes = *ppBytes;
+	pBytes = new uint8_t[2];
 	StartProcessLines(sLine);
-			printf("Parameter %d: %s\n", i,word.c_str());
+	printf("Parameter %d: %s\n", i, word.c_str());
+	pBytes[i - 1] = atoi(word.c_str());
 	EndProcessingLines;
 
 }
 
 void decodeClearFlag(std::string sLine, uint8_t* pBytes) {}
 
-void encodeSound(std::string sLine, uint8_t** ppBytes)
+void encodeSound(std::string sLine, uint8_t** ppBytes) 
 { 
 	StartProcessLines(sLine);
 			printf("Parameter %d: %s\n", i,word.c_str());
@@ -179,8 +182,11 @@ void decodeSound(std::string sLine, uint8_t* pBytes) {}
 
 void encodeSetFlag(std::string sLine, uint8_t** ppBytes)
 { 
+	uint8_t* pBytes = *ppBytes;
+	pBytes = new uint8_t[2];
 	StartProcessLines(sLine);
-			printf("Parameter %d: %s\n", i,word.c_str());
+	printf("Parameter %d: %s\n", i, word.c_str());
+	pBytes[i - 1] = atoi(word.c_str());
 	EndProcessingLines;
 
 }
@@ -189,8 +195,11 @@ void decodeSetFlag(std::string sLine, uint8_t* pBytes) {}
 
 void encodeMessage(std::string sLine, uint8_t** ppBytes)
 { 
+	uint8_t* pBytes = *ppBytes;
+	pBytes = new uint8_t[3];
 	StartProcessLines(sLine);
-			printf("Parameter %d: %s\n", i,word.c_str());
+	printf("Parameter %d: %s\n", i, word.c_str());
+	pBytes[i - 1] = atoi(word.c_str());
 	EndProcessingLines;
 
 }
@@ -199,8 +208,11 @@ void decodeMessage(std::string sLine, uint8_t* pBytes) {}
 
 void encodeStealItem(std::string sLine, uint8_t** ppBytes)
 { 
+	uint8_t* pBytes = *ppBytes;
+	pBytes = new uint8_t[3];
 	StartProcessLines(sLine);
 			printf("Parameter %d: %s\n", i,word.c_str());
+			pBytes[i-1] = atoi(word.c_str());
 	EndProcessingLines;
 
 }
@@ -229,8 +241,12 @@ void decodeAddMonster(std::string sLine, uint8_t* pBytes) {}
 
 void encodeCloseDoor(std::string sLine, uint8_t** ppBytes)
 { 
+	uint8_t* pBytes = *ppBytes;
+	pBytes = new uint8_t[2];
+
 	StartProcessLines(sLine);
-			printf("Parameter %d: %s\n", i,word.c_str());
+		printf("Parameter %d: %s\n", i, word.c_str());
+		pBytes[i - 1] = atoi(word.c_str());
 	EndProcessingLines;
 
 }
@@ -238,9 +254,13 @@ void encodeCloseDoor(std::string sLine, uint8_t** ppBytes)
 void decodeCloseDoor(std::string sLine, uint8_t* pBytes) {}
 
 void encodeOpenDoor(std::string sLine, uint8_t** ppBytes)
-{ 
+{
+	uint8_t* pBytes = *ppBytes;
+	pBytes = new uint8_t[2];
+
 	StartProcessLines(sLine);
 			printf("Parameter %d: %s\n", i,word.c_str());
+			pBytes[i - 1] = atoi(word.c_str());
 	EndProcessingLines;
 
 }
@@ -251,6 +271,8 @@ void encodeChangeWall(std::string sLine, uint8_t** ppBytes)
 { 
 	StartProcessLines(sLine);
 			printf("Parameter %d: %s\n", i,word.c_str());
+
+
 	EndProcessingLines;
 
 }

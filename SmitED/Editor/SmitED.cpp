@@ -1,7 +1,5 @@
-7#include <imgui.h> 
-0..
-..
-45#include <backends/imgui_impl_opengl3.h>
+#include <imgui.h> 
+#include <backends/imgui_impl_opengl3.h>
 #include <backends/imgui_impl_glfw.h>
 #include <stdio.h>
 #include <iostream>
@@ -44,13 +42,12 @@ int main(int, char**)
 	const char* glsl_version = "#version 130";
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 0);
-	//glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);  // 3.2+ only
-	//glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);            // 3.0+ only
 #endif
 	
 	GLFWwindow* window = glfwCreateWindow(1440, 800, "SmitED", NULL, NULL);
 	if (window == NULL)
 		return 1;
+
 	glfwMakeContextCurrent(window);
 	glfwSwapInterval(1); // Enable vsync
 
