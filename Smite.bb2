@@ -63,7 +63,7 @@ if doRedraw > 0
     doRedraw-1
 endif
 
-;drawBitmapText{mx.w, my.w, "X"}
+drawBitmapText{mx.w, my.w, "X"}
 Until gameEnd
 End
 

@@ -178,8 +178,9 @@ Statement drawView{}
   Shared *currentLevel.Level
   Shared bkgindex
   ; render the background, saves shapes, and does a cls of the view.
-  Boxf 2,2,240,176, 0
-  Blit bkgindex,4,4,%001
+  ; drawin this rect makes the palette shift to the next colour bank by abusin the way blitz only writes the 5 bitplanes of the shape
+  Boxf 2,2,244,182, 32
+  Blit bkgindex,4,4
   Dim currentView(17)
 
   px = playerLoc.w MOD 32;
@@ -256,7 +257,7 @@ Statement drawView{}
             tx.b =-walls()\locationX
             ty.b= walls()\locationY
             if (tx = CMazePos(i)\xDelta and ty = CMazePos(i)\yDelta)
-              Blit walls()\shapeIndex, walls()\screenX+4, walls()\screenY+4,%001
+              Blit walls()\shapeIndex, walls()\screenX+4, walls()\screenY+4
               Pop While
               
             EndIf
