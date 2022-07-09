@@ -44,31 +44,42 @@ Shared playerLoc.w, playerFacing.b
 shared bkgindex
 realFacing.b = 0
 
-if RawStatus ($4C) ; Up
+if RawStatus ($4C) or RawStatus($11); Up
     realFacing.b= (playerFacing.b) MOD 4
     playerLoc.w =  mazeMove{playerLoc.w, realFacing.b} ; Up Arrow
     Function Return True
 EndIf
-if RawStatus ($4D) ; Down
+if RawStatus ($4D) or RawStatus($21); Down
     realFacing.b= (playerFacing.b+2) MOD 4
-    playerLoc.w =  mazeMove{playerLoc.w, realFacing.b} ; Up Arrow
+    playerLoc.w =  mazeMove{playerLoc.w, realFacing.b} ; Down Arrow
     Function Return True
 EndIf
-if RawStatus ($4F) ; Left
+if RawStatus ($46) or RawStatus($10); Turn Left
     playerFacing.b-1
     bkgindex+1
     bkgindex = bkgindex Mod 2
-    ;playerLoc.w =  mazeMove{playerLoc.w, realFacing.b} ; Up Arrow
     Function Return True
 EndIf
-if RawStatus ($4E) ; Right
+if RawStatus ($5f) or RawStatus($12) ; Turn Right
     playerFacing.b+1
     bkgindex+1
     bkgindex = bkgindex Mod 2
-    ;realFacing.b= (playerFacing.b+1) MOD 4
-    ;playerLoc.w =  mazeMove{playerLoc.w, realFacing.b} ; Up Arrow
+
     Function Return True
 EndIf
+
+if RawStatus($4E) or RawStatus($22)
+     realFacing.b= (playerFacing.b+1) MOD 4
+    playerLoc.w =  mazeMove{playerLoc.w, realFacing.b} ; Left Arrow
+    Function Return True
+endif
+
+if RawStatus($4F) or RawStatus($20)
+ realFacing.b= (playerFacing.b+3) MOD 4
+    playerLoc.w =  mazeMove{playerLoc.w, realFacing.b} ; Right Arrow
+    Function Return True
+endif
+
     function return 0
 End Function
 
@@ -80,74 +91,75 @@ function handleButtons {}
     realFacing.b = 0
     mx.w = MouseX
     my.w = MouseY
-    if mx < 240 and my < 176
+    if mx < 240  : if my < 176
         Goto mainWindow:
-    endif
-    if  my > 176 and mx < 240
+    endif : endif 
+    if  my > 176  : if mx < 240
         Goto lowerWindow:
-    EndIf
+    EndIf : endif
 
     Goto invent:  
 
     mainWindow:
     ; find where in the main zone we have clicked.
-    if mx < 5 and my < 5
+    if mx < 5  : if my < 5
         if JoyB(0)=1 then gameEnd = 1
-    endif
+    endif : endif
     goto done:
 
     lowerWindow:
      if JoyB(0)=1
     ; Arrows
     ; top row
-    if my> 190 and my < 210
-        if mx > 3 and mx < 23
+    if my> 190  : if my < 210
+        if mx > 3  : if mx < 23
              playerFacing.b-1
             bkgindex+1
             bkgindex = bkgindex Mod 2
             Function Return 1
-        endif
-        if mx > 23 and mx < 44
+        endif : endif
+        if mx > 23  : if mx < 44
             realFacing.b= (playerFacing.b) MOD 4
             playerLoc.w =  mazeMove{playerLoc.w, realFacing.b} ; Up Arrow
             Function Return 1
-        endif
+        endif : endif
 
-        if mx > 44 and mx < 64
+        if mx > 44  : if mx < 64
             playerFacing.b+1
             bkgindex+1
             bkgindex = bkgindex Mod 2
             Function Return 1
-        endif
-    Endif
+        endif : endif
+    Endif : endif
+
     ; bottom row
-    if my > 210 and my < 230
+    if my > 210  : if my < 230
     ; 4,23,44
-        if mx > 3 and mx < 23
+        if mx > 3  : if mx < 23
             realFacing.b= (playerFacing.b+3) MOD 4
             playerLoc.w =  mazeMove{playerLoc.w, realFacing.b} ; Left Arrow
             Function Return 1
-        endif
-        if mx > 23 and mx < 44
+        endif : endif
+        if mx > 23  : if mx < 44
             realFacing.b= (playerFacing.b + 2)  MOD 4
             playerLoc.w =  mazeMove{playerLoc.w, realFacing.b } ; down Arrow
             Function Return 1
-        endif
+        endif : endif
 
-        if mx > 44 and mx < 87
+        if mx > 44  : if mx < 87
             realFacing.b= (playerFacing.b+1) MOD 4
             playerLoc.w =  mazeMove{playerLoc.w, realFacing.b} ; Right Arrow
             Function Return 1 
-        endif
-    Endif
+        endif : endif
+    Endif : Endif
     endif
 
     ; 65,190
-    if mx > 65 and my > 190
-        if mx < 88 and my < 230
+    if mx > 65  : if my > 190
+        if mx < 88  : if my < 230
             drawBitmapText{5, 240,  "BATTERY LEVEL 00"}
-        endif
-    endif
+        endif : endif
+    endif : endif
     ; 88, 230
     goto done:
 

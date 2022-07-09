@@ -99,19 +99,7 @@ If ReadFile(0,wallFile.s)
                     walls()\screenX = screenX.w : walls()\screenY = screenY.w
                     walls()\width = width.w : walls()\height = height.w
                     walls()\shapeIndex = shapeIndex
-                    ; LX.b = locationX+3
-                    ; LY.b = -locationY
-                    ; dbugprintstring{"LocX: " + str$(LX) + " LocY: " + str$(LY), " WMI:" + Str$(walltype.b)}
-                    
-                    ; wallslookup(LX, LY, walltype.b)\walltype = walltype.b
-                    ; wallslookup(LX, LY, walltype.b)\locationX = locationX.b 
-                    ; wallslookup(LX, LY, walltype.b)\locationY = locationY.b
-                    ; wallslookup(LX, LY, walltype.b)\screenX = screenX.w 
-                    ; wallslookup(LX, LY, walltype.b)\screenY = screenY.w
-                    ; wallslookup(LX, LY, walltype.b)\width = width.w 
-                    ; wallslookup(LX, LY, walltype.b)\height = height.w
-                    ; wallslookup(LX, LY, walltype.b)\shapeIndex = shapeIndex                   
-                    ;wallslookup(LX, LY, walltype.b)
+                 
                 EndIf
             Endif
         

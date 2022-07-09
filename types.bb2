@@ -177,3 +177,5 @@ bkgindex.b=0
 #gs_game = %01000
 #gs_paused = %10000
 gameEnd = 0
+Dim currentView(17)
+

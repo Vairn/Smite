@@ -174,14 +174,16 @@ Statement drawView{}
 
   Shared playerLoc.w, playerFacing.b, walls()
   Shared CMazeDr.MazeDir(), CMazePos.MazePos()
-  shared wallslookup()
+  shared wallslookup(), currentView()
   Shared *currentLevel.Level
   Shared bkgindex
   ; render the background, saves shapes, and does a cls of the view.
-  ; drawin this rect makes the palette shift to the next colour bank by abusin the way blitz only writes the 5 bitplanes of the shape
+  ; drawing this rect makes the palette shift to the next colour bank by abusing the way blitz only writes the 5 bitplanes
+  ; of the shape, therefore by clearing with a colour that sets the 6th bitplane, I can shift the images up a colour bank
+  ; and not have the extra draw times, renders the level FASTER!
   Boxf 2,2,244,182, 32
   Blit bkgindex,4,4
-  Dim currentView(17)
+  
 
   px = playerLoc.w MOD 32;
 	py = playerLoc.w/32;div(int(pos), 32).quot;
@@ -203,49 +205,54 @@ Statement drawView{}
     arx = CMazePos(i)\xDelta+3
     ary = CMazePos(i)\yDelta+3
     currentView(i) = wmi.b
-    next
-      if currentView(14) = 1 and currentView(15) = 1 and currentView(16) = 1
+  next
+      if currentView(14) >0
+        if  currentView(15) >0
+          if currentView(16) >0
       for i=0 to 13
         currentView(i) = 0
       next
       
-    endif
+    endif : endif : endif
 
-    if currentView(12) = 1 and currentView(13) = 1 and currentView(14) = 1
-      for i=0 to 11
-        currentView(i) = 0
-      next
+    if currentView(12) >0
+      if  currentView(13) >0
+        if  currentView(14) >0
+          for i=0 to 11
+            currentView(i) = 0
+          next
       
-    endif
-    if currentView(8) = 1 and currentView(10) = 1 and currentView(11) = 1
-      for i=0 to 7
-        currentView(i) = 0
-      next
+    endif : endif : endif
+
+    if currentView(8) >0
+      if  currentView(10) >0
+        if  currentView(11) >0
+          for i=0 to 7
+            currentView(i) = 0
+          next
       currentView(9) =0
       
-    endif
+    endif : endif : endif
 
-    if currentView(14) = 1
+    if currentView(14) >0
       currentView(11) = 0
       currentView(6) = 0
     endif
-    if currentView(15) = 1
+    if currentView(15) >0
       currentView(0) = 0
       currentView(1) = 0
       currentView(7) = 0
     endif
-    if currentView(16) = 1
+    if currentView(16) >0
       currentView(3) = 0
       currentView(4) = 0
       currentView(9) = 0
       
     endif
-    if currentView(11) = 1      
+    if currentView(11) >0      
       currentView(6) = 0
     endif
-
-  
-
+ 
     for i = 0 to 17
 
       wmi.b = currentView(i)
@@ -256,17 +263,14 @@ Statement drawView{}
           if(walls()\walltype = wmi)
             tx.b =-walls()\locationX
             ty.b= walls()\locationY
-            if (tx = CMazePos(i)\xDelta and ty = CMazePos(i)\yDelta)
+            if (tx = CMazePos(i)\xDelta) 
+              if (ty = CMazePos(i)\yDelta)
               Blit walls()\shapeIndex, walls()\screenX+4, walls()\screenY+4
-              Pop While
-              
-            EndIf
+              Pop While              
+            EndIf : Endif
           Endif
-        Wend  
-        
-        
+        Wend    
       Endif
-
   Next
 End Statement
 

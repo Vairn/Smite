@@ -45,6 +45,8 @@ drawView{}
 mx.w = 0
 my.w = 0
 MouseArea 0,0,320,256
+
+GetaSprite 0,#fontShapeStart+57
 ;Pointer 0,0
 Repeat
 VWait
@@ -63,7 +65,8 @@ if doRedraw > 0
     doRedraw-1
 endif
 
-drawBitmapText{mx.w, my.w, "X"}
+;drawBitmapText{mx.w, my.w, "X"}
+DisplaySprite 0,0,mx-4,my-4,0
 Until gameEnd
 End
 
@@ -93,6 +96,8 @@ initDemoMode:
     LoadFrame{"playfield2.iff"}
     loadWalls{"factory1"}
     res.b = LoadBitmapFont{"font8x8"}
+    
+    
 
 return
 
