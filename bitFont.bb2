@@ -44,6 +44,7 @@ End Function
 
 Statement drawBitmapText{scX.w, scY.w, strtext.s}
     shared currentBuffer
+    
     strLen.w = Len (strtext.s)
     
     if strLen = 0 then Statement Return
@@ -58,3 +59,4 @@ Statement drawBitmapText{scX.w, scY.w, strtext.s}
         BBlit currentBuffer,#fontShapeStart + ascii.w, scX.w + ((c-1)*8), scY,%000000
     next
 End Statement
+

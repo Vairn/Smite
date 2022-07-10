@@ -19,6 +19,14 @@ NEWTYPE .Wallset
 End NEWTYPE
 
 
+NewType .decorations
+  id.w  
+  screenX.w
+  screenY.w
+  width.w
+  height.w
+  shapeIndex.w
+End NewType
 
 
 NEWTYPE .MonsterInstance

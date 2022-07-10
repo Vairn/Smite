@@ -7,7 +7,6 @@ Statement dbugprintstring{output$}
   Poke.l $bfff04, &op$
 End Statement
 
-
 Statement dbugprintval{value.l}
   SHARED fmt$
 

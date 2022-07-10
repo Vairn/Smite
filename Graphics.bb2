@@ -209,3 +209,19 @@ endif
 
 BLITZ
 End Statement
+
+Statement LoadDoors{fileName$}
+QAMIGA
+BLITZ
+End Statement
+
+Statement LoadDecorations{fileName$}
+QAMIGA
+Blitz
+End Statement
+
+Statement LoadMonsterGfx{fileName$}
+QAMIGA
+BLITZ
+End Statement
+
