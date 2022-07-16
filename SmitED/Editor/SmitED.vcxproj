@@ -162,6 +162,7 @@
     <ClCompile Include="..\External\imgui\imgui_draw.cpp" />
     <ClCompile Include="..\External\imgui\imgui_tables.cpp" />
     <ClCompile Include="..\External\imgui\imgui_widgets.cpp" />
+    <ClCompile Include="..\External\imgui\misc\cpp\imgui_stdlib.cpp" />
     <ClCompile Include="..\libSmite\BlitzShape.cpp" />
     <ClCompile Include="..\libSmite\common.cpp" />
     <ClCompile Include="..\libSmite\IScriptCommand.cpp" />

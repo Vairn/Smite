@@ -3,12 +3,25 @@
 #include "CHexViewer.h"
 #include <imgui.h>
 #include "imgui_memory_editor.h"
+#include "misc/cpp/imgui_stdlib.h"
 #include "TextEditor.h"
 
 #include "portable-file-dialogs.h"
 #include "../../libSmite/typeDefs.h"
 
 #include <vector>
+
+//   event trigger points
+//
+//   XX,YY   coordinates
+//   MASK    mask
+//           $08 = on enter
+//           $10 = on leave
+//           $20 = on put item
+//           $40 = on get item
+//           $80 = on throw item
+
+
 struct sMaze;
 class CScriptRoutine;
 #define MKTAG(a0,a1,a2,a3) ((uint32_t)((a3) | ((a2) << 8) | ((a1) << 16) | ((a0) << 24)))
@@ -50,8 +63,12 @@ namespace SmitED
 		std::shared_ptr<pfd::open_file> open_file;
 		std::shared_ptr<pfd::save_file> save_file;
 		std::vector < std::pair<uint8_t, sCommand>> vecCommands;
+		
 
 		static CScriptRoutine* m_pScriptCompiler;
+		std::string sMazeMonsters[2];
+		std::string sMazeWallset;
+		std::string sMazeDecorations;
 		static int instance;
 };
 }

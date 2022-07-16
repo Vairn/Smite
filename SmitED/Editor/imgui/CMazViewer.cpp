@@ -9,6 +9,9 @@ CScriptRoutine* SmitED::CMazViewer::m_pScriptCompiler = nullptr;
 int SmitED::CMazViewer::instance = 1;
 SmitED::CMazViewer::CMazViewer()
 {
+	sMazeMonsters[0] = ""; sMazeMonsters[1] = "";
+	sMazeWallset = "";
+	sMazeDecorations = "";
 	pTextEditor = new TextEditor();
 	auto lang = LangSmyte();
 	pTextEditor->SetLanguageDefinition(lang);
@@ -113,16 +116,72 @@ void SmitED::CMazViewer::update()
 
 			ImGui::EndTabItem();
 		}
+		if (ImGui::BeginTabItem("Level Events"))
+		{
+			if (ImGui::Button("Add Event"))
+			{
 
-		if (ImGui::BeginTabItem("Maze 3D"))
+			}
+			ImGui::EndTabItem();
+		}
+		
+		if (ImGui::BeginTabItem("Level Data"))
+		{
+			if (ImGui::BeginTabBar("##ldtabs", ImGuiTabBarFlags_None))
+			{
+				if (ImGui::BeginTabItem("General"))
+				{
+					ImGui::InputTextWithHint("Wallset", "Wallset Data File", &sMazeWallset, ImGuiInputTextFlags_EnterReturnsTrue);
+					ImGui::SameLine();
+					if (ImGui::Button("Browse###Wallset"))
+					{
+					}
+
+					ImGui::InputTextWithHint("Monster Type 1", "Monster Data File", &sMazeMonsters[0], ImGuiInputTextFlags_EnterReturnsTrue);
+					ImGui::SameLine();
+					if (ImGui::Button("Browse###mon1"))
+					{
+					}
+
+					ImGui::InputTextWithHint("Monster Type 2", "Monster Data File", &sMazeMonsters[1], ImGuiInputTextFlags_EnterReturnsTrue);
+					ImGui::SameLine();
+					if (ImGui::Button("Browse###mon2"))
+					{
+					}
+
+					ImGui::InputTextWithHint("Decorations File", "Decorations Data File (doors, switches etc)", &sMazeDecorations, ImGuiInputTextFlags_EnterReturnsTrue);
+					ImGui::SameLine();
+					if (ImGui::Button("Browse###dec"))
+					{
+					}
+					ImGui::EndTabItem();
+				}
+				if (ImGui::BeginTabItem("Monsters"))
+				{
+					if (ImGui::Button("Add Monster"))
+					{
+
+					}
+					ImGui::EndTabItem();
+				}
+
+				if (ImGui::BeginTabItem("Items"))
+				{
+					if (ImGui::Button("Add Item"))
+					{
+
+					}
+					ImGui::EndTabItem();
+				}
+				ImGui::EndTabBar();
+			}
+			ImGui::EndTabItem();
+		}
+
+		if (ImGui::BeginTabItem("Maze Simulation"))
 		{
 			ImGui::EndTabItem();
 		}
-		if (ImGui::BeginTabItem("Wall Set"))
-		{
-			ImGui::EndTabItem();
-		}
-
 		if (ImGui::BeginTabItem("HexView"))
 		{
 			memEdit->DrawContents(pData, uiDataSize);
@@ -235,7 +294,9 @@ void SmitED::CMazViewer::DrawMaze2D()
 			}
 		}
 	}
-	ImGui::Text("Words and stuff");
+	std::string subInfo = "";
+	subInfo.append(std::to_string(mapX)).append(" ").append(std::to_string(mapY));
+	ImGui::Text(subInfo.c_str());
 	//ImGui::Dummy(ImVec2(65*15, 32*15));
 }
 
@@ -288,14 +349,18 @@ void SmitED::CMazViewer::DrawMenuBar()
 				auto textToSave = pTextEditor->GetText();
 				std::vector<CScriptRoutine::sError > vecErrors;
 				m_pScriptCompiler->Compile(textToSave, vecErrors);
+				TextEditor::ErrorMarkers aMarkers;
 				if (!vecErrors.empty())
 				{
 					// we had errors
+					for (auto error : vecErrors)
+					{
+						aMarkers.emplace(error.line, error.sErrorString);
+					}
+				
 				}
-				else
-				{
-					//pTextEditor->SetE
-				}
+				pTextEditor->SetErrorMarkers(aMarkers);
+
 			}
 			std::vector<std::string> filters = { "Python Script", "*.py" };
 			if (ImGui::MenuItem("Load from File"))

@@ -39,7 +39,7 @@ std::string IScriptCommand::BuildFromData(uint8_t* pSriptData, CScriptRoutine* p
 
 	return "";
 }
-bool IScriptCommand::BuildFromString(std::string sScriptData, uint8_t** ppBytes, CScriptRoutine* pScriptRoutine)
+uint8_t IScriptCommand::BuildFromString(std::string sScriptData, uint8_t** ppBytes, CScriptRoutine* pScriptRoutine)
 {
 	using namespace boost;
 	uint8_t *pBytes = new uint8_t[m_uiCmdSize + 1];
@@ -47,7 +47,7 @@ bool IScriptCommand::BuildFromString(std::string sScriptData, uint8_t** ppBytes,
 	if (m_Encoder)
 	{
 		m_Encoder(sScriptData, ppBytes);
-		return true;
+		return 0;
 	}
 	else
 	{
@@ -74,7 +74,7 @@ bool IScriptCommand::BuildFromString(std::string sScriptData, uint8_t** ppBytes,
 		int i = 0; 
 		for (auto word : lineWords)
 		{
-			printf("%s\n", word);
+			printf("%s\n", word.c_str());
 			if (i != 0)
 			{
 				if (isdigit(word[0]))
@@ -95,12 +95,11 @@ bool IScriptCommand::BuildFromString(std::string sScriptData, uint8_t** ppBytes,
 
 		delete[] pBytes;
 		
-		return true;
-
-		
+		return 0;		
 	}
-	return false;
+	return -1;
 }
+
 /*
 //////////////////////////////////////////////////////////////////////////
 
@@ -1118,17 +1117,40 @@ int CScriptRoutine::Compile(std::string sScript, std::vector<sError>& vecResults
 	using namespace boost;
 	vecResults.clear();
 	std::string sNewLine;
-	char_separator<char> sep("\n");
-	tokenizer<char_separator<char>> tokens(sScript, sep);
+	//char_separator<char> sep("\n");
+	typedef boost::tokenizer<boost::char_separator<char> > tokenizer;
+	boost::char_separator<char> sep(
+		"\n", // dropped delimiters
+		"",  // kept delimiters
+		boost::keep_empty_tokens); // empty token policy
 
+	//tokenizer<char_separator<char>> tokens(sScript, sep, boost::keep_empty_tokens);
+	tokenizer tokens(sScript, sep);
+
+	int lineNo = 0;
 	for (auto line : tokens) {
 		sNewLine = line;
+		lineNo++;
 		IScriptCommand* cmd = isKeyword(line);
-		if(cmd != nullptr)
+		if (cmd != nullptr)
 		{
 			uint8_t* pCmdBytes;
-			cmd->BuildFromString(line, &pCmdBytes, this);
+			uint8_t result = cmd->BuildFromString(line, &pCmdBytes, this);
+			if ( result!= 0)
+			{
+				// Something went wrong when compiling the command, the error code returned will tell me what
+			}
 			
+		}
+		else
+		{	
+			if (!line.empty())
+			{
+				sError error;
+				error.line = lineNo;
+				error.sErrorString = "Unknown Command";
+				vecResults.emplace_back(error);
+			}
 		}
 	}
 	// returns 0 on success, or the amount of errors it detected;

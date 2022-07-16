@@ -91,7 +91,7 @@ public:
 	virtual bool Run(float dt);
 
 	std::string BuildFromData(uint8_t* pSriptData, CScriptRoutine* pScriptRoutine = nullptr);
-	bool BuildFromString(std::string sScriptData, uint8_t** pBytes, CScriptRoutine* pScriptRoutine = nullptr);
+	uint8_t BuildFromString(std::string sScriptData, uint8_t** pBytes, CScriptRoutine* pScriptRoutine = nullptr);
 
 	const std::string& GetCommandName() { return m_sName; }
 	
@@ -594,8 +594,9 @@ class CScriptRoutine
 public:
 	struct sError
 	{
+	public:
 		int line;
-		std::string sError;
+		std::string sErrorString;
 	};
 
 	CScriptRoutine(void);
