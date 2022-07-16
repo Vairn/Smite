@@ -2,11 +2,41 @@
 XINCLUDE "debug.bb2"
 XINCLUDE "types.bb2"
 
-Statement LoadMap{path.s}
-QAMIGA
-VWait 50; wait for disk activity
-BLITZ
-End Statement
+
+
+function .l LoadMap{path.s}
+    QAMIGA
+    dummy.b =0
+    If ReadFile(0,path.s)
+      DEFTYPE .Level *newLevel
+      *newLevel = AllocMem_(sizeof .Level,0)
+      ; Lazy skip header
+      ReadMem 0, &dummy, 1
+      ReadMem 0, &dummy, 1
+      ReadMem 0, &dummy, 1
+      ReadMem 0, &dummy, 1
+      ReadMem 0, &dummy, 1
+      ReadMem 0, &dummy, 1
+      ReadMem 0, &dummy, 1
+      ReadMem 0, &dummy, 1
+
+      for i.w=0 to 1023
+      tmp.b =0
+        ReadMem 0, &tmp.b, 1
+        if (tmp.b=0)
+          *newLevel\walldata[i] = 0
+        else
+        *newLevel\walldata[i] = 1
+        endif
+        ReadMem 0, &dummy, 1
+        ReadMem 0, &dummy, 1
+        ReadMem 0, &dummy, 1
+      next
+    end if
+    vwait 50
+    blitz
+    function Return *newLevel  
+End Function
 
 Statement GenerateMap{seed.w}
 

@@ -88,7 +88,8 @@ initDemoMode:
     preFillPosData{}
 
     ; Demo map for development
-    *currentLevel = MakeDemoMap{}
+    ;*currentLevel = MakeDemoMap{}
+    *currentLevel = LoadMap{"maze1.maz"}
     ; Process and load in a wallset.
     ; Final build will have all assets pre-processed.
 
