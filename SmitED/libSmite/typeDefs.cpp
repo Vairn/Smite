@@ -42,9 +42,8 @@ sMaze::sMaze()
 	}
 }
 
-void sMaze::saveToFile(std::string& sFilename)
-{
-	std::ofstream fout(sFilename, std::ios_base::binary);
+void sMaze::saveToFile(std::ofstream& fout)
+{	
 	fout << "LVL";
 	
 	// level walls
@@ -56,6 +55,7 @@ void sMaze::saveToFile(std::string& sFilename)
 		fout << (uint8_t)walldata[i][3];
 	}
 
+	fout << "INF";
 	// write the size of the script
 	{
 		int32_t scriptLen = script.size();
@@ -71,4 +71,32 @@ void sMaze::saveToFile(std::string& sFilename)
 		fout << (uint8_t)smyte;
 	}
 
+}
+
+void sMaze::loadFromFile(std::ifstream& ifsFile)
+{
+	uint8_t hdr[3];
+	ifsFile >> hdr[0];
+	ifsFile >> hdr[1];
+	ifsFile >> hdr[2];
+	// level walls
+	for (int i = 0; i < 1024; i++)
+	{
+		ifsFile >> walldata[i][0];
+		ifsFile >> walldata[i][1];
+		ifsFile >> walldata[i][2];
+		ifsFile >> walldata[i][3];
+	}
+
+	{
+		ifsFile >> hdr[0];
+		ifsFile >> hdr[1];
+		ifsFile >> hdr[2];
+		int32_t scriptLen = 0;
+		uint8_t s01, s02, s03, s04;
+
+		ifsFile >> s04; ifsFile >> s03; ifsFile >> s02; ifsFile >> s01;
+		
+		scriptLen = s01 & (s02 >> 8) & (s02 >> 16) & (s02 >> 24);
+	}
 }

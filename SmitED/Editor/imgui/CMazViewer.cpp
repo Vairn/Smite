@@ -7,6 +7,27 @@
 #include "imgui_internal.h"
 CScriptRoutine* SmitED::CMazViewer::m_pScriptCompiler = nullptr;
 int SmitED::CMazViewer::instance = 1;
+
+void SmitED::CMazViewer::LoadMazeFile(std::ifstream& ifsFile)
+{
+	uint8_t a;
+	ifsFile >> a;
+	ifsFile >> a;
+	ifsFile >> a;
+	ifsFile >> a;
+	ifsFile >> a;
+	pMaz->loadFromFile(ifsFile);
+}
+
+
+void SmitED::CMazViewer::WriteMazeFile(std::ofstream& ofsFile)
+{
+	ofsFile << "MAZ";
+	ofsFile << (uint8_t)1;
+	ofsFile << (uint8_t)0;
+	pMaz->saveToFile(ofsFile);
+}
+
 SmitED::CMazViewer::CMazViewer()
 {
 	sMazeMonsters[0] = ""; sMazeMonsters[1] = "";
@@ -191,6 +212,9 @@ void SmitED::CMazViewer::update()
 	}
 	//memEdit->DrawContents(pData, uiDataSize);
 	end();
+
+	DoFileDialog_Open();
+	DoFileDialog_Save();
 }
 
 void SmitED::CMazViewer::DrawMaze2D()
@@ -298,6 +322,7 @@ void SmitED::CMazViewer::DrawMaze2D()
 	subInfo.append(std::to_string(mapX)).append(" ").append(std::to_string(mapY));
 	ImGui::Text(subInfo.c_str());
 	//ImGui::Dummy(ImVec2(65*15, 32*15));
+
 }
 
 
@@ -362,7 +387,7 @@ void SmitED::CMazViewer::DrawMenuBar()
 				pTextEditor->SetErrorMarkers(aMarkers);
 
 			}
-			std::vector<std::string> filters = { "Python Script", "*.py" };
+			std::vector<std::string> filters = { "Maze Data File", "*.maz" };
 			if (ImGui::MenuItem("Load from File"))
 			{
 				open_file = std::make_shared<pfd::open_file>("Choose Script to load from", "C:\\", filters);
@@ -420,6 +445,8 @@ void SmitED::CMazViewer::DrawMenuBar()
 		ImGui::EndMenuBar();
 
 	}
+
+
 }
 
 inline void SmitED::CMazViewer::DoFileDialog_Open()
@@ -430,18 +457,12 @@ inline void SmitED::CMazViewer::DoFileDialog_Open()
 		if (!result.empty())
 		{
 			//ns::debug::write_line("Opened File %s", result[0].c_str());
-			std::ifstream ifs;
-			ifs.open(result[0], std::ifstream::in);
-			if (ifs.is_open())
+			std::ifstream ifsFile(result[0].c_str(), std::ios_base::binary);
+			if (!ifsFile.fail())
 			{
-
-
-				std::ostringstream streamOut;
-				streamOut << ifs.rdbuf();
-
-				//m_sScriptText = streamOut.str(); ifs.close();
-				//m_pTextEditor->SetText(m_sScriptText);
+				LoadMazeFile(ifsFile);
 			}
+			ifsFile.close();
 		}
 		//std::cout << "Opened file " << result[0] << "\n";
 		open_file = nullptr;
@@ -458,16 +479,14 @@ inline void SmitED::CMazViewer::DoFileDialog_Save()
 			//m_sScriptText = m_pTextEditor->GetText();
 			//ns::debug::write_line("Saved File %s", result.c_str());
 			std::stringstream sOut;
-			std::ofstream ofsFile;
-			ofsFile.open(result.c_str(), std::ofstream::out);
-			//ofsFile.write(m_sScriptText.c_str(), m_sScriptText.size());
-
+			std::ofstream ofsFile(result.c_str(), std::ios_base::binary);
+			
 			if (ofsFile.fail())
 			{
 				//ns::debug::write_line("Error writing to file: %s", result.c_str());
 				ofsFile.clear();
 			}
-
+			WriteMazeFile(ofsFile);
 			ofsFile.close();
 		}
 		//std::cout << "Opened file " << result[0] << "\n";
@@ -518,6 +537,7 @@ inline const TextEditor::LanguageDefinition& SmitED::CMazViewer::LangSmyte()
 	}
 	return langDef;
 }
+
 
 void SmitED::CMazViewer::OnDataSet()
 {

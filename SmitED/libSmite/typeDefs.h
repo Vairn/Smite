@@ -77,7 +77,9 @@ struct sMaze
 public:
 	sMaze();
 
-	void saveToFile(std::string& sFilename);
+	
+	void loadFromFile(std::ifstream& ifsFile); 
+	void saveToFile(std::ofstream& fout);
 
 	
 	//	0: N  1:E  2:S  3:W
@@ -90,5 +92,6 @@ public:
 	std::vector<uint8_t> script;
 	std::vector<std::string> decompiledScript;
 
+	
 	
 };

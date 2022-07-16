@@ -55,6 +55,7 @@ namespace SmitED
 
 		const TextEditor::LanguageDefinition& LangSmyte();
 
+		void LoadMazeFile(std::ifstream& ifsFile);
 	protected:
 	
 	private:
@@ -70,5 +71,6 @@ namespace SmitED
 		std::string sMazeWallset;
 		std::string sMazeDecorations;
 		static int instance;
-};
+		void WriteMazeFile(std::ofstream& ofsFile);
+	};
 }
