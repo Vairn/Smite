@@ -20,17 +20,17 @@ function .l LoadMap{path.s}
       ReadMem 0, &dummy, 1
       ReadMem 0, &dummy, 1
 
-      for i.w=0 to 1023
+      for i.w=0 to 4096
       tmp.b =0
+        
         ReadMem 0, &tmp.b, 1
+        
         if (tmp.b=0)
-          *newLevel\walldata[i] = 0
+          *newLevel\walldata[i+0] = 0
         else
-        *newLevel\walldata[i] = 1
+        *newLevel\walldata[i+0] = 1
         endif
-        ReadMem 0, &dummy, 1
-        ReadMem 0, &dummy, 1
-        ReadMem 0, &dummy, 1
+        
       next
     end if
     vwait 50
@@ -231,7 +231,7 @@ Statement drawView{}
     ;dr = ((playerFacing + CMazePos(i)\facing) & $03);
     ;NPrint "I: " + str$(i)+" X: " + str$(x) + " Y: " +str$(y) + " dr:" + str$(dr): 
     mazePos.w = (((y + py) & $1f) * 32) + ((x + px) & $1F) 
-    wmi.b = *currentLevel\walldata[mazePos.w]
+    wmi.b = *currentLevel\walldata[mazePos.w*4]
     arx = CMazePos(i)\xDelta+3
     ary = CMazePos(i)\yDelta+3
     currentView(i) = wmi.b

@@ -77,6 +77,10 @@ struct sMaze
 public:
 	sMaze();
 
+	void DefaultLayout();
+
+	void ClearMaze();
+
 	
 	void loadFromFile(std::ifstream& ifsFile); 
 	void saveToFile(std::ofstream& fout);
@@ -95,3 +99,5 @@ public:
 	
 	
 };
+
+extern int8_t mazeData[32][32];

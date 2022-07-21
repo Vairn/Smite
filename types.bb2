@@ -105,9 +105,7 @@ NEWTYPE .Item
 End NEWTYPE
 
 NEWTYPE .Level
-  name$
-  walldata.b[1024]
-  coldata.b[1024]
+  walldata.b[4096]  
   strings$[256]
   
 End NEWTYPE 

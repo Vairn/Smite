@@ -321,6 +321,16 @@ void SmitED::CMazViewer::DrawMaze2D()
 	std::string subInfo = "";
 	subInfo.append(std::to_string(mapX)).append(" ").append(std::to_string(mapY));
 	ImGui::Text(subInfo.c_str());
+
+	if (ImGui::Button("Clear Maze"))
+	{
+		pMaz->ClearMaze();
+	}
+	ImGui::SameLine();
+	if (ImGui::Button("Default Demo Maze"))
+	{
+		pMaz->DefaultLayout();
+	}
 	//ImGui::Dummy(ImVec2(65*15, 32*15));
 
 }
@@ -463,6 +473,19 @@ inline void SmitED::CMazViewer::DoFileDialog_Open()
 				LoadMazeFile(ifsFile);
 			}
 			ifsFile.close();
+
+
+			std::string newfilename = result[0].substr(0, result[0].find_last_of('.')) + ".code";
+			std::ifstream codeFile(newfilename.c_str(), std::ios_base::in);
+			if (codeFile.is_open())
+			{
+				std::string sCodeText;
+				std::stringstream strStream;
+				strStream << codeFile.rdbuf(); //read the file
+				sCodeText = strStream.str(); //str holds the content of the file
+				pTextEditor->SetText(sCodeText);
+			}
+			codeFile.close();
 		}
 		//std::cout << "Opened file " << result[0] << "\n";
 		open_file = nullptr;
@@ -489,6 +512,16 @@ inline void SmitED::CMazViewer::DoFileDialog_Save()
 			WriteMazeFile(ofsFile);
 			ofsFile.close();
 		}
+		std::string sEditorText;
+		sEditorText = pTextEditor->GetText();
+		if (sEditorText.empty() == false)
+		{
+			std::stringstream sOut;
+			std::string newfilename = result.substr(0, result.find_last_of('.')) + ".code";
+			std::ofstream ofsFile(newfilename.c_str(), std::ios_base::out);
+			ofsFile << sEditorText;
+			ofsFile.close();
+		}
 		//std::cout << "Opened file " << result[0] << "\n";
 		save_file = nullptr;
 	}
@@ -501,7 +534,9 @@ inline const TextEditor::LanguageDefinition& SmitED::CMazViewer::LangSmyte()
 	if (!inited)
 	{
 		static const char* const keywords[] = {
-			"If" ,"Gosub" ,"Return" ,"End" ,"Goto", "ClearFlag" ,"SetFlag", "PartyVisible", "RollDice", "HasClass", "HasRace", "TriggerFlag", "PointerItem", "WallSide", "PartyDirection", "ElseGoto", "LevelFlag", "GlobalFlag", "PartyOnPos", "MonstersOnPos", "ItemsOnPos", "WallNumber", "Or", "And", "Greaterthan", "Lessthan", "Notequal", "Equal" };
+			"Event", "OnLoad", "If" ,"Gosub" ,"Return" ,"End" ,"Goto", "ClearFlag" ,"SetFlag", "PartyVisible", "RollDice", "HasClass", "HasRace", "TriggerFlag", "PointerItem", "WallSide", "PartyDirection", "ElseGoto", "LevelFlag", "GlobalFlag", "PartyOnPos", "MonstersOnPos", "ItemsOnPos", "WallNumber", "Or", "And", "Greaterthan", "Lessthan", "Notequal", "Equal",
+			"DOOR", "WALL", "OTHER",
+		};
 
 		for (auto& k : keywords)
 			langDef.mKeywords.insert(k);
@@ -509,11 +544,35 @@ inline const TextEditor::LanguageDefinition& SmitED::CMazViewer::LangSmyte()
 		 static const char* const identifiers[] = {
 			"Encounter" ,"IdentifyItems" ,"Turn" ,"Launcher" ,"AddItem" ,"GiveXp" ,"ChangeLevel" ,"RemoveItem" ,"Damage" ,"Sound" ,"Message" ,"StealItem" ,"Teleport" ,"AddMonster" ,"CloseDoor" ,"OpenDoor" ,"ChangeWall" ,"SetWall"
 		 };
+
+		 static const char* const identmessages[]{
+			"Encounter()",
+			"IdentifyItems",
+			"Turn",
+			"Launcher",
+			"AddItem",
+			"GiveXp",
+			"ChangeLevel",
+			"RemoveItem",
+			"Damage(count, max <1d6 is 1,6>)",
+			"Sound(soundIdx)",
+			"Message(type, string$)",
+			"StealItem",
+			"Teleport",
+			"AddMonster",
+			"CloseDoor(MapX, MapY)",
+			"OpenDoor(MapX, MapY)",
+			"ChangeWall(MapX, MapY)",
+			"SetWall((MapX, MapY)"
+		 };
+
+		 int i = 0;
 		 for (auto& k : identifiers)
 		 {
 		 	TextEditor::Identifier id;
-		 	id.mDeclaration = "Built-in function";
+		 	id.mDeclaration = identmessages[i];
 		 	langDef.mIdentifiers.insert(std::make_pair(std::string(k), id));
+			i++;
 		 }
 
 		langDef.mTokenRegexStrings.push_back(std::make_pair<std::string, TextEditor::PaletteIndex>("L?\\\"(\\\\.|[^\\\"])*\\\"", TextEditor::PaletteIndex::String));

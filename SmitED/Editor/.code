@@ -1,0 +1,10 @@
+.OnLoad
+	AddMonster(1,2,4,56,7)
+	Teleport(0, 1,1)
+
+.Event 
+	OpenDoor(23,23)
+
+
+
+

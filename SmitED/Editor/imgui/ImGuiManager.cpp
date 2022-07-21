@@ -102,6 +102,11 @@ SmitED::ImGuiUIManager::ImGuiUIManager(GLFWwindow* window)
 
 
 	ImGuiIO& io = ImGui::GetIO(); (void)io;
+	ImGui::GetStyle().ScaleAllSizes(2.0f);
+	ImFontConfig fc = ImFontConfig();
+	fc.OversampleH = fc.OversampleV = 2.0f;
+	fc.SizePixels = 13.f * 2.0f;
+	io.Fonts->AddFontDefault(&fc);
 	io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;       // Enable Keyboard Controls
 	//io.ConfigFlags |= ImGuiConfigFlags_NavEnableGamepad;      // Enable Gamepad Controls
 	//io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;           // Enable Docking
@@ -189,12 +194,13 @@ void SmitED::ImGuiUIManager::update()
 	ImGui_ImplGlfw_NewFrame();
 	ImGui::NewFrame();
 	ImGuiIO& io = ImGui::GetIO();
-
+	ImGui::SetWindowFontScale(2.f);
 	ShowDockSpace(&show);
 	updateWindows();
 	ImGuiViewportP* viewport = (ImGuiViewportP*)(void*)ImGui::GetMainViewport();
 	ImGuiWindowFlags window_flags = ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoSavedSettings | ImGuiWindowFlags_MenuBar;
 	float height = ImGui::GetFrameHeight();
+	
 	//ImGuiIO& io = ImGui::GetIO();
 	if (ImGui::BeginViewportSideBar("##MainStatusBar", viewport, ImGuiDir_Down, height, window_flags)) {
 		if (ImGui::BeginMenuBar()) {
