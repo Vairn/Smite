@@ -194,7 +194,6 @@ void SmitED::ImGuiUIManager::update()
 	ImGui_ImplGlfw_NewFrame();
 	ImGui::NewFrame();
 	ImGuiIO& io = ImGui::GetIO();
-	ImGui::SetWindowFontScale(2.f);
 	ShowDockSpace(&show);
 	updateWindows();
 	ImGuiViewportP* viewport = (ImGuiViewportP*)(void*)ImGui::GetMainViewport();
