@@ -158,6 +158,7 @@ bkgindex.b=0
 #decorationshapes =200
 #monstershapes = 300
 #fontShapeStart = 400
+#UIShapeStart = 500
 
 #spriteBitmap = 4
 #bkgndBitmap = 5

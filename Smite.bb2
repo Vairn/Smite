@@ -95,6 +95,7 @@ initDemoMode:
 
     ;ProcessWallset{"factory1"}
     LoadFrame{"playfield2.iff"}
+    res.b = LoadUIGfx{"ui_icons"}
     loadWalls{"factory1"}
     res.b = LoadBitmapFont{"font8x8"}
     

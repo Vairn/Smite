@@ -224,3 +224,45 @@ Statement LoadMonsterGfx{fileName$}
 QAMIGA
 BLITZ
 End Statement
+
+Function LoadUIGfx{fileName$}
+QAMIGA
+    shapeIndex.w = #UIShapeStart
+    returntype.b =0
+    shapefile.s = fileName$ + ".uishp"
+    shapesource.s = fileName$ + ".iff"
+ if Exists (shapefile)
+        returntype = -1
+    else
+        ILBMinfo iffFile.s
+        BitMap 3, ILBMWidth,ILBMHeight,ILBMDepth
+        LoadBitMap 3,iffFile.s
+        Use BitMap 3
+        for i=0 to 11
+            GetaShape shapeIndex.w, 0 + (i*17), 2,16,32
+            shapeIndex+1 
+        next
+        for i =0 to 4
+            GetaShape shapeIndex.w, 2+(37*i),40,32,32
+            shapeIndex+1
+        next
+        ; for y=0 to (ILBMHeight/8) -1
+        ;     for x=0 to (ILBMWidth/8) -1
+        ;         GetaShape shapeIndex.w, x*8, y*8, 8,8
+        ;         shapeIndex+1
+        ;     Next ; x
+        ; Next ; y
+        SaveShapes #UIShapeStart, shapeIndex.w, shpFile.s 
+        returntype = -1
+    endif
+BLITZ
+function return returntype.b
+End Function
+; battery
+;0,2,16,32
+;+17
+
+; wall
+;2,40,32,32
+;+37
+;2,72
