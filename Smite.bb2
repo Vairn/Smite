@@ -65,7 +65,7 @@ if doRedraw > 0
     drawView{}    
     doRedraw-1
     drawRadar{}
-    
+    drawMiniMap{}    
 
 shpidx+1
 if shpidx > 520 
@@ -73,7 +73,7 @@ if shpidx > 520
 endif
 endif
 ;drawBitmapText{mx.w, my.w, "X"}
-;DisplaySprite 0,0,mx-4,my-4,0
+DisplaySprite 0,0,mx-4,my-4,0
 
 BBlit  currentBuffer,shpidx,50,180
 

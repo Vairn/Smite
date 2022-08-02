@@ -197,7 +197,51 @@ data .b  0,  0     ; 17
 
 End Statement
 
+Statement drawMiniMap{}
+  Shared playerLoc.w, playerFacing.b, walls()
+  Shared CMazeDr.MazeDir(), CMazePos.MazePos()
+  shared wallslookup(), currentView()
+  Shared *currentLevel.Level
+  Shared bkgindex
+  Boxf 179,193, 179+64, 193+34,0
+  px = playerLoc.w MOD 32;
+	py = playerLoc.w/32;div(int(pos), 32).quot;
+
+  for x=-3 to 3
+    for y=-3 to 3
+      loca.w = (((y+py) & $1f) * 32) + ((x+ px) & $1F) 
+      wmi.b = *currentLevel\walldata[loca.w*4]
+      if (wmi.b = 0)
+        sx.w = ((x+3)*4)
+        sy.w = ((y+3)*4)
+        Boxf 194+sx,194+sy,197+sx, 197+sy, 8
+      endif
+    next ;y
+  next ;x  
+
+End Statement
+
+
 Statement drawMap{}
+  Shared playerLoc.w, playerFacing.b, walls()
+  Shared CMazeDr.MazeDir(), CMazePos.MazePos()
+  shared wallslookup(), currentView()
+  Shared *currentLevel.Level
+  Shared bkgindex
+  Boxf 179,193, 179+64, 193+34,0
+  
+  for x=-0 to 32
+    for y=0 to 32
+      loca.w = (((y) & $1f) * 32) + ((x) & $1F) 
+      wmi.b = *currentLevel\walldata[loca.w*4]
+      if (wmi.b = 0)
+        sx.w = ((x+3)*4)
+        sy.w = ((y+3)*4)
+        Boxf 4+sx,4+sy,8+sx, 8+sy, 8
+      endif
+    next ;y
+  next ;x  
+
 End Statement
 
 Statement drawRadar{}
