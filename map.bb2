@@ -200,6 +200,75 @@ End Statement
 Statement drawMap{}
 End Statement
 
+Statement drawRadar{}
+  Shared playerLoc.w, playerFacing.b, walls()
+  Shared CMazeDr.MazeDir(), CMazePos.MazePos()
+  shared wallslookup(), currentView()
+  Shared *currentLevel.Level
+  Shared bkgindex
+
+  px = playerLoc.w MOD 32;
+	py = playerLoc.w/32;div(int(pos), 32).quot;
+  
+  if playerFacing =0
+  xn.b=0 : yn.b=-1
+  xs.b=0 : ys.b=1
+  xe.b=-1 : ye.b=0
+  xw.b=1 : yw.b=0
+  endif
+  
+  if playerFacing = 3
+  yn.b=0 : xn.b=-1
+  ys.b=0 : xs.b=1
+  ye.b=1 : xe.b=0
+  yw.b=-1 : xw.b=0
+  endif
+  
+  if playerFacing = 2
+  xn.b=0 : yn.b=1
+  xs.b=0 : ys.b=-1
+  xe.b=1 : ye.b=0
+  xw.b=-1 : yw.b=0
+  endif
+  
+  if playerFacing = 1
+  yn.b=0 : xn.b=1
+  ys.b=0 : xs.b=-1
+  ye.b=-1 : xe.b=0
+  yw.b=1 : xw.b=0
+  endif
+  dbugprintstring{Str$(playerFacing)}
+  dbugprintstring{Str$(xn) + " " +Str$(xe) + " "+Str$(xs)+" " +Str$(xw)}
+  dbugprintstring{Str$(yn) + " " +Str$(ye) + " "+Str$(ys)+" " +Str$(yw) }
+  north.w = (((yn + py) & $1f) * 32) + ((xn + px) & $1F) 
+  south.w = (((ys + py) & $1f) * 32) + ((xs + px) & $1F) 
+  east.w = (((ye + py) & $1f) * 32) + ((xe + px) & $1F) 
+  west.w = (((yw + py) & $1f) * 32) + ((xw + px) & $1F) 
+  if (*currentLevel\walldata[north.w*4])
+    blit #UINORTH,92,195
+  else
+    blit #UINORTH+1,92,195
+  endif
+  
+  if (*currentLevel\walldata[south.w*4])
+    blit #UISOUTH,92,195
+  else
+    blit #UISOUTH+1,92,195
+  endif
+  
+  if (*currentLevel\walldata[east.w*4])
+    blit #UIEAST,92,195
+  else
+    blit #UIEAST+1,92,195
+  endif
+  
+  if (*currentLevel\walldata[west.w*4])
+    blit #UIWEST,92,195
+  else
+    blit #UIWEST+1,92,195
+  endif
+end Statement
+
 Statement drawView{}
 
   Shared playerLoc.w, playerFacing.b, walls()

@@ -159,6 +159,11 @@ bkgindex.b=0
 #monstershapes = 300
 #fontShapeStart = 400
 #UIShapeStart = 500
+#UIBatteryEnd = 511
+#UIEAST=512
+#UINORTH=514
+#UISOUTH=516
+#UIWEST=518
 
 #spriteBitmap = 4
 #bkgndBitmap = 5

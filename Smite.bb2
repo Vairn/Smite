@@ -22,7 +22,7 @@ gosub initDemoMode:
 InitCopList 0,44,256,$10008,8,256,0
 BLITZ
 Mouse On
-
+dbugprintstring{"Smite"}
 currentBuffer =0
 ; slices for now, maybe use the display lib later
 ;Slice 0,42,5
@@ -47,6 +47,7 @@ my.w = 0
 MouseArea 0,0,320,256
 
 GetaSprite 0,#fontShapeStart+57
+shpidx.w=500
 ;Pointer 0,0
 Repeat
 VWait
@@ -63,10 +64,19 @@ gosub handlePlayerActions:
 if doRedraw > 0
     drawView{}    
     doRedraw-1
-endif
+    drawRadar{}
+    
 
+shpidx+1
+if shpidx > 520 
+    shpidx = 500
+endif
+endif
 ;drawBitmapText{mx.w, my.w, "X"}
-DisplaySprite 0,0,mx-4,my-4,0
+;DisplaySprite 0,0,mx-4,my-4,0
+
+BBlit  currentBuffer,shpidx,50,180
+
 Until gameEnd
 End
 
@@ -94,11 +104,12 @@ initDemoMode:
     ; Final build will have all assets pre-processed.
 
     ;ProcessWallset{"factory1"}
-    LoadFrame{"playfield2.iff"}
+
     res.b = LoadUIGfx{"ui_icons"}
+    LoadFrame{"playfield2.iff"}
     loadWalls{"factory1"}
     res.b = LoadBitmapFont{"font8x8"}
-    
+
     
 
 return
