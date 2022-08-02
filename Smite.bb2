@@ -94,10 +94,7 @@ initDemoMode:
     ; Demo map for development
     ;*currentLevel = MakeDemoMap{}
     *currentLevel = LoadMap{"maze1.maz"}
-    ; Process and load in a wallset.
-    ; Final build will have all assets pre-processed.
 
-    ;ProcessWallset{"factory1"}
 
     res.b = LoadUIGfx{"ui_icons"}
     LoadFrame{"playfield2.iff"}

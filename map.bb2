@@ -48,7 +48,7 @@ function .l MakeDemoMap{}
     Restore demomap
     For i.w=0 To 1023
       Read tmp.b
-      *newLevel\walldata[i] = tmp.b
+      *newLevel\walldata[i*4] = tmp.b
     Next
     function Return *newLevel  
 
