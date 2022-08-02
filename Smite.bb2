@@ -47,7 +47,6 @@ my.w = 0
 MouseArea 0,0,320,256
 
 GetaSprite 0,#fontShapeStart+57
-shpidx.w=500
 ;Pointer 0,0
 Repeat
 VWait
@@ -67,15 +66,10 @@ if doRedraw > 0
     drawRadar{}
     drawMiniMap{}    
 
-shpidx+1
-if shpidx > 520 
-    shpidx = 500
-endif
 endif
 ;drawBitmapText{mx.w, my.w, "X"}
 DisplaySprite 0,0,mx-4,my-4,0
 
-BBlit  currentBuffer,shpidx,50,180
 
 Until gameEnd
 End
