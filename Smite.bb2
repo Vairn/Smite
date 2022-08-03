@@ -92,8 +92,8 @@ initDemoMode:
     preFillPosData{}
 
     ; Demo map for development
-    ;*currentLevel = MakeDemoMap{}
-    *currentLevel = LoadMap{"maze1.maz"}
+    *currentLevel = MakeDemoMap{}
+    ;*currentLevel = LoadMap{"maze1.maz"}
 
 
     res.b = LoadUIGfx{"ui_icons"}

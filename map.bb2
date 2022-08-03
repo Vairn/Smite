@@ -210,11 +210,19 @@ Statement drawMiniMap{}
   for x=-3 to 3
     for y=-3 to 3
       loca.w = (((y+py) & $1f) * 32) + ((x+ px) & $1F) 
-      wmi.b = *currentLevel\walldata[loca.w*4]
-      if (wmi.b = 0)
+      wmi.b = 0
+      if (y+py >= 0 and y+py < 32)
+        if (x+px >= 0 and x+px < 32)
+          wmi.b = *currentLevel\walldata[loca.w*4]
+        EndIf
+      endif
+      
         sx.w = ((x+3)*4)
         sy.w = ((y+3)*4)
-        Boxf 194+sx,194+sy,197+sx, 197+sy, 8
+      if (wmi.b = 1)
+        Boxf 194+sx,194+sy,197+sx, 197+sy, 31
+      else
+        Boxf 194+sx,194+sy,197+sx, 197+sy, 18
       endif
     next ;y
   next ;x  
@@ -230,14 +238,16 @@ Statement drawMap{}
   Shared bkgindex
   Boxf 179,193, 179+64, 193+34,0
   
-  for x=-0 to 32
-    for y=0 to 32
+  for x=-0 to 31
+    for y=0 to 31
       loca.w = (((y) & $1f) * 32) + ((x) & $1F) 
       wmi.b = *currentLevel\walldata[loca.w*4]
-      if (wmi.b = 0)
-        sx.w = ((x+3)*4)
-        sy.w = ((y+3)*4)
-        Boxf 4+sx,4+sy,8+sx, 8+sy, 8
+      sx.w = ((x+3)*4)
+      sy.w = ((y+3)*4)
+      if (wmi.b = 1)
+          Boxf 4+sx,4+sy,8+sx, 8+sy, 31
+      else
+          Boxf 4+sx,4+sy,8+sx, 8+sy, 18
       endif
     next ;y
   next ;x  
