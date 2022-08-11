@@ -140,6 +140,8 @@ Dim LIST aliveMonsters.MonsterInstance(32)
 ; Pointers
 DEFTYPE .Character *player
 DEFTYPE .Level *currentLevel
+DEFTYPE .Wallset currentWallset
+
 ; Other variables
 playerLoc.w = ((1 & $1f) * 32) + (1 & $1F)
 playerFacing.b = 0
@@ -188,6 +190,8 @@ bkgindex.b=0
 #gs_mainmenu = %0100
 #gs_game = %01000
 #gs_paused = %10000
+gShowMap = 0
 gameEnd = 0
+gameState = #gs_title
 Dim currentView(17)
 

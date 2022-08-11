@@ -259,17 +259,10 @@ QAMIGA
             GetaShape shapeIndex.w, 2+(37*i),74,32,32
             shapeIndex+1
         next
+        Free BitMap 3
         SaveShapes #UIShapeStart, shapeIndex.w, shapefile.s 
         returntype = -1
     endif
 BLITZ
 function return returntype.b
 End Function
-; battery
-;0,2,16,32
-;+17
-
-; wall
-;2,40,32,32
-;+37
-;2,72

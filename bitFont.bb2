@@ -35,6 +35,7 @@ function .b LoadBitmapFont{fileName.s}
             Next ; x
         Next ; y
         SaveShapes #fontShapeStart, shapeIndex.w, shpFile.s 
+        Free BitMap 3
         Function Return -1
     endif
         Function Return 0

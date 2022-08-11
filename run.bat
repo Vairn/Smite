@@ -12,7 +12,7 @@ setlocal EnableDelayedExpansion
 :: Set the project path as seen by WorkBench in the emulated Amiga instance.
 :: (This is a Windows folder set up as a virtual hdd in WinUAE.)
 :: The project path must end with a forward slash (/).
-set project_path_on_amiga=BLITZPROJECTS:/smite/
+set project_path_on_amiga=Smite:/
 
 :: Add all project files, first file must be the main file of the project.
 :: All project filenames must end with "_asc" and have the extension ".bb2".
@@ -28,6 +28,8 @@ set project_files[8]=bitfont.bb2
 set project_files[9]=PlayerActions.bb2
 set project_files[10]=Monster.bb2
 set project_files[11]=FileAccess.bb2
+set project_files[12]=GameMain.bb2
+
 
 :: Set the WinUAE folder.
 :: WinUAE folder must end with a backslash (\)
@@ -79,9 +81,9 @@ for /l %%n in (0,1,%count%) do (
 )
 
 :: Build the arguments for the WinUAEArexx command
-set filelist=!project_path_on_amiga!Build/!project_files[0]!
+set filelist=!project_path_on_amiga!!project_files[0]!
 for /l %%n in (1,1,%count%) do (
-  set filelist=!filelist! !project_path_on_amiga!Build/!project_files[%%n]!
+  set filelist=!filelist! !project_path_on_amiga!!project_files[%%n]!
 )
 
 :: Arexx was too unstable for me so I just did it the old fashion way

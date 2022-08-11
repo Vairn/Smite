@@ -1,0 +1,153 @@
+;game main
+XINCLUDE "debug.bb2"
+XINCLUDE "types.bb2"
+XINCLUDE "PlayerActions.bb2"
+XINCLUDE "Monster.bb2"
+XINCLUDE "Map.bb2"
+XINCLUDE "Graphics.bb2"
+
+
+Statement loadGameAssets{}
+    shared *currentLevel.Level, currentBuffer,  walls()
+    ; These populate the two arrays needed to draw the scene
+    dbugprintstring{"Pre Fill"}
+    preFillFacing{}
+    preFillPosData{}
+     ; Demo map for development
+    dbugprintstring{"Make Demo Map"}
+     
+    *currentLevel = MakeDemoMap{}
+    ;*currentLevel = LoadMap{"maze1.maz"}
+    dbugprintstring{"Load Assets"}
+    
+    res.b = LoadUIGfx{"ui_icons"}
+    LoadFrame{"playfield2.iff"}
+    loadWalls{"factory1"}
+   
+    dbugprintstring{"Reset Walls"}
+    
+    ResetList walls()
+
+    dbugprintstring{"Present Screen"}
+    DisplayPalette 0,1
+    !cycleBuffer{currentBuffer}
+    Cls 0
+    BlockScroll 0,0,320,256,0,0,#guiframe
+    ;ShowBitMap #guiframe
+    drawView{}
+
+    !cycleBuffer{currentBuffer}
+    Cls 0
+    BlockScroll 0,0,320,256,0,0,#guiframe
+    drawView{}
+
+end statement
+
+statement unloadGameAssets{}
+    ; free assets here
+end statement
+
+Statement InitMainScreens{}
+    ; Create a front and back buffer of 256 colours
+    BitMap #frontbuffer,320,256,8
+    BitMap #backbuffer,320,256,8
+    Buffer #frontbuffer, 13684
+    Buffer #backbuffer, 13684
+    
+    ; init our palette
+    InitPalette 1,16
+
+    mx.w = 0
+    my.w = 0
+    MouseArea 0,0,320,256
+    InitCopList 0,44,256,$10008,8,256,0
+    CreateDisplay 0
+    DisplayPalette 0,1
+    res.b = LoadBitmapFont{"font8x8"}
+   GetaSprite 0,#fontShapeStart+57
+   
+End Statement
+
+Statement doMainGameLoop{}
+    shared playerFacing, doRedraw,gShowMap
+; test for player movement
+    if handleMovementKeys{}
+        playerFacing = playerFacing MOD 4
+        doRedraw = 2
+        gShowMap = 0
+        ; draw the view if required
+    endif
+
+    action.b =  handleButtons{}
+    if action = 1 ; we moved
+        playerFacing = playerFacing MOD 4
+        doRedraw = 2
+        gShowMap = 0
+    endif
+    if action = 2 ; Show Map.
+        doRedraw = 2
+    endif
+
+
+    ;dbugprintstring {"Mouse X" + str$(mX) + " Mouse Y:" + str$(my)}
+
+    if doRedraw > 0
+        drawView{}    
+        doRedraw-1
+        drawRadar{}
+        drawMiniMap{}
+        if (gShowMap)
+            drawMap{}
+        endif    
+    endif
+end Statement
+
+Statement setGameState{newState}
+    shared gameState
+    if gameState = #gs_intro
+    endif
+
+    if gameState = #gs_game
+        unloadGameAssets{}
+    endif
+
+    if gameState = #gs_title
+        unloadMainTitle{}
+    endif
+
+    gameState = newState
+
+ if gameState = #gs_intro
+    endif
+
+    if gameState = #gs_game
+        loadGameAssets{}
+    endif
+
+    if gameState = #gs_title
+        loadMainTitle{}
+    endif
+
+
+End Statement
+
+Statement mainLoop{}
+    shared currentBuffer, gameState
+    VWait
+    mx.w = MouseX
+    my.w = MouseY
+
+    !cycleBuffer{currentBuffer}
+
+    if gameState = #gs_game
+    ; test for player movement
+        doMainGameLoop{}
+    endif
+    if gameState = #gs_title
+        doMainTitle{}
+    endif
+
+    ;drawBitmapText{mx.w, my.w, "X"}
+
+    DisplaySprite 0,0,mx-4,my-4,0
+end statement

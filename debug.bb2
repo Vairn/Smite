@@ -1,4 +1,4 @@
-fmt$ = "BLITZ - Output value: %ld hex:($%lx)" + Chr$(10)
+valuefmtString$ = "BLITZ - Output value: %ld hex:($%lx)" + Chr$(10)
 
 Statement dbugprintstring{output$}
   op$ = "BLITZ - "
@@ -8,9 +8,9 @@ Statement dbugprintstring{output$}
 End Statement
 
 Statement dbugprintval{value.l}
-  SHARED fmt$
+  SHARED valuefmtString$
 
   Poke.l $bfff00, value
   Poke.l $bfff00, value
-  Poke.l $bfff04, &fmt$
+  Poke.l $bfff04, &valuefmtString$
 End Statement

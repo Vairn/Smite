@@ -1,4 +1,13 @@
 ; Title.bb2
 
+StateMent loadMainTitle{}
+End Statement
+
+statement unloadMainTitle{}
+End Statement
+
+Statement doMainTitle{}
+End Statement
+
 Statement DrawMenu {}
 End Statement
