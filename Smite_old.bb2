@@ -1,0 +1,122 @@
+NoCli
+WBStartup
+
+DEFTYPE .b
+; Different parts of the Game has been split into different files.
+; Unfortunately Blitzbasic 2 doesn't have a workspace, OR any other modern ide feature, so you have To load them one by one.
+; Or use VSCode and a snazzy arexx script.
+XINCLUDE "debug.bb2"
+XINCLUDE "types.bb2"
+XINCLUDE "fileaccess.bb2"
+XINCLUDE "Monster.bb2"
+XINCLUDE "Map.bb2"
+XINCLUDE "Graphics.bb2"
+XINCLUDE "Title.bb2"
+XINCLUDE "Menu.bb2"
+
+XINCLUDE "bitfont.bb2"
+XINCLUDE "PlayerActions.bb2"
+AMIGA
+gosub initDemoMode:
+;InitCopList CopList#,ypos,height, type,sprites,colors,customs
+InitCopList 0,44,256,$10008,8,256,0
+BLITZ
+Mouse On
+dbugprintstring{"Smite"}
+currentBuffer =0
+; slices for now, maybe use the display lib later
+;Slice 0,42,5
+
+;Use Palette 1
+ResetList walls()
+CreateDisplay 0
+DisplayPalette 0,1
+BLITZ
+!cycleBuffer{currentBuffer}
+Cls 0
+BlockScroll 0,0,320,256,0,0,#guiframe
+;ShowBitMap #guiframe
+drawView{}
+
+!cycleBuffer{currentBuffer}
+Cls 0
+BlockScroll 0,0,320,256,0,0,#guiframe
+drawView{}
+mx.w = 0
+my.w = 0
+MouseArea 0,0,320,256
+
+GetaSprite 0,#fontShapeStart+57
+;Pointer 0,0
+Repeat
+VWait
+mx.w = MouseX
+my.w = MouseY
+
+!cycleBuffer{currentBuffer}
+
+; test for player movement
+gosub handlePlayerActions:
+
+;dbugprintstring {"Mouse X" + str$(mX) + " Mouse Y:" + str$(my)}
+
+if doRedraw > 0
+    drawView{}    
+    doRedraw-1
+    drawRadar{}
+    drawMiniMap{}    
+
+endif
+;drawBitmapText{mx.w, my.w, "X"}
+DisplaySprite 0,0,mx-4,my-4,0
+
+
+Until gameEnd
+End
+
+initDemoMode:
+
+    ; Create a front and back buffer of 256 colours
+    BitMap #frontbuffer,320,256,8
+    BitMap #backbuffer,320,256,8
+    Buffer #frontbuffer, 13684
+    Buffer #backbuffer, 13684
+    
+    ; init our palette
+    InitPalette 0,16
+
+    DEFTYPE .Wallset currentWallset
+
+    ; These populate the two arrays needed to draw the scene
+    preFillFacing{}
+    preFillPosData{}
+
+    ; Demo map for development
+    *currentLevel = MakeDemoMap{}
+    ;*currentLevel = LoadMap{"maze1.maz"}
+
+
+    res.b = LoadUIGfx{"ui_icons"}
+    LoadFrame{"playfield2.iff"}
+    loadWalls{"factory1"}
+    res.b = LoadBitmapFont{"font8x8"}
+
+    
+
+return
+
+handlePlayerActions:
+    if handleMovementKeys{}
+        playerFacing = playerFacing MOD 4
+        doRedraw = 2
+        ; draw the view if required
+    endif
+
+    action.b =  handleButtons{}
+    if action = 1 ; we moved
+        playerFacing = playerFacing MOD 4
+        doRedraw = 2
+    endif
+    if action = 2 ; done something in main window.
+    endif
+return
