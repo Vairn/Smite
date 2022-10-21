@@ -1,12 +1,13 @@
 ; Title.bb2
 
-StateMent loadMainTitle{}
+Statement loadMainTitle{}
 End Statement
 
-statement unloadMainTitle{}
+Statement unloadMainTitle{}
 End Statement
 
 Statement doMainTitle{}
+;setGameState{#gs_game}
 End Statement
 
 Statement DrawMenu {}

@@ -5,18 +5,1450 @@ DEFTYPE .b
 ; Different parts of the Game has been split into different files.
 ; Unfortunately Blitzbasic 2 doesn't have a workspace, OR any other modern ide feature, so you have To load them one by one.
 ; Or use VSCode and a snazzy arexx script.
-XINCLUDE "debug.bb2"
-XINCLUDE "types.bb2"
-XINCLUDE "fileaccess.bb2"
-XINCLUDE "Monster.bb2"
-XINCLUDE "Map.bb2"
-XINCLUDE "Graphics.bb2"
-XINCLUDE "Title.bb2"
-XINCLUDE "Menu.bb2"
+; XINCLUDE "debug.bb2"
+; --------------------------------------------------------------
 
-XINCLUDE "bitfont.bb2"
-XINCLUDE "PlayerActions.bb2"
-XINCLUDE "GameMain.bb2"
+valuefmtString$ = "BLITZ - Output value: %ld hex:($%lx)" + Chr$(10)
+
+Statement dbugprintstring{output$}
+  op$ = "BLITZ - "
+  op$ + output$ 
+  op$ + Chr$(10) ; Newline
+  Poke.l $bfff04, &op$
+End Statement
+
+Statement dbugprintval{value.l}
+  SHARED valuefmtString$
+
+  Poke.l $bfff00, value
+  Poke.l $bfff00, value
+  Poke.l $bfff04, &valuefmtString$
+End Statement
+
+; --------------------------------------------------------------
+
+; XINCLUDE "types.bb2"
+; --------------------------------------------------------------
+
+; Smite Types
+NEWTYPE .Monster
+  name$
+  hp
+  xp
+  damage
+End NEWTYPE
+
+NEWTYPE .Wallset
+  id.w
+  locationX.b
+  locationY.b
+  screenX.w
+  screenY.w
+  width.w
+  height.w
+  walltype.b 
+  shapeIndex.w
+End NEWTYPE
+
+
+NewType .decorations
+  id.w  
+  screenX.w
+  screenY.w
+  width.w
+  height.w
+  shapeIndex.w
+End NewType
+
+
+NEWTYPE .MonsterInstance
+  archetype.Monster
+  x
+  y
+  hp
+End NEWTYPE
+
+NEWTYPE .Character
+  name$
+  race
+  might
+  intelect
+  endurance
+  accuracy
+  speed
+  luck
+  hp
+  maxhp
+  sp
+  maxsp
+  xp
+  level[4] ; 0 fighter, 1 magic, 2 rogue ; 3 other
+  map
+  x
+  y
+  backpack[256] ; items held
+  equipment[16] ; items equiped
+  spellbook[16] ; spells
+ End NEWTYPE
+
+ NEWTYPE .GameData
+  player.Character
+  playerLocation.w
+  playerFacing.b
+  globalFlags.l[32]
+ End NEWTYPE
+
+NEWTYPE .VirtualMachine
+  
+	scriptData.b  ; byte code for the script
+  scriptSize.w  ; size of the script, makes it easy to delete, and know if it is trying to jmp to far.
+
+	abortScript.b ; abort flag
+
+	abortAfterSubroutine.w ; about after subrouting flag
+	dlgResult.w ; what index was selected in the last dialogue box
+	preventRest.b ; cam we sleep now?
+
+	lastScriptFunc.w ; last fun run
+	lastScriptFlags.w ; last flag set 
+
+	subroutineStack.b ; stack for subroutines
+	subroutineStackPos.w ; where we return too
+
+	flagTable.l[18]      ; global flags
+
+	stack.w[30]          ; vm stack
+	stackIndex.w;        ; stack pointer
+
+	activeCharacter.b    ; active character, will always be 1 for my life sucks.
+
+End NEWTYPE
+
+DEFTYPE .VirtualMachine *vm
+DEFTYPE .GameData *gameData
+
+NEWTYPE .Item
+  name$
+  class
+  icon
+  modifier
+  bonus
+  modifier2
+End NEWTYPE
+
+NEWTYPE .Level
+  walldata.b[4096]  
+  strings$[256]
+  
+End NEWTYPE 
+
+NEWTYPE .MazeDir
+  xs.b
+  ys.b
+End NEWTYPE
+
+NEWTYPE .MazePos
+  xDelta.b
+  yDelta.b
+  facing.b
+End NEWTYPE
+
+; Arrays
+
+Dim CMazeDr.MazeDir(4)
+Dim CMazePos.MazePos(18)
+; there are upto 32 different wall decorations
+;Dim wallslookup.Wallset(6,4,32)
+; Lists 
+;Dim List currentScript.LevelScript(1024)
+dim List walls.Wallset(100)
+DEFTYPE .Wallset *wallsPtr
+wallSetCount.w = 0
+
+Dim List items.Item(256)
+Dim List monsters.Monster(16)
+Dim LIST aliveMonsters.MonsterInstance(32)
+
+; Pointers
+DEFTYPE .Character *player
+DEFTYPE .Level *currentLevel
+DEFTYPE .Wallset currentWallset
+
+; Other variables
+playerLoc.w = ((1 & $1f) * 32) + (1 & $1F)
+playerFacing.b = 0
+bkgindex.b=0
+
+; Buffers
+#frontbuffer = 0
+#backbuffer = 1
+#blitbuffer = 0
+#backgroundImage = 2
+#guiframe = 3
+
+; Dungeon Shapes
+#wallshapes = 0
+#doorshapes = 100
+#decorationshapes =200
+#monstershapes = 300
+#fontShapeStart = 400
+#UIShapeStart = 500
+#UIBatteryEnd = 511
+#UIEAST=512
+#UINORTH=514
+#UISOUTH=516
+#UIWEST=518
+
+#spriteBitmap = 4
+#bkgndBitmap = 5
+
+#itemshapes = 5
+; gui
+#itemiconshapes = 10
+#guiShapes = 11
+
+; screen flags
+#eightbitplanes = $08
+#smoothscrolling = $10
+#dualplayfields = $20
+#lores = $000
+#fetchmode3 = $3000
+#agacolors = $10000
+
+
+; Game States
+#gs_title = %00001
+#gs_intro = %00010
+#gs_mainmenu = %0100
+#gs_game = %01000
+#gs_paused = %10000
+gShowMap = 0
+gameEnd = 0
+gameState = #gs_title
+Dim currentView(17)
+
+
+; --------------------------------------------------------------
+
+; XINCLUDE "fileaccess.bb2"
+; --------------------------------------------------------------
+
+
+Statement LoadGame{path.s}
+QAMIGA
+SHARED player
+
+VWait 50; wait
+BLITZ
+End Statement
+
+Statement SaveGame{path.s}
+SHARED player
+QAMIGA
+VWait 150 ; longer wait for saving
+BLITZ
+End Statement
+
+Statement SaveLevelFlags{path.s}
+Shared LevelFlags()
+QAMIGA
+VWait 150  ; longer wait for saving
+Blitz
+End Statement
+
+; --------------------------------------------------------------
+
+; XINCLUDE "Monster.bb2"
+; --------------------------------------------------------------
+
+; Monsters.bb2
+
+Statement LoadMonsters{}
+    QAMIGA
+    VWait 50
+    BLITZ
+End Statement
+
+; --------------------------------------------------------------
+
+; XINCLUDE "Map.bb2"
+; --------------------------------------------------------------
+
+;map.bb2
+
+
+
+function .l LoadMap{path.s}
+    QAMIGA
+    dummy.b =0
+    If ReadFile(0,path.s)
+      DEFTYPE .Level *newLevel
+      *newLevel = AllocMem_(sizeof .Level,0)
+      ; Lazy skip header
+      ReadMem 0, &dummy, 1
+      ReadMem 0, &dummy, 1
+      ReadMem 0, &dummy, 1
+      ReadMem 0, &dummy, 1
+      ReadMem 0, &dummy, 1
+      ReadMem 0, &dummy, 1
+      ReadMem 0, &dummy, 1
+      ReadMem 0, &dummy, 1
+
+      for i.w=0 to 4096
+      tmp.b =0
+        
+        ReadMem 0, &tmp.b, 1
+        
+        if (tmp.b=0)
+          *newLevel\walldata[i+0] = 0
+        else
+        *newLevel\walldata[i+0] = 1
+        endif
+        
+      next
+    end if
+    vwait 50
+    blitz
+    function Return *newLevel  
+End Function
+
+Statement GenerateMap{seed.w}
+
+End Statement
+
+function .l MakeDemoMap{}
+  DEFTYPE .Level *newLevel
+    *newLevel = AllocMem_(sizeof .Level,0)
+    Restore demomap
+    For i.w=0 To 1023
+      Read tmp.b
+      *newLevel\walldata[i*4] = tmp.b
+    Next
+    function Return *newLevel  
+
+  demomap:
+  data .b 1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1
+  data .b 1,0,0,0,0,0,0,0,1,0,0,0,0,1,0,1,0,0,0,1,0,0,1,0,0,1,0,0,0,0,0,1
+  data .b 1,0,0,1,0,1,0,0,1,0,0,0,0,1,0,1,1,0,0,1,0,1,1,0,0,1,1,1,0,1,1,1
+  data .b 1,1,1,1,0,1,1,1,1,0,0,0,0,1,0,0,0,0,0,1,0,0,0,0,0,1,0,0,0,0,0,1
+  data .b 1,0,0,0,0,0,0,0,1,1,1,1,0,1,1,1,1,1,0,1,1,1,1,1,0,1,1,1,1,0,1,1
+  data .b 1,0,0,1,0,1,0,0,1,0,0,0,0,1,0,0,0,0,0,0,0,1,0,0,0,0,1,0,0,0,0,1
+  data .b 1,1,1,1,0,1,1,1,1,0,1,0,0,0,0,0,0,1,0,0,0,0,0,1,0,0,0,0,1,1,0,1
+  data .b 1,0,0,0,0,0,0,0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0,0,1,1,1,1,1,1
+  data .b 1,0,0,1,0,1,0,0,1,0,0,0,0,0,1,0,0,1,0,0,0,0,0,1,0,0,1,0,0,0,0,1
+  data .b 1,1,1,1,0,1,1,1,1,0,1,1,1,0,1,0,0,1,0,1,1,1,1,1,0,0,1,0,1,1,0,1
+  data .b 1,0,0,0,0,0,0,0,1,0,0,1,0,0,1,0,0,1,0,0,0,0,0,1,0,0,1,0,0,1,0,1
+  data .b 1,0,0,1,0,1,0,0,1,0,0,0,0,0,1,0,0,1,0,1,0,1,0,1,0,0,1,0,0,0,0,1
+  data .b 1,1,1,1,0,1,1,1,1,1,1,0,1,1,1,0,0,1,1,1,0,1,1,1,0,0,1,0,0,1,0,1
+  data .b 1,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,0,1
+  data .b 1,0,0,1,0,1,0,0,1,1,1,0,1,1,1,0,0,1,1,1,0,1,1,1,0,0,1,0,0,1,0,1
+  data .b 1,1,1,1,0,1,1,1,1,0,0,0,0,0,1,0,0,1,0,0,0,0,0,1,0,0,1,0,0,0,0,1
+  data .b 1,0,0,0,0,0,0,0,1,0,1,1,1,0,1,0,0,1,0,0,0,0,0,1,0,0,1,0,0,1,0,1
+  data .b 1,0,0,1,0,1,0,0,1,0,0,1,0,0,1,0,0,1,0,1,1,1,0,1,0,0,1,0,1,1,0,1
+  data .b 1,1,1,1,0,1,1,1,1,0,0,1,0,0,1,0,0,1,0,0,0,0,0,1,0,0,1,0,0,0,0,1
+  data .b 1,0,0,0,0,0,0,0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0,0,1,1,1,1,1,1
+  data .b 1,0,0,1,0,1,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1
+  data .b 1,1,1,1,0,1,1,1,1,1,1,1,1,1,1,1,1,1,0,0,0,0,0,0,1,1,1,1,0,1,0,1
+  data .b 1,0,0,0,0,0,0,0,1,1,1,1,1,1,1,1,1,1,0,0,0,0,0,0,0,0,0,1,0,0,0,1
+  data .b 1,0,0,1,0,1,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,1,0,1,1,1,1,0,1
+  data .b 1,1,1,1,0,1,1,1,1,1,1,1,1,1,0,1,1,1,0,1,1,1,0,0,0,0,0,0,0,1,0,1
+  data .b 1,0,0,0,0,0,0,0,1,0,1,1,0,1,0,1,0,0,0,0,1,1,0,1,1,1,1,1,0,1,0,1
+  data .b 1,0,0,1,0,1,0,0,1,0,0,1,0,1,0,1,0,0,1,0,0,1,0,0,0,1,0,0,0,1,0,1
+  data .b 1,1,1,1,0,1,1,0,1,0,1,1,0,0,0,1,0,1,0,0,1,1,0,1,1,1,1,1,0,1,0,1
+  data .b 1,0,0,0,0,1,1,1,1,0,1,1,0,0,0,1,0,0,1,0,0,1,0,0,0,1,0,0,0,1,0,1
+  data .b 1,0,0,1,0,1,0,0,0,0,0,0,0,1,0,1,0,1,0,0,1,1,0,1,1,1,1,1,0,1,0,1
+  data .b 1,1,1,1,0,0,0,1,0,0,1,1,0,1,0,1,0,0,1,0,0,1,0,0,0,1,0,0,0,1,0,1
+  data .b 1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1
+End Function
+
+Statement preFillFacing{}
+
+  Shared CMazeDr()
+  tmp.b=0
+
+  Restore mazeFacingData
+  for i=0 to 3
+    
+    Read tmp.b : CMazeDr(i)\xs= tmp.b ; scale X
+    Read tmp.b : CMazeDr(i)\ys= tmp.b ; scale Y
+  next
+
+  mazeFacingData:
+  data .b 1,  1     ; north
+  data .b	 -1, 1    ; east
+  data .b -1, -1    ; south
+  data .b 1, -1     ; west
+
+End Statement
+
+Statement preFillPosData{}
+  Shared CMazePos()
+
+  Restore mazePosDataNoFacing
+  tmp.b =0
+  for i=0 to 17
+
+    Read tmp.b : CMazePos(i)\xDelta = tmp.b
+    Read tmp.b : CMazePos(i)\yDelta = tmp.b
+    ;Read tmp.b : CMazePos(i)\facing = tmp.b
+  Next
+
+
+  mazePosData:
+  data .b -3, -3, 1     ; 0
+  data .b -2, -3, 1     ; 1
+  data .b -1, -3, 1     ; 2
+  data .b  1, -3, 3     ; 3
+  data .b  2, -3, 3     ; 4
+  data .b  3, -3, 3     ; 5
+  data .b -2, -3, 2     ; 6
+  data .b -1, -3, 2     ; 7
+  data .b  2, -3, 2     ; 8
+  data .b  1, -3, 2     ; 9
+  data .b  0, -3, 2     ; 10
+  data .b -2, -2, 1     ; 11
+  data .b -1, -2, 1     ; 12
+  data .b  1, -2, 3     ; 13
+  data .b  2, -2, 3     ; 14
+  data .b -1, -2, 2     ; 15
+  data .b  1, -2, 2     ; 16
+  data .b  0, -2, 2     ; 17
+  data .b -1, -1, 1     ; 18
+  data .b  1, -1, 3     ; 19
+  data .b -1, -1, 2     ; 20
+  data .b  1, -1, 2     ; 21
+  data .b  0, -1, 2     ; 22 
+  data .b -1,  0, 1     ; 23 
+  data .b  1,  0, 3     ; 24
+  data .b  0,  0, 2     ; 25
+
+  ;    |-3|-2|-1| 0| 1| 2| 3|
+  ;--------------------------
+  ; -3 |00|01|02| |03|04|05|
+  ;    |  |06|07|10|09|08|  |
+  ;--------------------------
+  ; -2 |  |11|12|  |13|14|  |
+  ;    |  |  |15|17|16|  |  |
+  ;-------------------------- 
+  ; -1 |  |  |18|  |19|  |  |
+  ;    |  |  |20|22|21|  |  |
+  ;-------------------------- 
+  ;  0 |  |  |23|25|24|  |  |
+  ;--------------------------
+
+
+  mazePosDataNoFacing:
+  data .b -3, -3     ; 0
+  data .b -2, -3     ; 1
+  data .b -1, -3     ; 2
+  data .b  3, -3     ; 3
+  data .b  2, -3     ; 4
+  data .b  1, -3     ; 5
+  data .b  0, -3     ; 6
+  data .b -2, -2     ; 7
+  data .b -1, -2     ; 8
+  data .b  2, -2     ; 9
+  data .b  1, -2     ; 10
+  data .b  0, -2     ; 11
+  data .b -1, -1     ; 12
+  data .b  1, -1     ; 13
+  data .b  0, -1     ; 14
+  data .b -1,  0     ; 15 
+  data .b  1,  0     ; 16
+  data .b  0,  0     ; 17 
+
+  ;    |-3|-2|-1| 0| 1| 2| 3|
+  ;--------------------------
+  ; -3 |00|01|02|06|05|04|03|
+  ;--------------------------
+  ; -2 |  |07|08|11|10|09|  |
+  ;--------------------------       
+  ; -1 +|  |  |12|14|13|  |  |
+  ;--------------------------       
+  ;  0 |  |  |15|16|17|  |  |
+  ;--------------------------
+
+
+End Statement
+
+Statement drawMiniMap{}
+  Shared playerLoc.w, playerFacing.b, walls()
+  Shared CMazeDr.MazeDir(), CMazePos.MazePos()
+  shared wallslookup(), currentView()
+  Shared *currentLevel.Level, currentBuffer
+  Shared bkgindex
+    BitPlanesBitMap currentBuffer, currentBuffer+5, %00011111
+  use bitmap currentBuffer+5
+  Boxf 179,193, 179+64, 193+34,0
+  px = playerLoc.w MOD 32;
+	py = playerLoc.w/32;div(int(pos), 32).quot;
+
+  for x=-3 to 3
+    for y=-3 to 3
+      loca.w = (((y+py) & $1f) * 32) + ((x+ px) & $1F) 
+      wmi.b = 0
+      if (y+py >= 0 and y+py < 32)
+        if (x+px >= 0 and x+px < 32)
+          wmi.b = *currentLevel\walldata[loca.w*4]
+        EndIf
+      endif
+      
+        sx.w = ((x+3)*4)
+        sy.w = ((y+3)*4)
+      if (wmi.b = 1)
+        Boxf 194+sx,194+sy,198+sx, 198+sy, 31
+      else
+        Boxf 194+sx,194+sy,198+sx, 198+sy, 18
+      endif
+      
+      if x=0: if y=0
+        Boxf 194+sx,194+sy,198+sx, 198+sy, 15
+      endif : endif
+    next ;y
+  next ;x  
+  use bitmap currentBuffer
+
+End Statement
+
+
+Statement drawMap{}
+
+  Shared playerLoc.w, playerFacing.b, walls()
+  Shared CMazeDr.MazeDir(), CMazePos.MazePos()
+  shared wallslookup(), currentView()
+  Shared *currentLevel.Level
+  Shared bkgindex,currentBuffer
+  BitPlanesBitMap currentBuffer, currentBuffer+5, %00011111
+  use bitmap currentBuffer+5
+  ;Boxf 179,193, 179+64, 193+34,0
+  
+  px = playerLoc.w MOD 32;
+	py = playerLoc.w/32;div(int(pos), 32).quot;
+  
+  for x=-0 to 31
+    for y=0 to 31
+      loca.w = (((y) & $1f) * 32) + ((x) & $1F) 
+      wmi.b = *currentLevel\walldata[loca.w*4]
+      sx.w = ((x+3)*4)
+      sy.w = ((y+3)*4)
+      if (wmi.b = 1)
+          Boxf 4+sx,4+sy,8+sx, 8+sy, 31
+      else
+          Boxf 4+sx,4+sy,8+sx, 8+sy, 18
+      endif
+
+      
+      if x=px: if y=py
+        Boxf 4+sx,4+sy,8+sx, 8+sy, 15
+      endif : endif
+    next ;y
+  next ;x  
+  Use Bitmap currentBuffer
+
+End Statement
+
+Statement drawRadar{}
+  
+  Shared playerLoc.w, playerFacing.b, walls()
+  Shared CMazeDr.MazeDir(), CMazePos.MazePos()
+  shared wallslookup(), currentView()
+  Shared *currentLevel.Level
+  Shared bkgindex, currentBuffer
+  BitPlanesBitMap currentBuffer, currentBuffer+5, %00011111
+  use bitmap currentBuffer+5
+  px = playerLoc.w MOD 32;
+	py = playerLoc.w/32;div(int(pos), 32).quot;
+  
+  if playerFacing =0
+  xn.b=0 : yn.b=-1
+  xs.b=0 : ys.b=1
+  xe.b=-1 : ye.b=0
+  xw.b=1 : yw.b=0
+  endif
+  
+  if playerFacing = 3
+  yn.b=0 : xn.b=-1
+  ys.b=0 : xs.b=1
+  ye.b=1 : xe.b=0
+  yw.b=-1 : xw.b=0
+  endif
+  
+  if playerFacing = 2
+  xn.b=0 : yn.b=1
+  xs.b=0 : ys.b=-1
+  xe.b=1 : ye.b=0
+  xw.b=-1 : yw.b=0
+  endif
+  
+  if playerFacing = 1
+  yn.b=0 : xn.b=1
+  ys.b=0 : xs.b=-1
+  ye.b=-1 : xe.b=0
+  yw.b=1 : xw.b=0
+  endif
+  
+  north.w = (((yn + py) & $1f) * 32) + ((xn + px) & $1F) 
+  south.w = (((ys + py) & $1f) * 32) + ((xs + px) & $1F) 
+  east.w = (((ye + py) & $1f) * 32) + ((xe + px) & $1F) 
+  west.w = (((yw + py) & $1f) * 32) + ((xw + px) & $1F) 
+  if (*currentLevel\walldata[north.w*4])
+    blit #UINORTH,92,195
+  else
+    blit #UINORTH+1,92,195
+  endif
+  
+  if (*currentLevel\walldata[south.w*4])
+    blit #UISOUTH,92,195
+  else
+    blit #UISOUTH+1,92,195
+  endif
+  
+  if (*currentLevel\walldata[east.w*4])
+    blit #UIEAST,92,195
+  else
+    blit #UIEAST+1,92,195
+  endif
+  
+  if (*currentLevel\walldata[west.w*4])
+    blit #UIWEST,92,195
+  else
+    blit #UIWEST+1,92,195
+  endif
+  use bitmap currentBuffer
+end Statement
+
+Statement drawView{}
+
+  Shared playerLoc.w, playerFacing.b, walls()
+  Shared CMazeDr.MazeDir(), CMazePos.MazePos()
+  shared wallslookup(), currentView()
+  Shared *currentLevel.Level
+  Shared bkgindex, currentBuffer
+  ; render the background, saves shapes, and does a cls of the view.
+  ; drawing this rect makes the palette shift to the next colour bank by abusing the way blitz only writes the 5 bitplanes
+  ; of the shape, therefore by clearing with a colour that sets the 6th bitplane, I can shift the images up a colour bank
+  ; and not have the extra draw times, renders the level FASTER!
+  
+  BitPlanesBitMap currentBuffer, currentBuffer+5, %00111111
+  use bitmap currentBuffer+5
+
+  Boxf 2,60,244,92, 32
+  Boxf 240,00,244,186, 32
+
+
+  Blit bkgindex,4,4,%1
+  BitPlanesBitMap currentBuffer, currentBuffer+5, %00011111
+  use bitmap currentBuffer+5
+
+  px = playerLoc.w MOD 32;
+	py = playerLoc.w/32;div(int(pos), 32).quot;
+  for i=0 to 17
+    
+    x.b = 0
+    y.b = 0
+    if ((playerFacing MOD 2) <> 0)
+      x = CMazeDr(playerFacing)\xs * CMazePos(i)\yDelta;
+      y = CMazeDr(playerFacing)\ys * CMazePos(i)\xDelta;
+    else
+      x = CMazeDr(playerFacing)\xs * CMazePos(i)\xDelta;
+      y = CMazeDr(playerFacing)\ys * CMazePos(i)\yDelta;				
+    Endif
+    ;dr = ((playerFacing + CMazePos(i)\facing) & $03);
+    ;NPrint "I: " + str$(i)+" X: " + str$(x) + " Y: " +str$(y) + " dr:" + str$(dr): 
+    mazePos.w = (((y + py) & $1f) * 32) + ((x + px) & $1F) 
+    wmi.b = *currentLevel\walldata[mazePos.w*4]
+    arx = CMazePos(i)\xDelta+3
+    ary = CMazePos(i)\yDelta+3
+    currentView(i) = wmi.b
+  next
+      if currentView(14) > 0
+        if  currentView(15) > 0
+          if currentView(16) > 0
+      for i=0 to 13
+        currentView(i) = 0
+      next
+      
+    endif : endif : endif
+
+    if currentView(12) > 0
+      if  currentView(13) > 0
+        if  currentView(14) > 0
+          for i=0 to 11
+            currentView(i) = 0
+          next
+      
+    endif : endif : endif
+
+    if currentView(8) > 0
+      if  currentView(10) > 0
+        if  currentView(11) > 0
+          for i=0 to 7
+            currentView(i) = 0
+          next
+      currentView(9) =0
+      
+    endif : endif : endif
+
+    if currentView(14) > 0
+      currentView(11) = 0
+      currentView(6) = 0
+    endif
+    if currentView(15) > 0
+      currentView(0) = 0
+      currentView(1) = 0
+      currentView(7) = 0
+    endif
+    if currentView(16) > 0
+      currentView(3) = 0
+      currentView(4) = 0
+      currentView(9) = 0
+      
+    endif
+    if currentView(11) > 0      
+      currentView(6) = 0
+    endif
+ 
+    for i = 0 to 17
+
+      wmi.b = currentView(i)
+      if (wmi.b <> 0)
+        ; .draw the required walltile
+        ResetList walls()
+        While(NextItem (walls()))
+          if(walls()\walltype = wmi)
+            tx.b =-walls()\locationX
+            ty.b= walls()\locationY
+            if (tx = CMazePos(i)\xDelta) 
+              if (ty = CMazePos(i)\yDelta)
+              Blit walls()\shapeIndex, walls()\screenX+4, walls()\screenY+4
+              Pop While              
+            EndIf : Endif
+          Endif
+        Wend    
+      Endif
+  Next
+    use bitmap currentBuffer
+End Statement
+
+
+; --------------------------------------------------------------
+
+; XINCLUDE "Graphics.bb2"
+; --------------------------------------------------------------
+
+; Graphics.bb2
+
+Macro cycleBuffer
+;Show `1
+
+DisplayBitMap 0,`1
+`1 = 1-`1
+Use BitMap `1
+
+UnBuffer `1
+;BitMapOutput `1
+;Locate 0,0
+End Macro
+
+Statement LoadFrame{filename$}
+QAMIGA
+
+ILBMinfo filename$
+BitMap  #guiframe, 320,256,8
+LoadBitMap #guiframe, filename$,1
+BLITZ
+End Statement
+
+; only used in Building the game
+; final exe will use pre-processed assets.
+Statement ProcessWallset{filename$}
+SHARED walls()
+SHARED wallslookup()
+QAMIGA
+cMod.b = 16
+BitMap #spriteBitmap,320,256,5
+Use BitMap #spriteBitmap
+BitMap #bkgndBitmap,240,180,5
+
+wallFile.s = filename$+".wll"
+outfile.s = filename$ + ".wllshp"
+palfile.s = filename$ + ".wllpal"
+processed.s = filename$ + ".wllinf"
+dbugprintstring{wallFile.s}
+If ReadFile(0,wallFile.s)
+
+    ;Do your file handling here.
+    colourCount =0
+    wallsetCount = 0
+    tileCount =0
+    dummy.b =0
+    r.w =0
+    g.w = 0
+    b.w = 0
+    shapeIndex.w=2 ; skip 0,1 it is for the background
+    ; these just read the 3 letter acronym
+    ReadMem 0, &dummy, 1
+    ReadMem 0, &dummy, 1
+    ReadMem 0, &dummy, 1
+    
+    ; read the colour count
+
+    ReadMem 0, &colourCount,1
+    dbugprintval{colourCount}
+    InitPalette 1, 64
+    For c=1 To colourCount
+        ReadMem 0,&dummy,1
+        r = dummy
+        if r< 0 then r=256+r
+        ReadMem 0,&dummy,1
+        g = dummy 
+        if g< 0 then g=256+g
+        ReadMem 0,&dummy,1
+        b = dummy 
+        if b< 0 then b=256+b
+        dbugprintstring{"COL: "+Str$(c)+" R:" +Str$(r)+" G:" +Str$(g)+ "B:" +Str$(b)}
+        AGAPalRGB 1,c-1,r*cMod,g*cMod,b*cMod
+     Next
+
+     totalTileCount.w = 0
+     ReadMem 0,&totalTileCount,2
+     dbugprintstring{"Wallset Count: "+Str$(totalTileCount)}
+     ;Dim List walls.Wallset(totalTileCount)
+
+     ReadMem 0,&wallsetCount, 1
+     dbugprintstring{"Wallset Count: "+Str$(wallsetCount)}
+     For w=1 To wallsetCount
+        ReadMem 0,&tileCount,1
+        dbugprintstring{"Tile Count: "+Str$(tileCount)}
+        For tile=1 To tileCount
+            dbugprintval{Loc(0)}
+            ReadMem 0, &walltype.b,1
+            ReadMem 0, &locationX.b,1 : ReadMem 0, &locationY.b,1
+            ReadMem 0, &screenX.w,2 : ReadMem 0, &screenY.w,2
+            ReadMem 0, &width.w,2 : ReadMem 0, &height.w,2
+            If walltype.b = 1 OR walltype.b = 4 OR walltype.b = 5 OR walltype.b = 0
+                If AddItem (walls())
+
+                    dbugprintval{Loc(0)}
+                    walls()\walltype = walltype.b
+                    walls()\locationX = locationX.b : walls()\locationY = locationY.b
+                    walls()\screenX = screenX.w : walls()\screenY = screenY.w
+                    walls()\width = width.w : walls()\height = height.w
+                    walls()\shapeIndex = shapeIndex
+                 
+                EndIf
+            Endif
+        
+            offx.w =0
+            offy.w= 0
+            skipCol.b=-1
+            If walltype.b = 1 OR walltype.b = 4 OR walltype.b = 5
+            Use BitMap #spriteBitmap
+            Cls 0
+            Else
+            Use BitMap #bkgndBitmap
+            skipCol.b = 0
+            offx = screenX
+            offy = screenY
+            EndIf
+             dbugprintstring{"Wall Size: " + str$(width.w) + " Height:" + str$(height.w)}
+            For py.w=1 To height.w
+            ;dbugprintval{py.w}
+                For px.w=1 To width.w
+                    ;dbugprintval{px.w}
+                    ReadMem 0,&idx,1
+                    If idx <> skipCol
+                        Plot offx+px.w,offy+py.w,idx
+                    EndIf
+                Next
+            Next
+            If walltype.b = 1 OR walltype.b = 4 OR walltype.b = 5 OR walltype.b = 0
+                GetaShape shapeIndex,1, 1, width.w,height.w
+                shapeIndex+1
+            EndIf
+        Next
+
+     Next
+    CloseFile 0
+    Use BitMap #bkgndBitmap
+    GetaShape 0, 1,1,239,179 ; background frame 1
+    GetaShape 1, 1,1,239,179 ; background frame 2
+    XFlip 1                  ; fliping the background for when you walk or turn to make it look that you are moving
+
+    SaveShapes 0,shapeIndex,outfile.s
+    SavePalette 1, palfile.s
+
+    ; Write the data for the walls that we can load it faster next time.
+    if OpenFile(0,processed.s)
+        ;Do your file handling here.
+        sizeWall.w = SizeOf .Wallset
+        ResetList walls()
+        count.w =0;
+        while(NextItem (walls()))
+            count+1
+        wend
+
+        ; write number of tiles
+        WriteMem 0,&count.w,2
+
+        ResetList walls()
+        
+       While(NextItem (walls()))
+            WriteMem 0, walls(), sizeWall.w
+        wend
+
+        CloseFile 0
+    else
+        ;The file was not successfully opened. Do your error handling here.
+    endif
+
+    
+    Free BitMap #bkgndBitmap
+    Free BitMap #spriteBitmap
+Else
+    ;The file was not successfully opened. Do your error handling here.
+EndIf
+BLITZ
+End Statement
+
+
+
+Statement loadWalls{filename$}
+shared walls()
+QAMIGA
+sizeWall.w = SizeOf .Wallset
+
+shapefile.s = filename$ + ".wllshp"
+palfile.s = filename$ + ".wllpal"
+processed.s = filename$ + ".wllinf"
+
+dbugprintstring {"Loading - Palette: " + palfile.s}
+LoadPalette 1, palfile.s,32
+dbugprintstring {"Loading - Shapes: " + shapefile.s}
+LoadShapes 0,shapefile.s
+
+dbugprintstring {"Loading - WallData: " + processed.s}
+if ReadFile(0, processed.s)
+    ;Do your file handling here.
+    count.w =0
+    ReadMem 0, &count.w,2
+    ResetList walls()
+    for idx.w=0 to count.w
+        AddItem walls() 
+        ReadMem 0, walls(), sizeWall.w
+    next
+    CloseFile 0
+    ResetList walls()
+else
+    ProcessWallset{filename$}    
+endif
+
+BLITZ
+End Statement
+
+Statement LoadDoors{fileName$}
+QAMIGA
+BLITZ
+End Statement
+
+Statement LoadDecorations{fileName$}
+QAMIGA
+Blitz
+End Statement
+
+Statement LoadMonsterGfx{fileName$}
+QAMIGA
+BLITZ
+End Statement
+
+Function LoadUIGfx{fileName$}
+QAMIGA
+    shapeIndex.w = #UIShapeStart
+    dbugprintval{shapeIndex}
+    returntype.b =0
+    shapefile.s = fileName$ + ".uishp"
+    shapesource.s = fileName$ + ".iff"
+    dbugprintstring{"Loading UI Shapes"}
+ if Exists (shapefile)
+       dbugprintstring {"Baked " + shapefile.s }
+          LoadShapes shapeIndex.w, shapefile
+        returntype = -1
+    else
+        dbugprintstring {"Building " + shapesource.s }
+        ILBMinfo shapesource.s
+        BitMap 3, ILBMWidth,ILBMHeight,ILBMDepth
+        LoadBitMap 3,shapesource.s
+        dbugprintval{ILBMWidth}
+        dbugprintval{ILBMHeight}
+        dbugprintval{ILBMDepth}
+        Use BitMap 3
+        for i=0 to 11
+            dbugprintval{i}
+            GetaShape shapeIndex.w, 0 + (i*16), 2,16,32
+            shapeIndex+1 
+            dbugprintval{shapeIndex}
+        next
+        for i =0 to 4
+            dbugprintval{i}
+            GetaShape shapeIndex.w, 2+(37*i),40,32,32
+            shapeIndex+1
+            GetaShape shapeIndex.w, 2+(37*i),74,32,32
+            shapeIndex+1
+        next
+        Free BitMap 3
+        SaveShapes #UIShapeStart, shapeIndex.w, shapefile.s 
+        returntype = -1
+    endif
+BLITZ
+function return returntype.b
+End Function
+
+; --------------------------------------------------------------
+
+; XINCLUDE "Title.bb2"
+; --------------------------------------------------------------
+
+; Title.bb2
+
+Statement loadMainTitle{}
+End Statement
+
+Statement unloadMainTitle{}
+End Statement
+
+Statement doMainTitle{}
+;setGameState{#gs_game}
+End Statement
+
+Statement DrawMenu {}
+End Statement
+
+; --------------------------------------------------------------
+
+; XINCLUDE "Menu.bb2"
+; --------------------------------------------------------------
+
+; Menu.bb2
+
+; --------------------------------------------------------------
+
+
+; XINCLUDE "bitfont.bb2"
+; --------------------------------------------------------------
+
+;bitFont.bb2
+; Bitmap font Functions
+
+; LoadBitmapFont
+; 
+
+
+NEWTYPE .fontData
+    startIndex.w
+    shapeCount.w
+end NEWTYPE
+
+function .b LoadBitmapFont{fileName.s}
+     QAMIGA
+
+    shapeIndex.w = #fontShapeStart
+
+    iffFile.s = fileName.s + ".iff"
+    ;shpDesc.s = fileName.s + "fntDsc"
+    shpFile.s = fileName.s + ".fntShp"
+
+    if Exists (shpFile)
+        LoadShapes shapeIndex.w, shpFile
+        Function Return -1
+    else
+        ILBMinfo iffFile.s
+        BitMap 3, ILBMWidth,ILBMHeight,ILBMDepth
+        LoadBitMap 3,iffFile.s
+        Use BitMap 3
+        for y=0 to (ILBMHeight/8) -1
+            for x=0 to (ILBMWidth/8) -1
+                GetaShape shapeIndex.w, x*8, y*8, 8,8
+                shapeIndex+1
+            Next ; x
+        Next ; y
+        SaveShapes #fontShapeStart, shapeIndex.w, shpFile.s 
+        Free BitMap 3
+        Function Return -1
+    endif
+        Function Return 0
+
+    BLITZ
+End Function
+
+Statement drawBitmapText{scX.w, scY.w, strtext.s}
+    shared currentBuffer
+    
+    strLen.w = Len (strtext.s)
+    
+    if strLen = 0 then Statement Return
+
+    for c =1 to strLen.w
+        ascii.w = Asc(Mid$(strtext.s,c,1))
+        if ascii.w = 10
+            scY + 8
+        endif
+
+        ascii-31 ; string font starts from the space character
+        BBlit currentBuffer,#fontShapeStart + ascii.w, scX.w + ((c-1)*8), scY,%0000000
+    next
+End Statement
+
+Statement drawColouredText{scX.w, scY.w, R.w, G.w, B.w, strtext.s}
+    ;; Set Colour
+    AGAPalRGB  1,1,R,G,B
+    DisplayPalette 0,1
+    ;; Draw Text 
+    drawBitmapText{scX, scY, strtext}
+End Statement
+
+; --------------------------------------------------------------
+
+; XINCLUDE "PlayerActions.bb2"
+; --------------------------------------------------------------
+
+
+
+; Movement Commands
+
+Function .w mazeMove{originalPos.w, dir.b}
+    Shared *currentLevel.Level
+    shared bkgindex
+	x.b=0
+    y.b=0
+	x = originalPos.w MOD 32;
+	y = originalPos.w/32;div(int(pos), 32).quot;
+	;dbugprintstring{ str$(x) + " " + str$(y)}
+
+    Select dir.b
+        Case 0
+            y-1
+        case 1
+            x+1
+        case 2
+            y+1
+        case 3
+            x-1
+        Default
+    End Select
+    newPos.w = ((y & $1f) * 32) + (x & $1F) 
+    ;long newPos = ((y & 0x1f) * 32) + (x & 0x1F);
+
+	wmi.b = *currentLevel\walldata[newPos*4]
+	if (wmi = 1)
+		function return originalPos;
+	end if
+    ;dbugprintstring{ str$(x) + " " + str$(y)}
+	bkgindex+1
+    bkgindex = bkgindex Mod 2
+    function return newPos;
+End Function
+
+
+Function .b handleMovementKeys{}
+Shared playerLoc.w, playerFacing.b
+shared bkgindex
+realFacing.b = 0
+
+if RawStatus ($4C) or RawStatus($11); Up
+    realFacing.b= (playerFacing.b) MOD 4
+    playerLoc.w =  mazeMove{playerLoc.w, realFacing.b} ; Up Arrow
+    Function Return True
+EndIf
+if RawStatus ($4D) or RawStatus($21); Down
+    realFacing.b= (playerFacing.b+2) MOD 4
+    playerLoc.w =  mazeMove{playerLoc.w, realFacing.b} ; Down Arrow
+    Function Return True
+EndIf
+if RawStatus ($46) or RawStatus($10); Turn Left
+    playerFacing.b-1
+    bkgindex+1
+    bkgindex = bkgindex Mod 2
+    Function Return True
+EndIf
+if RawStatus ($5f) or RawStatus($12) ; Turn Right
+    playerFacing.b+1
+    bkgindex+1
+    bkgindex = bkgindex Mod 2
+
+    Function Return True
+EndIf
+
+if RawStatus($4E) or RawStatus($22)
+     realFacing.b= (playerFacing.b+1) MOD 4
+    playerLoc.w =  mazeMove{playerLoc.w, realFacing.b} ; Left Arrow
+    Function Return True
+endif
+
+if RawStatus($4F) or RawStatus($20)
+ realFacing.b= (playerFacing.b+3) MOD 4
+    playerLoc.w =  mazeMove{playerLoc.w, realFacing.b} ; Right Arrow
+    Function Return True
+endif
+
+    function return 0
+End Function
+
+function handleButtons {}
+    ; where in the screen are we.
+    ; this changes where we are.
+    Shared playerLoc.w, playerFacing.b
+    shared bkgindex, gameEnd
+    shared gShowMap
+    shared *player
+
+    realFacing.b = 0
+    mx.w = MouseX
+    my.w = MouseY
+    if mx < 240  : if my < 176
+        Goto mainWindow:
+    endif : endif 
+    if  my > 176  : if mx < 240
+        Goto lowerWindow:
+    EndIf : endif
+
+    Goto invent:  
+
+    mainWindow:
+    ; find where in the main zone we have clicked.
+    if mx < 5  : if my < 5
+        if JoyB(0)=1 then gameEnd = 1
+    endif : endif
+    goto done:
+
+
+    lowerWindow:
+    if JoyB(0)=1
+    ; Arrows
+    ; top row
+        if my> 190  : if my < 210
+            if mx > 3  : if mx < 23
+                playerFacing.b-1
+                bkgindex+1
+                bkgindex = bkgindex Mod 2
+                Function Return 1
+            endif : endif
+            if mx > 23  : if mx < 44
+                realFacing.b= (playerFacing.b) MOD 4
+                playerLoc.w =  mazeMove{playerLoc.w, realFacing.b} ; Up Arrow
+                Function Return 1
+            endif : endif
+
+            if mx > 44  : if mx < 64
+                playerFacing.b+1
+                bkgindex+1
+                bkgindex = bkgindex Mod 2
+                Function Return 1
+            endif : endif
+        Endif : endif
+
+        ; bottom row
+        if my > 210  : if my < 230
+        ; 4,23,44
+            if mx > 3  : if mx < 23
+                realFacing.b= (playerFacing.b+3) MOD 4
+                playerLoc.w =  mazeMove{playerLoc.w, realFacing.b} ; Left Arrow
+                Function Return 1
+            endif : endif
+            if mx > 23  : if mx < 44
+                realFacing.b= (playerFacing.b + 2)  MOD 4
+                playerLoc.w =  mazeMove{playerLoc.w, realFacing.b } ; down Arrow
+                Function Return 1
+            endif : endif
+
+            if mx > 44  : if mx < 87
+                realFacing.b= (playerFacing.b+1) MOD 4
+                playerLoc.w =  mazeMove{playerLoc.w, realFacing.b} ; Right Arrow
+                Function Return 1 
+            endif : endif
+        Endif : Endif
+
+        if mx > 179 : if mx < 240
+            if my > 190 : if my < 230
+            gShowMap = 1-gShowMap
+            function Return 2
+            endif : endif
+        endif : endif
+    
+    endif
+
+    ; 65,190
+    if mx > 65  : if my > 190
+        if mx < 88  : if my < 230
+
+            ;drawBitmapText{5, 240,  "BATTERY LEVEL 00"}
+            drawColouredText{5, 240, 255,128,0, "TEST TEXT"}
+        endif : endif
+    endif : endif
+    ; 88, 230
+    goto done:
+
+    invent:
+    goto done:
+
+    done:
+    function return 0
+End Function
+
+; --------------------------------------------------------------
+
+; XINCLUDE "GameMain.bb2"
+; --------------------------------------------------------------
+
+;game main
+
+
+Statement loadGameAssets{}
+    shared *currentLevel.Level, currentBuffer,  walls()
+    ; These populate the two arrays needed to draw the scene
+    dbugprintstring{"Pre Fill"}
+    preFillFacing{}
+    preFillPosData{}
+     ; Demo map for development
+    dbugprintstring{"Make Demo Map"}
+     
+    *currentLevel = MakeDemoMap{}
+    ;*currentLevel = LoadMap{"maze1.maz"}
+    dbugprintstring{"Load Assets"}
+    
+    res.b = LoadUIGfx{"ui_icons"}
+    LoadFrame{"playfield2.iff"}
+    loadWalls{"factory1"}
+   
+    dbugprintstring{"Reset Walls"}
+    
+    ResetList walls()
+
+    dbugprintstring{"Present Screen"}
+    DisplayPalette 0,1
+    !cycleBuffer{currentBuffer}
+    Cls 0
+    BlockScroll 0,0,320,256,0,0,#guiframe
+    ;ShowBitMap #guiframe
+    drawView{}
+
+    !cycleBuffer{currentBuffer}
+    Cls 0
+    BlockScroll 0,0,320,256,0,0,#guiframe
+    drawView{}
+
+end statement
+
+statement unloadGameAssets{}
+    ; free assets here
+end statement
+
+Statement InitMainScreens{}
+    ; Create a front and back buffer of 256 colours
+    BitMap #frontbuffer,320,256,8
+    BitMap #backbuffer,320,256,8
+    Buffer #frontbuffer, 13684
+    Buffer #backbuffer, 13684
+    
+    ; init our palette
+    InitPalette 1,16
+
+    mx.w = 0
+    my.w = 0
+    MouseArea 0,0,320,256
+    InitCopList 0,44,256,$10008,8,256,0
+    CreateDisplay 0
+    DisplayPalette 0,1
+    res.b = LoadBitmapFont{"font8x8"}
+   GetaSprite 0,#fontShapeStart+57
+   
+End Statement
+
+Statement doMainGameLoop{}
+    shared playerFacing, doRedraw,gShowMap
+; test for player movement
+    if handleMovementKeys{}
+        playerFacing = playerFacing MOD 4
+        doRedraw = 2
+        gShowMap = 0
+        ; draw the view if required
+    endif
+
+    action.b =  handleButtons{}
+    if action = 1 ; we moved
+        playerFacing = playerFacing MOD 4
+        doRedraw = 2
+        gShowMap = 0
+    endif
+    if action = 2 ; Show Map.
+        doRedraw = 2
+    endif
+
+
+    ;dbugprintstring {"Mouse X" + str$(mX) + " Mouse Y:" + str$(my)}
+
+    if doRedraw > 0
+        drawView{}    
+        doRedraw-1
+        drawRadar{}
+        drawMiniMap{}
+        if (gShowMap)
+            drawMap{}
+        endif    
+    endif
+end Statement
+
+Statement setGameState{newState}
+    shared gameState
+    if gameState = #gs_intro
+    endif
+
+    if gameState = #gs_game
+        unloadGameAssets{}
+    endif
+
+    ;if gameState = #gs_title
+    ;    #unloadMainTitle{}
+    ;endif
+
+    gameState = newState
+
+ if gameState = #gs_intro
+    endif
+
+    if gameState = #gs_game
+        loadGameAssets{}
+    endif
+
+    if gameState = #gs_title
+       ; loadMainTitle{}
+    endif
+
+
+End Statement
+
+Statement mainLoop{}
+    shared currentBuffer, gameState
+    VWait
+    mx.w = MouseX
+    my.w = MouseY
+
+    !cycleBuffer{currentBuffer}
+
+    if gameState = #gs_game
+    ; test for player movement
+        doMainGameLoop{}
+    endif
+    if gameState = #gs_title
+        ;doMainTitle{}
+    endif
+
+    ;drawBitmapText{mx.w, my.w, "X"}
+
+    DisplaySprite 0,0,mx-4,my-4,0
+end statement
+
+; --------------------------------------------------------------
+
 AMIGA
 
 dbugprintstring{"InitMainScreens {"}

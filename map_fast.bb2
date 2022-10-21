@@ -203,7 +203,7 @@ Statement drawMiniMap{}
   shared wallslookup(), currentView()
   Shared *currentLevel.Level, currentBuffer
   Shared bkgindex
-    BitPlanesBitMap currentBuffer, currentBuffer+5, %00011111
+  BitPlanesBitMap currentBuffer, currentBuffer+5, %00011111
   use bitmap currentBuffer+5
   Boxf 179,193, 179+64, 193+34,0
   px = playerLoc.w MOD 32;

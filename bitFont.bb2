@@ -57,7 +57,14 @@ Statement drawBitmapText{scX.w, scY.w, strtext.s}
         endif
 
         ascii-31 ; string font starts from the space character
-        BBlit currentBuffer,#fontShapeStart + ascii.w, scX.w + ((c-1)*8), scY,%000000
+        BBlit currentBuffer,#fontShapeStart + ascii.w, scX.w + ((c-1)*8), scY,%0000000
     next
 End Statement
 
+Statement drawColouredText{scX.w, scY.w, R.w, G.w, B.w, strtext.s}
+    ;; Set Colour
+    AGAPalRGB  1,1,R,G,B
+    DisplayPalette 0,1
+    ;; Draw Text 
+    drawBitmapText{scX, scY, strtext}
+End Statement

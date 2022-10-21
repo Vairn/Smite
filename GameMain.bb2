@@ -111,9 +111,9 @@ Statement setGameState{newState}
         unloadGameAssets{}
     endif
 
-    if gameState = #gs_title
-        unloadMainTitle{}
-    endif
+    ;if gameState = #gs_title
+    ;    #unloadMainTitle{}
+    ;endif
 
     gameState = newState
 
@@ -125,7 +125,7 @@ Statement setGameState{newState}
     endif
 
     if gameState = #gs_title
-        loadMainTitle{}
+       ; loadMainTitle{}
     endif
 
 
@@ -144,7 +144,7 @@ Statement mainLoop{}
         doMainGameLoop{}
     endif
     if gameState = #gs_title
-        doMainTitle{}
+        ;doMainTitle{}
     endif
 
     ;drawBitmapText{mx.w, my.w, "X"}

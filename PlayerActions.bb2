@@ -89,6 +89,8 @@ function handleButtons {}
     Shared playerLoc.w, playerFacing.b
     shared bkgindex, gameEnd
     shared gShowMap
+    shared *player
+
     realFacing.b = 0
     mx.w = MouseX
     my.w = MouseY
@@ -167,7 +169,9 @@ function handleButtons {}
     ; 65,190
     if mx > 65  : if my > 190
         if mx < 88  : if my < 230
-            drawBitmapText{5, 240,  "BATTERY LEVEL 00"}
+
+            ;drawBitmapText{5, 240,  "BATTERY LEVEL 00"}
+            drawColouredText{5, 240, 255,128,0, "TEST TEXT"}
         endif : endif
     endif : endif
     ; 88, 230
