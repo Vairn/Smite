@@ -16,8 +16,8 @@ set project_path_on_amiga=Smite:/
 
 :: Add all project files, first file must be the main file of the project.
 :: All project filenames must end with "_asc" and have the extension ".bb2".
-set project_files[0]=smite.bb2
-set input_files[0]=Smite_main.bb2
+set input_files[0]=smite.bb2
+set project_files[0]=Smite_main.bb2
 ::set project_files[1]=types.bb2
 ::set project_files[2]=Map.bb2
 ::set project_files[3]=script.bb2
@@ -73,6 +73,8 @@ if defined project_files[%x%] (
    GOTO :arrayLength
 )
 
+python preprocess.py !project_files[0]! !input_files[0]!
+
 :: Reduce project file count by one for loops
 set /a count=%x%-1
 
@@ -87,7 +89,7 @@ for /l %%n in (1,1,%count%) do (
   set filelist=!filelist! !project_path_on_amiga!!project_files[%%n]!
 )
 
-python preprocess.py !project_files[0]! !input_files[0]!
+
 :: Arexx was too unstable for me so I just did it the old fashion way
 echo rx blitzbasic2 !filelist!>>cmd.txt
 COPY .vscode\User-Startup+cmd.txt dh0\s\User-Startup
