@@ -1,0 +1,69 @@
+; Title.bb2
+XINCLUDE "bitfont.bb2"
+
+introCounter.w = 0
+Statement loadIntro{}
+    QAMIGA
+    ILBMinfo "JamLogo.iff"
+    BitMap #titlescreenbitmap, ILBMWidth,ILBMHeight,ILBMDepth
+    InitPalette #titlepalette, 256
+    LoadBitMap #titlescreenbitmap,"JamLogo.iff",#titlepalette
+
+    BLITZ
+    DisplayPalette 0, #titlepalette
+    !cycleBuffer{currentBuffer}
+    BlockScroll 0,0,320,256,0,0,#titlescreenbitmap
+    !cycleBuffer{currentBuffer}
+    BlockScroll 0,0,320,256,0,0,#titlescreenbitmap
+    !cycleBuffer{currentBuffer}
+
+End Statement
+
+Statement unloadIntro{}
+    Free Palette #titlepalette
+    Free Bitmap #titlescreenbitmap
+
+
+End Statement
+
+function doIntro{}
+    shared currentBuffer
+    shared gameEnd
+    shared introCounter.w
+    
+    retVal.b = 1
+    introCounter+1
+    
+    ;BlockScroll 0,0,320,256,0,0,#titlescreenbitmap 
+
+    if JoyB(0)=1
+        if introCounter < 200
+        introCounter = 199
+            function return retVal.b
+        end if
+        if introCounter > 200 : if introCounter < 400
+            retVal = 2
+            function return retVal.b
+        end if :end if
+    endif
+    if introCounter = 200
+    QAMIGA 
+        ILBMinfo "dt.iff"
+        BitMap #titlescreenbitmap, ILBMWidth,ILBMHeight,ILBMDepth
+        InitPalette #titlepalette, 256
+        LoadBitMap #titlescreenbitmap,"dt.iff",#titlepalette
+
+        BLITZ
+        DisplayPalette 0, #titlepalette
+        !cycleBuffer{currentBuffer}
+        BlockScroll 0,0,320,256,0,0,#titlescreenbitmap
+        !cycleBuffer{currentBuffer}
+        BlockScroll 0,0,320,256,0,0,#titlescreenbitmap
+        !cycleBuffer{currentBuffer} 
+    end if 
+
+    if introCounter = 400
+        retVal = 2
+    end if
+    function return retVal.b
+End function
