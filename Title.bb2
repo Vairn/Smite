@@ -1,14 +1,34 @@
 ; Title.bb2
 
 Statement loadMainTitle{}
+    QAMIGA
+    ILBMinfo "menu.iff"
+    BitMap #titlescreenbitmap, ILBMWidth,ILBMHeight,ILBMDepth
+    InitPalette #titlepalette, 256
+    LoadBitMap #titlescreenbitmap,"menu.iff",#titlepalette
+   ; Use BitMap #titlescreenbitmap
+    BLITZ
 End Statement
 
 Statement unloadMainTitle{}
+    Free Palette #titlepalette
+    Free Bitmap #titlescreenbitmap
+
 End Statement
 
-Statement doMainTitle{}
+function doMainTitle{}
 ;setGameState{#gs_game}
-End Statement
+    ; returning 1 exits the title to a new game
+    
+    ; returning 2 loads the load game menu
+
+    ; returning 3 is options
+
+    ; 4 means do nothing
+    DisplayBitMap 0,#titlescreenbitmap
+    DisplayPalette 0, #titlepalette
+    function return 4 
+End function
 
 Statement DrawMenu {}
 End Statement

@@ -201,7 +201,8 @@ bkgindex.b=0
 
 #spriteBitmap = 4
 #bkgndBitmap = 5
-
+#titlescreenbitmap = 6
+#titlepalette = 5
 #itemshapes = 5
 ; gui
 #itemiconshapes = 10
@@ -1011,14 +1012,34 @@ End Function
 ; Title.bb2
 
 Statement loadMainTitle{}
+    QAMIGA
+    ILBMinfo "menu.iff"
+    BitMap #titlescreenbitmap, ILBMWidth,ILBMHeight,ILBMDepth
+    InitPalette #titlepalette, 256
+    LoadBitMap #titlescreenbitmap,"menu.iff",#titlepalette
+   ; Use BitMap #titlescreenbitmap
+    BLITZ
 End Statement
 
 Statement unloadMainTitle{}
+    Free Palette #titlepalette
+    Free Bitmap #titlescreenbitmap
+
 End Statement
 
-Statement doMainTitle{}
+function doMainTitle{}
 ;setGameState{#gs_game}
-End Statement
+    ; returning 1 exits the title to a new game
+    
+    ; returning 2 loads the load game menu
+
+    ; returning 3 is options
+
+    ; 4 means do nothing
+    DisplayBitMap 0,#titlescreenbitmap
+    DisplayPalette 0, #titlepalette
+    function return 4 
+End function
 
 Statement DrawMenu {}
 End Statement
@@ -1301,7 +1322,6 @@ End Function
 
 ;game main
 
-
 Statement loadGameAssets{}
     shared *currentLevel.Level, currentBuffer,  walls()
     ; These populate the two arrays needed to draw the scene
@@ -1406,9 +1426,9 @@ Statement setGameState{newState}
         unloadGameAssets{}
     endif
 
-    ;if gameState = #gs_title
-    ;    #unloadMainTitle{}
-    ;endif
+    if gameState = #gs_title
+        unloadMainTitle{}
+    endif
 
     gameState = newState
 
@@ -1420,7 +1440,7 @@ Statement setGameState{newState}
     endif
 
     if gameState = #gs_title
-       ; loadMainTitle{}
+        loadMainTitle{}
     endif
 
 
@@ -1439,7 +1459,10 @@ Statement mainLoop{}
         doMainGameLoop{}
     endif
     if gameState = #gs_title
-        ;doMainTitle{}
+        option.w = doMainTitle{}
+        if option.w = 1
+            setGameState{#gs_game}
+        endif
     endif
 
     ;drawBitmapText{mx.w, my.w, "X"}
@@ -1464,7 +1487,7 @@ Mouse On
 dbugprintstring{"Smite"}
 gameState = 0
 currentBuffer =0
-setGameState{#gs_game}
+setGameState{#gs_title}
 
 Repeat
     mainLoop{}

@@ -32,7 +32,7 @@ Mouse On
 dbugprintstring{"Smite"}
 gameState = 0
 currentBuffer =0
-setGameState{#gs_game}
+setGameState{#gs_title}
 
 Repeat
     mainLoop{}
