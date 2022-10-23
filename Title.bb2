@@ -7,14 +7,16 @@ Statement loadMainTitle{}
     InitPalette #titlepalette, 256
     LoadBitMap #titlescreenbitmap,"title-menu.iff",#titlepalette
     
-    ILBMinfo "enu.iff"
+    ILBMinfo "menu.iff"
     BitMap #titlescreenitems, ILBMWidth,ILBMHeight,ILBMDepth
     LoadBitMap #titlescreenitems, "menu.iff"
     use bitmap #titlescreenitems
-    GetaShape  1,208,48,90,32 
-    GetaShape  2,208,80,90,32 
-    GetaShape  3,208,112,90,32 
+    GetaShape  1,224,61,67,11 
+    GetaShape  2,224,95,70,11  
+    GetaShape  3,224,127,65,11 
+
     Free Bitmap #titlescreenitems
+    BitMap #titlescreenitems, ILBMWidth,ILBMHeight,ILBMDepth
     BLITZ
     
     DisplayPalette 0, #titlepalette
@@ -22,8 +24,12 @@ Statement loadMainTitle{}
     BlockScroll 0,0,320,256,0,0,#titlescreenbitmap
     !cycleBuffer{currentBuffer}
     BlockScroll 0,0,320,256,0,0,#titlescreenbitmap
-    ;!cycleBuffer{currentBuffer}
+    !cycleBuffer{currentBuffer}
+   ;FadeInBitmap  #titlescreenbitmap, #titlescreenitems,1000,100,100,100
+  ; ASyncFade on
+  ; FadeIn #titlepalette,10
 
+   
 End Statement
 
 Statement unloadMainTitle{}
@@ -40,31 +46,31 @@ function doMainTitle{}
     shared gameEnd
     mx.w = MouseX
     my.w = MouseY
-
-;setGameState{#gs_game}
+    ;DoFade
+    ;DisplayBitMap 0,#titlescreenitems
+    ;BlockScroll 0,0,320,256,0,0,#titlescreenbitmap 
+    ;setGameState{#gs_game}
     ; returning 1 exits the title to a new game
-    
     ; returning 2 loads the load game menu
-
     ; returning 3 is options
     retVal.b = 4
     ; 4 means do nothing
     if mx > 220 
         if mx < 300
             if my > 55 : if  my < 75
-                BBlit currentBuffer,1,208, 48
+                BBlit currentBuffer,1,224, 61
                 if JoyB(0)=1 
                     retVal = 1
                 end if
             endif : end if
             if my > 92 : if  my < 108
-                BBlit currentBuffer,2,208, 80
+                BBlit currentBuffer,2,224, 95
                 if JoyB(0)=1 
                     retVal = 2
                 end if
             endif : end if
             if my > 124 : if  my < 140
-                BBlit currentBuffer,3,208, 112
+                BBlit currentBuffer,3,224, 127
                 if JoyB(0)=1 
                     retVal = 3
                     gameEnd = 1
@@ -72,9 +78,6 @@ function doMainTitle{}
             endif : end if
         end if
     end if
-    ;drawBitmapText{208, 200, "BOB"}
-    ;DisplayBitMap 0,#titlescreenitems, MouseX, MouseY
-    ;BlockScroll 208,48,Y1,Width,Height,X2,Y2[,BitMap#]
     function return retVal.b
 End function
 
