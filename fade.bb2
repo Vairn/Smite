@@ -1,0 +1,21 @@
+; AGA Fade Palette Code.
+; (c) 2022 Theo Theoderich
+
+Statement AGA_FADE_IN{clist.w,source.w,destination.w,speed.w,offset.w}
+
+For a.q=0 To 1 Step 1/speed.w
+  VWait
+  FadePalette source.w,destination.w,a.q
+  DisplayPalette clist.w,destination.w,offset.w
+Next
+
+End Statement
+
+Statement AGA_FADE_OUT{clist.w,source.w,destination.w,speed.w,offset.w}
+
+For a.q= 1 To 0 Step -1/speed.w
+  VWait
+  FadePalette source.w,destination.w,a.q
+  DisplayPalette clist.w,destination.w,offset.w
+Next
+End Statement
