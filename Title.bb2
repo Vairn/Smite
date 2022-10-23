@@ -27,9 +27,7 @@ Statement loadMainTitle{}
     !cycleBuffer{currentBuffer}
 
      AGA_FADE_IN{0,#titlepalette,2,40,0}
-   ;FadeInBitmap  #titlescreenbitmap, #titlescreenitems,1000,100,100,100
-  ; ASyncFade on
-  ; FadeIn #titlepalette,10
+
 
    
 End Statement
@@ -49,10 +47,6 @@ function doMainTitle{}
     shared gameEnd
     mx.w = MouseX
     my.w = MouseY
-    ;DoFade
-    ;DisplayBitMap 0,#titlescreenitems
-    ;BlockScroll 0,0,320,256,0,0,#titlescreenbitmap 
-    ;setGameState{#gs_game}
     ; returning 1 exits the title to a new game
     ; returning 2 loads the load game menu
     ; returning 3 is options
