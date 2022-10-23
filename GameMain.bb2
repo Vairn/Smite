@@ -31,7 +31,9 @@ Statement loadGameAssets{}
     ResetList walls()
 
     dbugprintstring{"Present Screen"}
-    DisplayPalette 0,1
+    BLITZ
+    AGA_FADE_OUT{0,1,2,1,0}
+    ;DisplayPalette 0,1
     !cycleBuffer{currentBuffer}
     Cls 0
     BlockScroll 0,0,320,256,0,0,#guiframe
@@ -43,10 +45,13 @@ Statement loadGameAssets{}
     BlockScroll 0,0,320,256,0,0,#guiframe
     drawView{}
 
+    AGA_FADE_IN{0,1,2,30,0}
+
 end statement
 
 statement unloadGameAssets{}
     ; free assets here
+      AGA_FADE_OUT{0,1,2,30,0}
 end statement
 
 Statement InitMainScreens{}

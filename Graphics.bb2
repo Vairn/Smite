@@ -266,3 +266,6 @@ QAMIGA
 BLITZ
 function return returntype.b
 End Function
+
+
+XINCLUDE "fade.bb2"

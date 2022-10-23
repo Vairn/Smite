@@ -10,12 +10,17 @@ Statement loadIntro{}
     LoadBitMap #titlescreenbitmap,"JamLogo.iff",#titlepalette
 
     BLITZ
-    DisplayPalette 0, #titlepalette
+    InitPalette 2, 256
+    AGA_FADE_OUT{0,#titlepalette,2,1,0}
+    ;DisplayPalette 0, #titlepalette
     !cycleBuffer{currentBuffer}
     BlockScroll 0,0,320,256,0,0,#titlescreenbitmap
     !cycleBuffer{currentBuffer}
     BlockScroll 0,0,320,256,0,0,#titlescreenbitmap
     !cycleBuffer{currentBuffer}
+    
+    DisplayPalette 0,2
+    AGA_FADE_IN{0,#titlepalette,2,20,0}
 
 End Statement
 
@@ -34,6 +39,7 @@ function doIntro{}
     retVal.b = 1
     introCounter+1
     
+   
     ;BlockScroll 0,0,320,256,0,0,#titlescreenbitmap 
 
     if JoyB(0)=1
@@ -43,27 +49,32 @@ function doIntro{}
         end if
         if introCounter > 200 : if introCounter < 400
             retVal = 2
+            AGA_FADE_OUT{0,#titlepalette,2,20,0}
             function return retVal.b
         end if :end if
     endif
     if introCounter = 200
-    QAMIGA 
+        AGA_FADE_OUT{0,#titlepalette,2,20,0}
+        QAMIGA 
+       
         ILBMinfo "dt.iff"
         BitMap #titlescreenbitmap, ILBMWidth,ILBMHeight,ILBMDepth
         InitPalette #titlepalette, 256
         LoadBitMap #titlescreenbitmap,"dt.iff",#titlepalette
 
         BLITZ
-        DisplayPalette 0, #titlepalette
+        ;DisplayPalette 0, #titlepalette
         !cycleBuffer{currentBuffer}
         BlockScroll 0,0,320,256,0,0,#titlescreenbitmap
         !cycleBuffer{currentBuffer}
         BlockScroll 0,0,320,256,0,0,#titlescreenbitmap
         !cycleBuffer{currentBuffer} 
+        AGA_FADE_IN{0,#titlepalette,2,20,0}
     end if 
 
     if introCounter = 400
         retVal = 2
+        AGA_FADE_OUT{0,#titlepalette,2,20,0}
     end if
     function return retVal.b
 End function
