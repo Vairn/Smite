@@ -54,7 +54,7 @@
 ; All script functions read from the VM stack
 ; most of them need a few extra vars parsed into them
 
-Function .b stackValue(src.w,offset.b)
+Function .b stackValue{src.w,offset.b}
     SHARED *vm
     function return -1;
 End Function

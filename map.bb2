@@ -355,104 +355,109 @@ Statement drawView{}
   ; of the shape, therefore by clearing with a colour that sets the 6th bitplane, I can shift the images up a colour bank
   ; and not have the extra draw times, renders the level FASTER!
   
-  BitPlanesBitMap currentBuffer, currentBuffer+5, %00111111
-  use bitmap currentBuffer+5
+  shouldDraw = True
+  if shouldDraw = True
+    BitPlanesBitMap currentBuffer, currentBuffer+5, %00111111
+    use bitmap currentBuffer+5
 
-  Boxf 2,60,244,92, 32
-  Boxf 240,00,244,186, 32
+    Boxf 2,60,244,92, 32
+    Boxf 240,00,244,186, 32
 
 
-  Blit bkgindex,4,4,%1
-  BitPlanesBitMap currentBuffer, currentBuffer+5, %00011111
-  use bitmap currentBuffer+5
+    Blit bkgindex,4,4,%1
+    BitPlanesBitMap currentBuffer, currentBuffer+5, %00011111
+    use bitmap currentBuffer+5
 
-  px = playerLoc.w MOD 32;
-	py = playerLoc.w/32;div(int(pos), 32).quot;
-  for i=0 to 17
-    
-    x.b = 0
-    y.b = 0
-    if ((playerFacing MOD 2) <> 0)
-      x = CMazeDr(playerFacing)\xs * CMazePos(i)\yDelta;
-      y = CMazeDr(playerFacing)\ys * CMazePos(i)\xDelta;
-    else
-      x = CMazeDr(playerFacing)\xs * CMazePos(i)\xDelta;
-      y = CMazeDr(playerFacing)\ys * CMazePos(i)\yDelta;				
-    Endif
-    ;dr = ((playerFacing + CMazePos(i)\facing) & $03);
-    ;NPrint "I: " + str$(i)+" X: " + str$(x) + " Y: " +str$(y) + " dr:" + str$(dr): 
-    mazePos.w = (((y + py) & $1f) * 32) + ((x + px) & $1F) 
-    wmi.b = *currentLevel\walldata[mazePos.w*4]
-    arx = CMazePos(i)\xDelta+3
-    ary = CMazePos(i)\yDelta+3
-    currentView(i) = wmi.b
-  next
-      if currentView(14) > 0
-        if  currentView(15) > 0
-          if currentView(16) > 0
-      for i=0 to 13
-        currentView(i) = 0
-      next
+    px = playerLoc.w MOD 32;
+    py = playerLoc.w/32;div(int(pos), 32).quot;
+    for i=0 to 17
       
-    endif : endif : endif
-
-    if currentView(12) > 0
-      if  currentView(13) > 0
-        if  currentView(14) > 0
-          for i=0 to 11
-            currentView(i) = 0
-          next
-      
-    endif : endif : endif
-
-    if currentView(8) > 0
-      if  currentView(10) > 0
-        if  currentView(11) > 0
-          for i=0 to 7
-            currentView(i) = 0
-          next
-      currentView(9) =0
-      
-    endif : endif : endif
-
-    if currentView(14) > 0
-      currentView(11) = 0
-      currentView(6) = 0
-    endif
-    if currentView(15) > 0
-      currentView(0) = 0
-      currentView(1) = 0
-      currentView(7) = 0
-    endif
-    if currentView(16) > 0
-      currentView(3) = 0
-      currentView(4) = 0
-      currentView(9) = 0
-      
-    endif
-    if currentView(11) > 0      
-      currentView(6) = 0
-    endif
- 
-    for i = 0 to 17
-
-      wmi.b = currentView(i)
-      if (wmi.b <> 0)
-        ; .draw the required walltile
-        ResetList walls()
-        While(NextItem (walls()))
-          if(walls()\walltype = wmi)
-            tx.b =-walls()\locationX
-            ty.b= walls()\locationY
-            if (tx = CMazePos(i)\xDelta) 
-              if (ty = CMazePos(i)\yDelta)
-              Blit walls()\shapeIndex, walls()\screenX+4, walls()\screenY+4
-              Pop While              
-            EndIf : Endif
-          Endif
-        Wend    
+      x.b = 0
+      y.b = 0
+      if ((playerFacing MOD 2) <> 0)
+        x = CMazeDr(playerFacing)\xs * CMazePos(i)\yDelta;
+        y = CMazeDr(playerFacing)\ys * CMazePos(i)\xDelta;
+      else
+        x = CMazeDr(playerFacing)\xs * CMazePos(i)\xDelta;
+        y = CMazeDr(playerFacing)\ys * CMazePos(i)\yDelta;				
       Endif
-  Next
-    use bitmap currentBuffer
+      ;dr = ((playerFacing + CMazePos(i)\facing) & $03);
+      ;NPrint "I: " + str$(i)+" X: " + str$(x) + " Y: " +str$(y) + " dr:" + str$(dr): 
+      mazePos.w = (((y + py) & $1f) * 32) + ((x + px) & $1F) 
+      wmi.b = *currentLevel\walldata[mazePos.w*4]
+      arx = CMazePos(i)\xDelta+3
+      ary = CMazePos(i)\yDelta+3
+      currentView(i) = wmi.b
+    next
+        if currentView(14) > 0
+          if  currentView(15) > 0
+            if currentView(16) > 0
+        for i=0 to 13
+          currentView(i) = 0
+        next
+        
+      endif : endif : endif
+
+      if currentView(12) > 0
+        if  currentView(13) > 0
+          if  currentView(14) > 0
+            for i=0 to 11
+              currentView(i) = 0
+            next
+        
+      endif : endif : endif
+
+      if currentView(8) > 0
+        if  currentView(10) > 0
+          if  currentView(11) > 0
+            for i=0 to 7
+              currentView(i) = 0
+            next
+        currentView(9) =0
+        
+      endif : endif : endif
+
+      if currentView(14) > 0
+        currentView(11) = 0
+        currentView(6) = 0
+      endif
+      if currentView(15) > 0
+        currentView(0) = 0
+        currentView(1) = 0
+        currentView(7) = 0
+      endif
+      if currentView(16) > 0
+        currentView(3) = 0
+        currentView(4) = 0
+        currentView(9) = 0
+        
+      endif
+      if currentView(11) > 0      
+        currentView(6) = 0
+      endif
+  
+      for i = 0 to 17
+
+        wmi.b = currentView(i)
+        if (wmi.b <> 0)
+          ; .draw the required walltile
+          ResetList walls()
+          While(NextItem (walls()))
+            if(walls()\walltype = wmi)
+              tx.b =-walls()\locationX
+              ty.b= walls()\locationY
+              if (tx = CMazePos(i)\xDelta) 
+                if (ty = CMazePos(i)\yDelta)
+                Blit walls()\shapeIndex, walls()\screenX+4, walls()\screenY+4
+                Pop While              
+              EndIf : Endif
+            Endif
+          Wend    
+        Endif
+    Next
+      use bitmap currentBuffer
+    else
+    drawMap{}
+    end if
 End Statement
 

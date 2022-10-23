@@ -6,6 +6,8 @@ XINCLUDE "Monster.bb2"
 XINCLUDE "Map.bb2"
 XINCLUDE "Graphics.bb2"
 XINCLUDE "Title.bb2"
+XINCLUDE "Intro.bb2"
+XINCLUDE "script.bb2"
 
 Statement loadGameAssets{}
     shared *currentLevel.Level, currentBuffer,  walls()
@@ -105,6 +107,7 @@ end Statement
 Statement setGameState{newState}
     shared gameState
     if gameState = #gs_intro
+        unloadIntro{}
     endif
 
     if gameState = #gs_game
@@ -117,7 +120,8 @@ Statement setGameState{newState}
 
     gameState = newState
 
- if gameState = #gs_intro
+    if gameState = #gs_intro
+        loadIntro{}
     endif
 
     if gameState = #gs_game
@@ -143,6 +147,13 @@ Statement mainLoop{}
     ; test for player movement
         doMainGameLoop{}
     endif
+    if gameState = #gs_intro
+        option.w = doIntro{}
+        if option.w = 2
+            setGameState{#gs_title}
+        end if
+    end if
+
     if gameState = #gs_title
         option.w = doMainTitle{}
         if option.w = 1
