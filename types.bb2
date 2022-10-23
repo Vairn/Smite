@@ -66,31 +66,7 @@ NEWTYPE .Character
   globalFlags.l[32]
  End NEWTYPE
 
-NEWTYPE .VirtualMachine
-  
-	scriptData.b  ; byte code for the script
-  scriptSize.w  ; size of the script, makes it easy to delete, and know if it is trying to jmp to far.
-
-	abortScript.b ; abort flag
-
-	abortAfterSubroutine.w ; about after subrouting flag
-	dlgResult.w ; what index was selected in the last dialogue box
-	preventRest.b ; cam we sleep now?
-
-	lastScriptFunc.w ; last fun run
-	lastScriptFlags.w ; last flag set 
-
-	subroutineStack.b ; stack for subroutines
-	subroutineStackPos.w ; where we return too
-
-	flagTable.l[18]      ; global flags
-
-	stack.w[30]          ; vm stack
-	stackIndex.w;        ; stack pointer
-
-	activeCharacter.b    ; active character, will always be 1 for my life sucks.
-
-End NEWTYPE
+XINCLUDE "vmtype.bb2"
 
 DEFTYPE .VirtualMachine *vm
 DEFTYPE .GameData *gameData
