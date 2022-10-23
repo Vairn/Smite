@@ -170,7 +170,8 @@ bkgindex.b=0
 #spriteBitmap = 4
 #bkgndBitmap = 5
 #titlescreenbitmap = 6
-#titlepalette = 5
+#titlepalette = 3
+#titlescreenitems = 7
 #itemshapes = 5
 ; gui
 #itemiconshapes = 10

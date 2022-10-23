@@ -106,7 +106,7 @@ function handleButtons {}
     mainWindow:
     ; find where in the main zone we have clicked.
     if mx < 5  : if my < 5
-        if JoyB(0)=1 then gameEnd = 1
+        if JoyB(0)=1 then gameEnd = 2
     endif : endif
     goto done:
 

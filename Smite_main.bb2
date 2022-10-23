@@ -202,7 +202,8 @@ bkgindex.b=0
 #spriteBitmap = 4
 #bkgndBitmap = 5
 #titlescreenbitmap = 6
-#titlepalette = 5
+#titlepalette = 3
+#titlescreenitems = 7
 #itemshapes = 5
 ; gui
 #itemiconshapes = 10
@@ -1010,50 +1011,6 @@ End Function
 ; --------------------------------------------------------------
 
 ; Title.bb2
-
-Statement loadMainTitle{}
-    QAMIGA
-    ILBMinfo "menu.iff"
-    BitMap #titlescreenbitmap, ILBMWidth,ILBMHeight,ILBMDepth
-    InitPalette #titlepalette, 256
-    LoadBitMap #titlescreenbitmap,"menu.iff",#titlepalette
-   ; Use BitMap #titlescreenbitmap
-    BLITZ
-End Statement
-
-Statement unloadMainTitle{}
-    Free Palette #titlepalette
-    Free Bitmap #titlescreenbitmap
-
-End Statement
-
-function doMainTitle{}
-;setGameState{#gs_game}
-    ; returning 1 exits the title to a new game
-    
-    ; returning 2 loads the load game menu
-
-    ; returning 3 is options
-
-    ; 4 means do nothing
-    DisplayBitMap 0,#titlescreenbitmap
-    DisplayPalette 0, #titlepalette
-    function return 4 
-End function
-
-Statement DrawMenu {}
-End Statement
-
-; --------------------------------------------------------------
-
-; XINCLUDE "Menu.bb2"
-; --------------------------------------------------------------
-
-; Menu.bb2
-
-; --------------------------------------------------------------
-
-
 ; XINCLUDE "bitfont.bb2"
 ; --------------------------------------------------------------
 
@@ -1128,6 +1085,97 @@ Statement drawColouredText{scX.w, scY.w, R.w, G.w, B.w, strtext.s}
 End Statement
 
 ; --------------------------------------------------------------
+
+Statement loadMainTitle{}
+    QAMIGA
+    ILBMinfo "title-menu.iff"
+    BitMap #titlescreenbitmap, ILBMWidth,ILBMHeight,ILBMDepth
+    InitPalette #titlepalette, 256
+    LoadBitMap #titlescreenbitmap,"title-menu.iff",#titlepalette
+    
+    ILBMinfo "enu.iff"
+    BitMap #titlescreenitems, ILBMWidth,ILBMHeight,ILBMDepth
+    LoadBitMap #titlescreenitems, "menu.iff"
+    use bitmap #titlescreenitems
+    GetaShape  1,208,48,90,32 
+    GetaShape  2,208,80,90,32 
+    GetaShape  3,208,112,90,32 
+    Free Bitmap #titlescreenitems
+    BLITZ
+    
+    DisplayPalette 0, #titlepalette
+    !cycleBuffer{currentBuffer}
+    BlockScroll 0,0,320,256,0,0,#titlescreenbitmap
+    !cycleBuffer{currentBuffer}
+    BlockScroll 0,0,320,256,0,0,#titlescreenbitmap
+    ;!cycleBuffer{currentBuffer}
+
+End Statement
+
+Statement unloadMainTitle{}
+    Free Palette #titlepalette
+    Free Bitmap #titlescreenbitmap
+    Free Shape 1
+    Free Shape 2
+    Free Shape 3
+
+End Statement
+
+function doMainTitle{}
+    shared currentBuffer
+    shared gameEnd
+    mx.w = MouseX
+    my.w = MouseY
+
+;setGameState{#gs_game}
+    ; returning 1 exits the title to a new game
+    
+    ; returning 2 loads the load game menu
+
+    ; returning 3 is options
+    retVal.b = 4
+    ; 4 means do nothing
+    if mx > 220 
+        if mx < 300
+            if my > 55 : if  my < 75
+                BBlit currentBuffer,1,208, 48
+                if JoyB(0)=1 
+                    retVal = 1
+                end if
+            endif : end if
+            if my > 92 : if  my < 108
+                BBlit currentBuffer,2,208, 80
+                if JoyB(0)=1 
+                    retVal = 2
+                end if
+            endif : end if
+            if my > 124 : if  my < 140
+                BBlit currentBuffer,3,208, 112
+                if JoyB(0)=1 
+                    retVal = 3
+                    gameEnd = 1
+                end if
+            endif : end if
+        end if
+    end if
+    ;drawBitmapText{208, 200, "BOB"}
+    ;DisplayBitMap 0,#titlescreenitems, MouseX, MouseY
+    ;BlockScroll 208,48,Y1,Width,Height,X2,Y2[,BitMap#]
+    function return retVal.b
+End function
+
+Statement DrawMenu {}
+End Statement
+
+; --------------------------------------------------------------
+
+; XINCLUDE "Menu.bb2"
+; --------------------------------------------------------------
+
+; Menu.bb2
+
+; --------------------------------------------------------------
+
 
 ; XINCLUDE "PlayerActions.bb2"
 ; --------------------------------------------------------------
@@ -1237,7 +1285,7 @@ function handleButtons {}
     mainWindow:
     ; find where in the main zone we have clicked.
     if mx < 5  : if my < 5
-        if JoyB(0)=1 then gameEnd = 1
+        if JoyB(0)=1 then gameEnd = 2
     endif : endif
     goto done:
 
@@ -1491,5 +1539,9 @@ setGameState{#gs_title}
 
 Repeat
     mainLoop{}
+    if gameEnd = 2
+    gameEnd =0
+    setGameState{#gs_title}
+    end if
 Until gameEnd
 End

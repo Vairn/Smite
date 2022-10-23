@@ -36,5 +36,9 @@ setGameState{#gs_title}
 
 Repeat
     mainLoop{}
+    if gameEnd = 2
+    gameEnd =0
+    setGameState{#gs_title}
+    end if
 Until gameEnd
 End
