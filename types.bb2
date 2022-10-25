@@ -1,9 +1,9 @@
 ; Smite Types
 NEWTYPE .Monster
   name$
-  hp
-  xp
-  damage
+  hp.w
+  xp.w
+  damage.b
 End NEWTYPE
 
 NEWTYPE .Wallset
@@ -31,32 +31,29 @@ End NewType
 
 NEWTYPE .MonsterInstance
   archetype.Monster
-  x
-  y
-  hp
+  x.b
+  y.b
+  hp.b
 End NEWTYPE
 
 NEWTYPE .Character
   name$
-  race
-  might
-  intelect
-  endurance
-  accuracy
-  speed
-  luck
-  hp
-  maxhp
-  sp
-  maxsp
-  xp
-  level[4] ; 0 fighter, 1 magic, 2 rogue ; 3 other
-  map
-  x
-  y
-  backpack[256] ; items held
-  equipment[16] ; items equiped
-  spellbook[16] ; spells
+  race.b
+  might.b
+  intelect.b
+  endurance.b
+  accuracy.b
+  speed.b
+  luck.b
+  hp.b
+  maxhp.b
+  sp.b
+  maxsp.b
+  xp.b
+  level.b[4] ; 0 fighter, 1 magic, 2 rogue ; 3 other
+  backpack.b[256] ; items held
+  equipment.b[16] ; items equiped
+  spellbook.b[16] ; spells
  End NEWTYPE
 
  NEWTYPE .GameData
@@ -68,8 +65,7 @@ NEWTYPE .Character
 
 XINCLUDE "vmtype.bb2"
 
-DEFTYPE .VirtualMachine *vm
-DEFTYPE .GameData *gameData
+
 
 NEWTYPE .Item
   name$
@@ -114,13 +110,14 @@ Dim List monsters.Monster(16)
 Dim LIST aliveMonsters.MonsterInstance(32)
 
 ; Pointers
-DEFTYPE .Character *player
+;DEFTYPE .Character *player
 DEFTYPE .Level *currentLevel
+DEFTYPE .GameData gd
 DEFTYPE .Wallset currentWallset
 
 ; Other variables
-playerLoc.w = ((1 & $1f) * 32) + (1 & $1F)
-playerFacing.b = 0
+; playerLoc.w = ((1 & $1f) * 32) + (1 & $1F)
+; playerFacing.b = 0
 bkgindex.b=0
 
 ; Buffers

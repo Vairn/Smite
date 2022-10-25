@@ -9,6 +9,8 @@ XINCLUDE "Title.bb2"
 XINCLUDE "Intro.bb2"
 XINCLUDE "script.bb2"
 
+XINCLUDE "GameState.bb2"
+
 Statement loadGameAssets{}
     shared *currentLevel.Level, currentBuffer,  walls()
     ; These populate the two arrays needed to draw the scene
@@ -76,20 +78,22 @@ Statement InitMainScreens{}
 End Statement
 
 Statement doMainGameLoop{}
-    shared playerFacing, doRedraw,gShowMap
+    shared gd.GameData, doRedraw,gShowMap
 ; test for player movement
     if handleMovementKeys{}
-        playerFacing = playerFacing MOD 4
+        gd\playerFacing = gd\playerFacing MOD 4
         doRedraw = 2
         gShowMap = 0
+        gd\player\sp - 1
         ; draw the view if required
     endif
 
     action.b =  handleButtons{}
     if action = 1 ; we moved
-        playerFacing = playerFacing MOD 4
+        gd\playerFacing = gd\playerFacing MOD 4
         doRedraw = 2
         gShowMap = 0
+        gd\player\sp-1
     endif
     if action = 2 ; Show Map.
         doRedraw = 2

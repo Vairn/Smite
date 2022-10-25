@@ -23,3 +23,5 @@ NEWTYPE .VirtualMachine
     activeCharacter.b    ; active character, will always be 1 for my life sucks.
 
 End NEWTYPE
+
+DEFTYPE .VirtualMachine *vm

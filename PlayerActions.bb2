@@ -38,47 +38,46 @@ Function .w mazeMove{originalPos.w, dir.b}
     function return newPos;
 End Function
 
-
 Function .b handleMovementKeys{}
-Shared playerLoc.w, playerFacing.b
-shared bkgindex
-realFacing.b = 0
+    Shared gd.GameData
+    shared bkgindex
+    realFacing.b = 0
 
-if RawStatus ($4C) or RawStatus($11); Up
-    realFacing.b= (playerFacing.b) MOD 4
-    playerLoc.w =  mazeMove{playerLoc.w, realFacing.b} ; Up Arrow
-    Function Return True
-EndIf
-if RawStatus ($4D) or RawStatus($21); Down
-    realFacing.b= (playerFacing.b+2) MOD 4
-    playerLoc.w =  mazeMove{playerLoc.w, realFacing.b} ; Down Arrow
-    Function Return True
-EndIf
-if RawStatus ($46) or RawStatus($10); Turn Left
-    playerFacing.b-1
-    bkgindex+1
-    bkgindex = bkgindex Mod 2
-    Function Return True
-EndIf
-if RawStatus ($5f) or RawStatus($12) ; Turn Right
-    playerFacing.b+1
-    bkgindex+1
-    bkgindex = bkgindex Mod 2
+    if RawStatus ($4C) or RawStatus($11); Up
+        realFacing.b= (gd\playerFacing ) MOD 4
+        gd\playerLocation =  mazeMove{gd\playerLocation, realFacing.b} ; Up Arrow
+        Function Return True
+    EndIf
+    if RawStatus ($4D) or RawStatus($21); Down
+        realFacing.b= (gd\playerFacing +2) MOD 4
+        gd\playerLocation =  mazeMove{gd\playerLocation, realFacing.b} ; Down Arrow
+        Function Return True
+    EndIf
+    if RawStatus ($46) or RawStatus($10); Turn Left
+        gd\playerFacing -1
+        bkgindex+1
+        bkgindex = bkgindex Mod 2
+        Function Return True
+    EndIf
+    if RawStatus ($5f) or RawStatus($12) ; Turn Right
+        gd\playerFacing +1
+        bkgindex+1
+        bkgindex = bkgindex Mod 2
 
-    Function Return True
-EndIf
+        Function Return True
+    EndIf
 
-if RawStatus($4E) or RawStatus($22)
-     realFacing.b= (playerFacing.b+1) MOD 4
-    playerLoc.w =  mazeMove{playerLoc.w, realFacing.b} ; Left Arrow
-    Function Return True
-endif
+    if RawStatus($4E) or RawStatus($22)
+        realFacing.b= (gd\playerFacing +1) MOD 4
+        gd\playerLocation =  mazeMove{gd\playerLocation, realFacing.b} ; Left Arrow
+        Function Return True
+    endif
 
-if RawStatus($4F) or RawStatus($20)
- realFacing.b= (playerFacing.b+3) MOD 4
-    playerLoc.w =  mazeMove{playerLoc.w, realFacing.b} ; Right Arrow
-    Function Return True
-endif
+    if RawStatus($4F) or RawStatus($20)
+    realFacing.b= (gd\playerFacing +3) MOD 4
+        gd\playerLocation =  mazeMove{gd\playerLocation, realFacing.b} ; Right Arrow
+        Function Return True
+    endif
 
     function return 0
 End Function
@@ -86,7 +85,7 @@ End Function
 function handleButtons {}
     ; where in the screen are we.
     ; this changes where we are.
-    Shared playerLoc.w, playerFacing.b
+    Shared gd.GameData
     shared bkgindex, gameEnd
     shared gShowMap
     shared *player
@@ -107,6 +106,7 @@ function handleButtons {}
     ; find where in the main zone we have clicked.
     if mx < 5  : if my < 5
         if JoyB(0)=1 then gameEnd = 2
+        saveGameState{}
     endif : endif
     goto done:
 
@@ -117,19 +117,19 @@ function handleButtons {}
     ; top row
         if my> 190  : if my < 210
             if mx > 3  : if mx < 23
-                playerFacing.b-1
+                gd\playerFacing -1
                 bkgindex+1
                 bkgindex = bkgindex Mod 2
                 Function Return 1
             endif : endif
             if mx > 23  : if mx < 44
-                realFacing.b= (playerFacing.b) MOD 4
-                playerLoc.w =  mazeMove{playerLoc.w, realFacing.b} ; Up Arrow
+                realFacing.b= (gd\playerFacing ) MOD 4
+                gd\playerLocation =  mazeMove{gd\playerLocation, realFacing.b} ; Up Arrow
                 Function Return 1
             endif : endif
 
             if mx > 44  : if mx < 64
-                playerFacing.b+1
+                gd\playerFacing +1
                 bkgindex+1
                 bkgindex = bkgindex Mod 2
                 Function Return 1
@@ -140,19 +140,19 @@ function handleButtons {}
         if my > 210  : if my < 230
         ; 4,23,44
             if mx > 3  : if mx < 23
-                realFacing.b= (playerFacing.b+3) MOD 4
-                playerLoc.w =  mazeMove{playerLoc.w, realFacing.b} ; Left Arrow
+                realFacing.b= (gd\playerFacing +3) MOD 4
+                gd\playerLocation =  mazeMove{gd\playerLocation, realFacing.b} ; Left Arrow
                 Function Return 1
             endif : endif
             if mx > 23  : if mx < 44
-                realFacing.b= (playerFacing.b + 2)  MOD 4
-                playerLoc.w =  mazeMove{playerLoc.w, realFacing.b } ; down Arrow
+                realFacing.b= (gd\playerFacing  + 2)  MOD 4
+                gd\playerLocation =  mazeMove{gd\playerLocation, realFacing.b } ; down Arrow
                 Function Return 1
             endif : endif
 
             if mx > 44  : if mx < 87
-                realFacing.b= (playerFacing.b+1) MOD 4
-                playerLoc.w =  mazeMove{playerLoc.w, realFacing.b} ; Right Arrow
+                realFacing.b= (gd\playerFacing +1) MOD 4
+                gd\playerLocation =  mazeMove{gd\playerLocation, realFacing.b} ; Right Arrow
                 Function Return 1 
             endif : endif
         Endif : Endif

@@ -1,5 +1,6 @@
 ; Title.bb2
 XINCLUDE "bitfont.bb2"
+XINCLUDE "GameState.bb2"
 Statement loadMainTitle{}
     QAMIGA
     ILBMinfo "title-menu.iff"
@@ -47,23 +48,28 @@ function doMainTitle{}
     shared gameEnd
     mx.w = MouseX
     my.w = MouseY
+    
     ; returning 1 exits the title to a new game
     ; returning 2 loads the load game menu
     ; returning 3 is options
-    retVal.b = 4
     ; 4 means do nothing
+
+    retVal.b = 4
+
     if mx > 220 
         if mx < 300
             if my > 55 : if  my < 75
                 BBlit currentBuffer,1,224, 61
                 if JoyB(0)=1 
                     retVal = 1
+                    resetGameState{}
                 end if
             endif : end if
             if my > 92 : if  my < 108
                 BBlit currentBuffer,2,224, 95
                 if JoyB(0)=1 
-                    retVal = 2
+                    retVal = 1
+                    loadGameState{}
                 end if
             endif : end if
             if my > 124 : if  my < 140
@@ -79,5 +85,5 @@ function doMainTitle{}
     function return retVal.b
 End function
 
-Statement DrawMenu {}
+Statement drawLoadGameMenu {}
 End Statement

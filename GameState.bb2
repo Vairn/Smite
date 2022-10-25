@@ -1,0 +1,44 @@
+
+statement resetGameState{}
+    ; new game.
+shared gd.GameData
+    ; default location.
+    gd\playerLocation = ((1 & $1f) * 32) + (1 & $1F)
+    gd\playerFacing = 0
+
+    for i=0 to 31
+        gd\globalFlags[i] = 0
+
+    next
+end statement
+
+statement saveGameState{}
+    shared gd.GameData
+    ; Write the data for the walls that we can load it faster next time.
+    if OpenFile(0,"save.dat")
+        WriteMem 0, &gd\playerLocation, 2
+        WriteMem 0, &gd\playerFacing,1
+        for i=0 to 31
+            WriteMem 0, &gd\globalFlags[i],4
+        next
+
+        WriteMem 0, &gd\player, sizeof .Character
+    end if  
+end statement
+
+statement loadGameState{}
+shared gd.GameData
+    if ReadFile(0, "save.dat")
+    ; Write the data for the walls that we can load it faster next time.
+        ReadMem 0, &gd\playerLocation, 2
+        ReadMem 0, &gd\playerFacing,1
+        for i=0 to 31
+            ReadMem 0, &gd\globalFlags[i],4
+        next
+
+        ReadMem 0, &gd\player, SizeOf .Character
+    else
+        ; no save file.
+        resetGameState{}
+    end if
+end statement

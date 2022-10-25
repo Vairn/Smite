@@ -198,7 +198,7 @@ Statement preFillPosData{}
 End Statement
 
 Statement drawMiniMap{}
-  Shared playerLoc.w, playerFacing.b, walls()
+  Shared gd.GameData, walls()
   Shared CMazeDr.MazeDir(), CMazePos.MazePos()
   shared wallslookup(), currentView()
   Shared *currentLevel.Level, currentBuffer
@@ -206,8 +206,8 @@ Statement drawMiniMap{}
     BitPlanesBitMap currentBuffer, currentBuffer+5, %00011111
   use bitmap currentBuffer+5
   Boxf 179,193, 179+64, 193+34,0
-  px = playerLoc.w MOD 32;
-	py = playerLoc.w/32;div(int(pos), 32).quot;
+  px = gd\playerLocation MOD 32;
+  py = gd\playerLocation/32;div(int(pos), 32).quot;
 
   for x=-3 to 3
     for y=-3 to 3
@@ -239,7 +239,7 @@ End Statement
 
 Statement drawMap{}
 
-  Shared playerLoc.w, playerFacing.b, walls()
+  Shared gd.GameData, walls()
   Shared CMazeDr.MazeDir(), CMazePos.MazePos()
   shared wallslookup(), currentView()
   Shared *currentLevel.Level
@@ -248,8 +248,8 @@ Statement drawMap{}
   use bitmap currentBuffer+5
   ;Boxf 179,193, 179+64, 193+34,0
   
-  px = playerLoc.w MOD 32;
-	py = playerLoc.w/32;div(int(pos), 32).quot;
+  px = gd\playerLocation MOD 32;
+	py = gd\playerLocation/32;div(int(pos), 32).quot;
   
   for x=-0 to 31
     for y=0 to 31
@@ -275,38 +275,39 @@ End Statement
 
 Statement drawRadar{}
   
-  Shared playerLoc.w, playerFacing.b, walls()
+  Shared gd.GameData
+  Shared walls()
   Shared CMazeDr.MazeDir(), CMazePos.MazePos()
   shared wallslookup(), currentView()
   Shared *currentLevel.Level
   Shared bkgindex, currentBuffer
   BitPlanesBitMap currentBuffer, currentBuffer+5, %00011111
   use bitmap currentBuffer+5
-  px = playerLoc.w MOD 32;
-	py = playerLoc.w/32;div(int(pos), 32).quot;
-  
-  if playerFacing =0
+  px = gd\playerLocation MOD 32;
+	py = gd\playerLocation /32;div(int(pos), 32).quot;
+  realFacing.b = gd\playerFacing
+  if realFacing.b =0
   xn.b=0 : yn.b=-1
   xs.b=0 : ys.b=1
   xe.b=-1 : ye.b=0
   xw.b=1 : yw.b=0
   endif
   
-  if playerFacing = 3
+  if realFacing.b = 3
   yn.b=0 : xn.b=-1
   ys.b=0 : xs.b=1
   ye.b=1 : xe.b=0
   yw.b=-1 : xw.b=0
   endif
   
-  if playerFacing = 2
+  if realFacing.b = 2
   xn.b=0 : yn.b=1
   xs.b=0 : ys.b=-1
   xe.b=1 : ye.b=0
   xw.b=-1 : yw.b=0
   endif
   
-  if playerFacing = 1
+  if realFacing.b = 1
   yn.b=0 : xn.b=1
   ys.b=0 : xs.b=-1
   ye.b=-1 : xe.b=0
@@ -345,7 +346,8 @@ end Statement
 
 Statement drawView{}
 
-  Shared playerLoc.w, playerFacing.b, walls()
+  Shared gd.GameData
+  Shared walls()
   Shared CMazeDr.MazeDir(), CMazePos.MazePos()
   shared wallslookup(), currentView()
   Shared *currentLevel.Level
@@ -357,6 +359,7 @@ Statement drawView{}
   
   shouldDraw = True
   if shouldDraw = True
+    realFacing.b = gd\playerFacing
     BitPlanesBitMap currentBuffer, currentBuffer+5, %00111111
     use bitmap currentBuffer+5
 
@@ -368,20 +371,23 @@ Statement drawView{}
     BitPlanesBitMap currentBuffer, currentBuffer+5, %00011111
     use bitmap currentBuffer+5
 
-    px = playerLoc.w MOD 32;
-    py = playerLoc.w/32;div(int(pos), 32).quot;
+    px = gd\playerLocation MOD 32;
+    py = gd\playerLocation / 32;div(int(pos), 32).quot;
+    dbugprintval{px}
+    dbugprintval{py}
+    dbugprintval{gd\playerFacing}
     for i=0 to 17
       
       x.b = 0
       y.b = 0
-      if ((playerFacing MOD 2) <> 0)
-        x = CMazeDr(playerFacing)\xs * CMazePos(i)\yDelta;
-        y = CMazeDr(playerFacing)\ys * CMazePos(i)\xDelta;
+      if ((realFacing.b MOD 2) <> 0)
+        x = CMazeDr(realFacing.b)\xs * CMazePos(i)\yDelta;
+        y = CMazeDr(realFacing.b)\ys * CMazePos(i)\xDelta;
       else
-        x = CMazeDr(playerFacing)\xs * CMazePos(i)\xDelta;
-        y = CMazeDr(playerFacing)\ys * CMazePos(i)\yDelta;				
+        x = CMazeDr(realFacing.b)\xs * CMazePos(i)\xDelta;
+        y = CMazeDr(realFacing.b)\ys * CMazePos(i)\yDelta;				
       Endif
-      ;dr = ((playerFacing + CMazePos(i)\facing) & $03);
+      ;dr = ((realFacing.b + CMazePos(i)\facing) & $03);
       ;NPrint "I: " + str$(i)+" X: " + str$(x) + " Y: " +str$(y) + " dr:" + str$(dr): 
       mazePos.w = (((y + py) & $1f) * 32) + ((x + px) & $1F) 
       wmi.b = *currentLevel\walldata[mazePos.w*4]
