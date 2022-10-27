@@ -2,7 +2,7 @@
 XINCLUDE "debug.bb2"
 XINCLUDE "types.bb2"
 
-
+XINCLUDE "Items.bb2"
 
 function .l LoadMap{path.s}
     QAMIGA

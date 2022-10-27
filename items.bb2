@@ -1,0 +1,35 @@
+statement loadItemGraphics{filename$}
+    QAMIGA
+    ; create some fake items for debug
+    ; there are 25 icons in my iff.
+    shapefile.s = filename$ + ".icnshp"
+    shapesource.s = filename$ + ".iff"
+    dbugprintstring{"Loading UI Shapes"}
+    shapeIndex.w = #UIItems
+    if Exists(shapefile.s)
+        LoadShapes shapeIndex, shapefile
+    else
+        ILBMinfo shapesource.s
+                dbugprintval{ILBMWidth}
+        dbugprintval{ILBMHeight}
+        dbugprintval{ILBMDepth}
+        BitMap 3, ILBMWidth,ILBMHeight,ILBMDepth
+        LoadBitMap 3,shapesource.s
+        Use BitMap 3
+        for y=0 to 5
+            for x=0 to 5
+            GetaShape shapeIndex, x*16, y*16, 16,16
+            shapeIndex+1
+            next x
+        next y
+
+        Free BitMap 3
+        SaveShapes #UIItems, shapeIndex, shapefile.s
+        
+    endif
+    BLITZ
+end statement
+
+statement loadItemDetails{}
+    shared items()
+end statement

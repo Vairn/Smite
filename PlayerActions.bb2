@@ -2,7 +2,7 @@
 XINCLUDE "debug.bb2"
 XINCLUDE "types.bb2"
 XINCLUDE "bitfont.bb2"
-
+XINCLUDE "Items.bb2"
 ; Movement Commands
 
 Function .w mazeMove{originalPos.w, dir.b}
@@ -89,6 +89,7 @@ function handleButtons {}
     shared bkgindex, gameEnd
     shared gShowMap
     shared *player
+    shared mousecur
 
     realFacing.b = 0
     mx.w = MouseX
@@ -108,6 +109,12 @@ function handleButtons {}
         if JoyB(0)=1 then gameEnd = 2
         saveGameState{}
     endif : endif
+    if JoyB(0) =1
+        mousecur +1
+        if  mousecur = 26
+            mousecur =0
+        end if
+    endif
     goto done:
 
 

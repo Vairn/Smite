@@ -23,11 +23,11 @@ Statement loadGameAssets{}
     *currentLevel = MakeDemoMap{}
     ;*currentLevel = LoadMap{"maze1.maz"}
     dbugprintstring{"Load Assets"}
-    
+   
     res.b = LoadUIGfx{"ui_icons"}
     LoadFrame{"playfield2.iff"}
     loadWalls{"factory1"}
-   
+    
     dbugprintstring{"Reset Walls"}
     
     ResetList walls()
@@ -73,7 +73,12 @@ Statement InitMainScreens{}
     CreateDisplay 0
     DisplayPalette 0,1
     res.b = LoadBitmapFont{"font8x8"}
-   GetaSprite 0,#fontShapeStart+57
+    loadItemGraphics{"items"}
+    GetaSprite 0,#UIItems+22
+    for i =0 to 25
+        dbugprintval{i}
+        GetaSprite i, #UIItems+i
+    next
    
 End Statement
 
@@ -146,6 +151,7 @@ End Statement
 
 Statement mainLoop{}
     shared currentBuffer, gameState
+    shared mousecur
     VWait
     mx.w = MouseX
     my.w = MouseY
@@ -172,5 +178,6 @@ Statement mainLoop{}
 
     ;drawBitmapText{mx.w, my.w, "X"}
 
-    DisplaySprite 0,0,mx-4,my-4,0
+    DisplaySprite 0,mousecur,mx,my,0
+
 end statement

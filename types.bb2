@@ -66,15 +66,33 @@ NEWTYPE .Character
 XINCLUDE "vmtype.bb2"
 
 
+NEWTYPE .Item 
+	nameUnid.w;
+	nameId.w;
+	flags.w;
+	icon.w;
+	itemtype.w;
+	pos.w;    level pos, or backpack spot.
+	blck.l;  if level 0, then this is which character, otherwise it is where on the block it is, alco, corner etc.
+	level.w;  level 0 is in the inventory of a player
+	value.w;
+End NewType
 
-NEWTYPE .Item
-  name$
-  class
-  icon
-  modifier
-  bonus
-  modifier2
-End NEWTYPE
+NEWTYPE .ItemType
+	invFlags.l;
+	handFlags.l;
+	armorClass.w;
+	allowedClasses.w;
+	requiredHands.w;
+	dmgNumDiceS.w;
+	dmgNumPipsS.w;
+	dmgIncS.w;
+	dmgNumDiceL.w;
+	dmgNumPipsL.w;
+	dmgIncL.w;
+	unk1.w;
+	extraProperties.l;
+End NewType
 
 NEWTYPE .Level
   walldata.b[4096]  
@@ -105,7 +123,8 @@ dim List walls.Wallset(100)
 DEFTYPE .Wallset *wallsPtr
 wallSetCount.w = 0
 
-Dim List items.Item(256)
+Dim List items.Item(512)
+Dim List itemtypes.ItemType(128)
 Dim List monsters.Monster(16)
 Dim LIST aliveMonsters.MonsterInstance(32)
 
@@ -139,6 +158,7 @@ bkgindex.b=0
 #UINORTH=514
 #UISOUTH=516
 #UIWEST=518
+#UIItems = 520
 
 #spriteBitmap = 4
 #bkgndBitmap = 5
@@ -170,3 +190,4 @@ gameEnd = 0
 gameState = #gs_title
 Dim currentView(17)
 
+mousecur=22
