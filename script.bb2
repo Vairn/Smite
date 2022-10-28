@@ -60,131 +60,135 @@ Function .b stackValue{src.w,offset.b}
 End Function
 
 Statement RunScript{}
-SHARED *vm, *player
+  Shared gd.GameData
 
 End Statement
 
-Statement doSetwall{}
-SHARED *vm, *player
+Statement doSetwall{x,y,value}
+  Shared gd.GameData
+  Shared *currentLevel.Level
+End Statement
+
+Statement doChangeWall{x,y,value}
+  Shared *currentLevel.Level
+  Shared gd.GameData
 
 End Statement
 
-Statement doChangeWall{}
-SHARED *vm, *player
+Statement doOpenDoor{x,y}
+  Shared *currentLevel.Level
+  Shared gd.GameData
 
 End Statement
 
-Statement doOpenDoor{}
-SHARED *vm, *player
+Statement doCloseDoor{x,y}
+  Shared *currentLevel.Level
+  Shared gd.GameData
 
-End Statement
-
-Statement doCloseDoor{}
-SHARED *vm, *player
 
 End Statement
 
 Statement doAddMonster{}
-SHARED *vm, *player
+  Shared gd.GameData
 
 End Statement
 
 Statement doTeleport{}
-SHARED *vm, *player
+  Shared gd.GameData
 
 End Statement
 
 Statement doStealItem{}
-SHARED *vm, *player
+  Shared gd.GameData
 
 End Statement
 
-Statement doMessage{}
-SHARED *vm, *player
+Statement doMessage{text$}
+  Shared gd.GameData
 
 End Statement
 
-Statement doSetFlag{}
-SHARED *vm, *player
+Statement doSetFlag{idx}
+  Shared gd.GameData
 
 End Statement
 
 Statement doSound{}
-SHARED *vm, *player
+  Shared gd.GameData
 
 End Statement
 
-Statement doClearFlag{}
-SHARED *vm, *player
+Statement doClearFlag{idx}
+  Shared gd.GameData
 
 End Statement
 
 Statement doEncounter{}
-SHARED *vm, *player
+  Shared gd.GameData
 
 End Statement
 
 Statement doIdentify_items{}
-SHARED *vm, *player
+  Shared gd.GameData
 
 End Statement
 
 Statement doTurn{}
-SHARED *vm, *player
+  Shared gd.GameData
 
 End Statement
 
 Statement doLauncher{}
-SHARED *vm, *player
+  Shared gd.GameData
 
 End Statement
 
 Statement doAddItem{}
-SHARED *vm, *player
+  Shared gd.GameData
 
 End Statement
 
 Statement doGiveXp{}
-SHARED *vm, *player
+  Shared gd.GameData
 
 End Statement
 
 Statement doChangeLevel{}
-SHARED *vm, *player
+  Shared gd.GameData
 
 End Statement
 
 Statement doRemoveItem{}
-SHARED *vm, *player
+  Shared gd.GameData
 
 End Statement
 
 Statement doIf{}
-SHARED *vm, *player
+  Shared gd.GameData
 
 End Statement
 
 Statement doGosub{}
-SHARED *vm, *player
+  Shared gd.GameData
 
 End Statement
 
 Statement doReturn{}
-SHARED *vm, *player
+  Shared gd.GameData
 
 End Statement
 
 Statement doEnd{}
-SHARED *vm, *player
+  Shared gd.GameData
 
 End Statement
 
 Statement doGoto{}
-SHARED *vm, *player
+  Shared gd.GameData
 
 End Statement
 
 Statement doDamage{}
-SHARED *vm, *player
+  Shared gd.GameData
 
 End Statement

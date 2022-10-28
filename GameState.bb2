@@ -2,6 +2,7 @@
 statement resetGameState{}
     ; new game.
 shared gd.GameData
+
     ; default location.
     gd\playerLocation = ((1 & $1f) * 32) + (1 & $1F)
     gd\playerFacing = 0
@@ -10,6 +11,9 @@ shared gd.GameData
         gd\globalFlags[i] = 0
 
     next
+
+    gd\mousecur = 22
+
 end statement
 
 statement saveGameState{}

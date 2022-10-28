@@ -29,7 +29,7 @@ Statement ProcessWallset{filename$}
 SHARED walls()
 SHARED wallslookup()
 QAMIGA
-cMod.b = 16
+cMod.b = 1
 BitMap #spriteBitmap,320,256,5
 Use BitMap #spriteBitmap
 BitMap #bkgndBitmap,240,180,5
@@ -186,13 +186,13 @@ shapefile.s = filename$ + ".wllshp"
 palfile.s = filename$ + ".wllpal"
 processed.s = filename$ + ".wllinf"
 
-dbugprintstring {"Loading - Palette: " + palfile.s}
-LoadPalette 1, palfile.s,32
-dbugprintstring {"Loading - Shapes: " + shapefile.s}
-LoadShapes 0,shapefile.s
 
-dbugprintstring {"Loading - WallData: " + processed.s}
 if ReadFile(0, processed.s)
+    dbugprintstring {"Loading - Palette: " + palfile.s}
+    LoadPalette 1, palfile.s,32
+    dbugprintstring {"Loading - Shapes: " + shapefile.s}
+    LoadShapes 0,shapefile.s
+    dbugprintstring {"Loading - WallData: " + processed.s}
     ;Do your file handling here.
     count.w =0
     ReadMem 0, &count.w,2
@@ -210,8 +210,36 @@ endif
 BLITZ
 End Statement
 
-Statement LoadDoors{fileName$}
+Statement LoadDoors{filename$}
+shared walls()
 QAMIGA
+    ; todo - Save the walls to the wallset shape file.
+    ; walls need to have been already loaded for this to do it's magic.
+    sizeWall.w = SizeOf .Wallset
+   ; stop
+    shapefile.s = filename$ + ".wllshp"
+    ;palfile.s = filename$ + ".wllpal"
+    processed.s = filename$ + ".wllinf"
+
+    if ReadFile(0, processed.s)
+        count.w =0
+        ReadMem 0, &count.w,2
+        ResetList walls()
+        for idx.w=0 to count.w
+            AddItem walls() 
+            ReadMem 0, walls(), sizeWall.w
+            walls()\walltype=2
+            walls()\shapeIndex + 100
+        next
+
+      LoadShapes 100,shapefile.s
+    end if
+    ; While(NextItem (walls()))
+    ;  if(walls()\walltype = 1)
+    ;     GetaShape walls()\shapeIndex, walls()\screenX, walls()\screenY, walls()\width, walls()\height  
+    ;     ;shapeIndex+1 
+    ;  end if
+    ; wend
 BLITZ
 End Statement
 

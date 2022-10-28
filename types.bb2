@@ -61,6 +61,8 @@ NEWTYPE .Character
   playerLocation.w
   playerFacing.b
   globalFlags.l[32]
+  mousecur.b
+  iteminhand.b
  End NEWTYPE
 
 XINCLUDE "vmtype.bb2"
@@ -189,5 +191,4 @@ gShowMap = 0
 gameEnd = 0
 gameState = #gs_title
 Dim currentView(17)
-
-mousecur=22
+gd\mousecur = 22

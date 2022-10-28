@@ -89,7 +89,6 @@ function handleButtons {}
     shared bkgindex, gameEnd
     shared gShowMap
     shared *player
-    shared mousecur
 
     realFacing.b = 0
     mx.w = MouseX
@@ -110,9 +109,9 @@ function handleButtons {}
         saveGameState{}
     endif : endif
     if JoyB(0) =1
-        mousecur +1
-        if  mousecur = 26
-            mousecur =0
+        gd\mousecur +1
+        if  gd\mousecur = 26
+            gd\mousecur =0
         end if
     endif
     goto done:
@@ -177,8 +176,8 @@ function handleButtons {}
     if mx > 65  : if my > 190
         if mx < 88  : if my < 230
 
-            ;drawBitmapText{5, 240,  "BATTERY LEVEL 00"}
-            drawColouredText{5, 240, 255,128,0, "TEST TEXT"}
+            drawBitmapText{5, 240,  "BATTERY LEVEL 00"}
+            ;drawColouredText{5, 240, 255,128,0, "TEST TEXT"}
         endif : endif
     endif : endif
     ; 88, 230

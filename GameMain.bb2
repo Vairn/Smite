@@ -26,8 +26,10 @@ Statement loadGameAssets{}
    
     res.b = LoadUIGfx{"ui_icons"}
     LoadFrame{"playfield2.iff"}
-    loadWalls{"factory1"}
-    
+    loadWalls{"factory"}
+    ;loadWalls{"doors"}
+    dbugprintstring{"Doors"}
+    LoadDoors{"Doors"}
     dbugprintstring{"Reset Walls"}
     
     ResetList walls()
@@ -151,7 +153,7 @@ End Statement
 
 Statement mainLoop{}
     shared currentBuffer, gameState
-    shared mousecur
+    shared gd.GameData
     VWait
     mx.w = MouseX
     my.w = MouseY
@@ -178,6 +180,6 @@ Statement mainLoop{}
 
     ;drawBitmapText{mx.w, my.w, "X"}
 
-    DisplaySprite 0,mousecur,mx,my,0
+    DisplaySprite 0,gd\mousecur,mx,my,0
 
 end statement

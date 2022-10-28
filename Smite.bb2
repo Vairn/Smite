@@ -22,9 +22,9 @@ AMIGA
 dbugprintstring{"InitMainScreens {"}
 InitMainScreens{}
 dbugprintstring{"InitMainScreens }"}
-;InitCopList CopList#,ypos,height, type,sprites,colors,customs
 
 ; Extra Comment for test
+
 BLITZ
 
 ;

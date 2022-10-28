@@ -16,10 +16,6 @@ void sBlitzShape::swapValues()
 	bltsize = swap_uint16(bltsize);
 	xhandle = swap_uint16(xhandle);
 	yhandle = swap_uint16(yhandle);
-	//unknown[0] = swap_uint32(unknown[0]);
-	//unknown[1] = swap_uint32(unknown[1]);
-	//unknown[2] = swap_uint16(unknown[2]);
-	//unknown[3] = swap_uint16(unknown[3]);
 	onebpmem = swap_uint16(onebpmem);
 	onebpmemx = swap_uint16(onebpmemx);
 	allmem = swap_uint16(allmem);
@@ -60,5 +56,6 @@ sBlitzShapes* LoadShapes(const char* sFilename)
 				break;
 		}
 	}
+
 	return pShapes;
 }
