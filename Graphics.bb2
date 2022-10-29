@@ -1,6 +1,7 @@
 ; Graphics.bb2
 XINCLUDE "debug.bb2"
 XINCLUDE "types.bb2"
+XINCLUDE "fade.bb2"
 
 Macro cycleBuffer
 ;Show `1
@@ -33,6 +34,8 @@ cMod.b = 1
 BitMap #spriteBitmap,320,256,5
 Use BitMap #spriteBitmap
 BitMap #bkgndBitmap,240,180,5
+use bitmap #bkgndBitmap
+cls 0
 
 wallFile.s = filename$+".wll"
 outfile.s = filename$ + ".wllshp"
@@ -137,7 +140,7 @@ If ReadFile(0,wallFile.s)
     Use BitMap #bkgndBitmap
     GetaShape 0, 1,1,239,179 ; background frame 1
     GetaShape 1, 1,1,239,179 ; background frame 2
-    XFlip 1                  ; fliping the background for when you walk or turn to make it look that you are moving
+   ; XFlip 1                  ; fliping the background for when you walk or turn to make it look that you are moving
 
     SaveShapes 0,shapeIndex,outfile.s
     SavePalette 1, palfile.s
@@ -275,13 +278,13 @@ QAMIGA
         dbugprintval{ILBMDepth}
         Use BitMap 3
         for i=0 to 11
-            dbugprintval{i}
+           ; dbugprintval{i}
             GetaShape shapeIndex.w, 0 + (i*16), 2,16,32
             shapeIndex+1 
-            dbugprintval{shapeIndex}
+           ; dbugprintval{shapeIndex}
         next
         for i =0 to 4
-            dbugprintval{i}
+            ;dbugprintval{i}
             GetaShape shapeIndex.w, 2+(37*i),40,32,32
             shapeIndex+1
             GetaShape shapeIndex.w, 2+(37*i),74,32,32
@@ -294,6 +297,3 @@ QAMIGA
 BLITZ
 function return returntype.b
 End Function
-
-
-XINCLUDE "fade.bb2"

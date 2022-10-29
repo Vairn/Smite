@@ -40,5 +40,9 @@ Repeat
     gameEnd =0
     setGameState{#gs_title}
     end if
+    if gameEnd = 3
+        gameEnd = 0
+        setGameState{#gs_deadBattery}
+    end if
 Until gameEnd
 End

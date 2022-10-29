@@ -110,14 +110,18 @@ Statement doMainGameLoop{}
     ;dbugprintstring {"Mouse X" + str$(mX) + " Mouse Y:" + str$(my)}
 
     if doRedraw > 0
-        drawView{}    
+        drawView{}   
+        drawDecals{}
+        drawItems{} 
         doRedraw-1
         drawRadar{}
         drawMiniMap{}
         if (gShowMap)
             drawMap{}
-        endif    
+        endif
+   
     endif
+        drawBattery{} 
 end Statement
 
 Statement setGameState{newState}

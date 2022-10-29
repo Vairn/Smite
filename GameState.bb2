@@ -13,7 +13,8 @@ shared gd.GameData
     next
 
     gd\mousecur = 22
-
+    gd\player\sp=100
+    gd\player\maxsp = 100
 end statement
 
 statement saveGameState{}

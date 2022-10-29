@@ -187,6 +187,7 @@ bkgindex.b=0
 #gs_mainmenu = %0100
 #gs_game = %01000
 #gs_paused = %10000
+#gs_deadBattery = %00011
 gShowMap = 0
 gameEnd = 0
 gameState = #gs_title

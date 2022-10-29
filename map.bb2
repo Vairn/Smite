@@ -221,9 +221,17 @@ Statement drawMiniMap{}
       
         sx.w = ((x+3)*4)
         sy.w = ((y+3)*4)
+      if (wmi.b = 2)
+        Boxf 194+sx,194+sy,198+sx, 198+sy, 32
+      end if
+      if (wmi.b = 3)
+        Boxf 194+sx,194+sy,198+sx, 198+sy, 18
+      endif
+      
       if (wmi.b = 1)
         Boxf 194+sx,194+sy,198+sx, 198+sy, 31
-      else
+      end if
+      if (wmi.b = 0)
         Boxf 194+sx,194+sy,198+sx, 198+sy, 18
       endif
       
@@ -373,9 +381,9 @@ Statement drawView{}
 
     px = gd\playerLocation MOD 32;
     py = gd\playerLocation / 32;div(int(pos), 32).quot;
-    dbugprintval{px}
-    dbugprintval{py}
-    dbugprintval{gd\playerFacing}
+    ;dbugprintval{px}
+    ;dbugprintval{py}
+    ;dbugprintval{gd\playerFacing}
     for i=0 to 17
       
       x.b = 0
@@ -454,7 +462,12 @@ Statement drawView{}
               ty.b= walls()\locationY
               if (tx = CMazePos(i)\xDelta) 
                 if (ty = CMazePos(i)\yDelta)
-                Blit walls()\shapeIndex, walls()\screenX+4, walls()\screenY+4
+                if wmi.b = 2
+                  ; closed door
+                  Boxf walls()\screenX+4, walls()\screenY+4, walls()\screenX+walls()\width, walls()\screenY+walls()\height,48
+                endif
+                  Blit walls()\shapeIndex, walls()\screenX+4, walls()\screenY+4
+                
                 Pop While              
               EndIf : Endif
             Endif
@@ -465,5 +478,41 @@ Statement drawView{}
     else
     drawMap{}
     end if
+    
 End Statement
 
+
+statement  drawDecals{}
+  Shared gd.GameData
+  Shared walls()
+  Shared CMazeDr.MazeDir(), CMazePos.MazePos()
+  shared wallslookup(), currentView()
+  Shared *currentLevel.Level
+  Shared bkgindex, currentBuffer
+end Statement
+
+Statement drawItems{}
+  Shared gd.GameData
+  Shared walls()
+  Shared CMazeDr.MazeDir(), CMazePos.MazePos()
+  shared wallslookup(), currentView()
+  Shared *currentLevel.Level
+  Shared bkgindex, currentBuffer
+End Statement 
+
+
+Statement  drawBattery{}
+  Shared gd.GameData
+  Shared bkgindex, currentBuffer
+  shared gameEnd
+  ratio.q = gd\player\sp / gd\player\maxsp
+  round.w = ratio.q * 10
+  dbugprintval{round.w}
+  
+  if (round > -1)
+    BBlit currentBuffer, #UIShapeStart + round, 67,195
+  else
+    gameEnd = 3
+  end if
+  
+End Statement

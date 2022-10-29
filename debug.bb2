@@ -14,3 +14,11 @@ Statement dbugprintval{value.l}
   Poke.l $bfff00, value
   Poke.l $bfff04, &valuefmtString$
 End Statement
+
+Statement dbugprintvalq{value.q}
+  SHARED valuefmtString$
+
+  Poke.l $bfff00, value
+  Poke.l $bfff00, value
+  Poke.l $bfff04, &valuefmtString$
+End Statement
