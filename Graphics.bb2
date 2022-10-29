@@ -138,8 +138,8 @@ If ReadFile(0,wallFile.s)
      Next
     CloseFile 0
     Use BitMap #bkgndBitmap
-    GetaShape 0, 1,1,239,179 ; background frame 1
-    GetaShape 1, 1,1,239,179 ; background frame 2
+    GetaShape 0, 1,1,1,1 ; background frame 1
+    GetaShape 1, 1,1,1,1 ; background frame 2
    ; XFlip 1                  ; fliping the background for when you walk or turn to make it look that you are moving
 
     SaveShapes 0,shapeIndex,outfile.s

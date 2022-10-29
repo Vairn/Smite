@@ -8,15 +8,7 @@ Statement loadMainTitle{}
     InitPalette #titlepalette, 256
     LoadBitMap #titlescreenbitmap,"title-menu.iff",#titlepalette
     
-    ILBMinfo "menu.iff"
-    BitMap #titlescreenitems, ILBMWidth,ILBMHeight,ILBMDepth
-    LoadBitMap #titlescreenitems, "menu.iff"
-    use bitmap #titlescreenitems
-    GetaShape  1,224,61,67,11 
-    GetaShape  2,224,95,70,11  
-    GetaShape  3,224,127,65,11 
-
-    Free Bitmap #titlescreenitems
+    LoadShapes 1,"title.shp"  
     BitMap #titlescreenitems, ILBMWidth,ILBMHeight,ILBMDepth
     BLITZ
      AGA_FADE_OUT{0,#titlepalette,2,1,0}

@@ -27,7 +27,6 @@ Statement unloadNoBattery{}
     Free Palette #titlepalette
     Free Bitmap #titlescreenbitmap
 
-
 End Statement
 
 function doNoBattery{}

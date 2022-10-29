@@ -10,7 +10,7 @@ statement loadItemGraphics{filename$}
         LoadShapes shapeIndex, shapefile
     else
         ILBMinfo shapesource.s
-                dbugprintval{ILBMWidth}
+        dbugprintval{ILBMWidth}
         dbugprintval{ILBMHeight}
         dbugprintval{ILBMDepth}
         BitMap 3, ILBMWidth,ILBMHeight,ILBMDepth
