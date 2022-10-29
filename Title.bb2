@@ -3,12 +3,12 @@ XINCLUDE "bitfont.bb2"
 XINCLUDE "GameState.bb2"
 Statement loadMainTitle{}
     QAMIGA
-    ILBMinfo "title-menu.iff"
+    ILBMinfo "assets/" + "title-menu.iff"
     BitMap #titlescreenbitmap, ILBMWidth,ILBMHeight,ILBMDepth
     InitPalette #titlepalette, 256
-    LoadBitMap #titlescreenbitmap,"title-menu.iff",#titlepalette
+    LoadBitMap #titlescreenbitmap,"assets/" + "title-menu.iff",#titlepalette
     
-    LoadShapes 1,"title.shp"  
+    LoadShapes 1,"assets/" + "title.shp"  
     BitMap #titlescreenitems, ILBMWidth,ILBMHeight,ILBMDepth
     BLITZ
      AGA_FADE_OUT{0,#titlepalette,2,1,0}

@@ -3,10 +3,10 @@ XINCLUDE "bitfont.bb2"
 
 Statement loadNoBattery{}
     QAMIGA
-    ILBMinfo "NoBattery.iff"
+    ILBMinfo "assets/" + "NoBattery.iff"
     BitMap #titlescreenbitmap, ILBMWidth,ILBMHeight,ILBMDepth
     InitPalette #titlepalette, 256
-    LoadBitMap #titlescreenbitmap,"NoBattery.iff",#titlepalette
+    LoadBitMap #titlescreenbitmap,"assets/" + "NoBattery.iff",#titlepalette
 
     BLITZ
     InitPalette 2, 256

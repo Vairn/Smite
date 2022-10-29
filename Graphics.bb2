@@ -37,10 +37,10 @@ BitMap #bkgndBitmap,240,180,5
 use bitmap #bkgndBitmap
 cls 0
 
-wallFile.s = filename$+".wll"
-outfile.s = filename$ + ".wllshp"
-palfile.s = filename$ + ".wllpal"
-processed.s = filename$ + ".wllinf"
+wallFile.s = "assets/" + filename$+".wll"
+outfile.s = "assets/" + filename$ + ".wllshp"
+palfile.s = "assets/" + filename$ + ".wllpal"
+processed.s = "assets/" + filename$ + ".wllinf"
 dbugprintstring{wallFile.s}
 If ReadFile(0,wallFile.s)
 
@@ -185,9 +185,9 @@ shared walls()
 QAMIGA
 sizeWall.w = SizeOf .Wallset
 
-shapefile.s = filename$ + ".wllshp"
-palfile.s = filename$ + ".wllpal"
-processed.s = filename$ + ".wllinf"
+shapefile.s = "assets/" +  filename$ + ".wllshp"
+palfile.s = "assets/" + filename$ + ".wllpal"
+processed.s = "assets/" + filename$ + ".wllinf"
 
 
 if ReadFile(0, processed.s)
@@ -220,9 +220,9 @@ QAMIGA
     ; walls need to have been already loaded for this to do it's magic.
     sizeWall.w = SizeOf .Wallset
    ; stop
-    shapefile.s = filename$ + ".wllshp"
+    shapefile.s = "assets/" + filename$ + ".wllshp"
     ;palfile.s = filename$ + ".wllpal"
-    processed.s = filename$ + ".wllinf"
+    processed.s = "assets/" + filename$ + ".wllinf"
 
     if ReadFile(0, processed.s)
         count.w =0
@@ -261,8 +261,8 @@ QAMIGA
     shapeIndex.w = #UIShapeStart
     dbugprintval{shapeIndex}
     returntype.b =0
-    shapefile.s = fileName$ + ".uishp"
-    shapesource.s = fileName$ + ".iff"
+    shapefile.s = "assets/" + fileName$ + ".uishp"
+    shapesource.s = "assets/" + fileName$ + ".iff"
     dbugprintstring{"Loading UI Shapes"}
  if Exists (shapefile)
        dbugprintstring {"Baked " + shapefile.s }

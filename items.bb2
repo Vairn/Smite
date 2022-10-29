@@ -2,8 +2,8 @@ statement loadItemGraphics{filename$}
     QAMIGA
     ; create some fake items for debug
     ; there are 25 icons in my iff.
-    shapefile.s = filename$ + ".icnshp"
-    shapesource.s = filename$ + ".iff"
+    shapefile.s = "assets/" + filename$ + ".icnshp"
+    shapesource.s = "assets/" + filename$ + ".iff"
     dbugprintstring{"Loading UI Shapes"}
     shapeIndex.w = #UIItems
     if Exists(shapefile.s)

@@ -16,9 +16,9 @@ function .b LoadBitmapFont{fileName.s}
 
     shapeIndex.w = #fontShapeStart
 
-    iffFile.s = fileName.s + ".iff"
+    iffFile.s = "assets/" + fileName.s + ".iff"
     ;shpDesc.s = fileName.s + "fntDsc"
-    shpFile.s = fileName.s + ".fntShp"
+    shpFile.s = "assets/" + fileName.s + ".fntShp"
 
     if Exists (shpFile)
         LoadShapes shapeIndex.w, shpFile

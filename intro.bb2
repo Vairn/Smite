@@ -4,10 +4,10 @@ XINCLUDE "bitfont.bb2"
 introCounter.w = 0
 Statement loadIntro{}
     QAMIGA
-    ILBMinfo "JamLogo.iff"
+    ILBMinfo "assets/" + "JamLogo.iff"
     BitMap #titlescreenbitmap, ILBMWidth,ILBMHeight,ILBMDepth
     InitPalette #titlepalette, 256
-    LoadBitMap #titlescreenbitmap,"JamLogo.iff",#titlepalette
+    LoadBitMap #titlescreenbitmap,"assets/" + "JamLogo.iff",#titlepalette
 
     BLITZ
     InitPalette 2, 256
@@ -57,10 +57,10 @@ function doIntro{}
         AGA_FADE_OUT{0,#titlepalette,2,20,0}
         QAMIGA 
        
-        ILBMinfo "dt.iff"
+        ILBMinfo "assets/" + "dt.iff"
         BitMap #titlescreenbitmap, ILBMWidth,ILBMHeight,ILBMDepth
         InitPalette #titlepalette, 256
-        LoadBitMap #titlescreenbitmap,"dt.iff",#titlepalette
+        LoadBitMap #titlescreenbitmap,"assets/" + "dt.iff",#titlepalette
 
         BLITZ
         ;DisplayPalette 0, #titlepalette

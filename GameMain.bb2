@@ -26,7 +26,7 @@ Statement loadGameAssets{}
     dbugprintstring{"Load Assets"}
    
     res.b = LoadUIGfx{"ui_icons"}
-    LoadFrame{"playfield2.iff"}
+    LoadFrame{"assets/" + "playfield2.iff"}
     loadWalls{"factory"}
     ;loadWalls{"doors"}
     dbugprintstring{"Doors"}
