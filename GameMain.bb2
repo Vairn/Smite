@@ -8,6 +8,7 @@ XINCLUDE "Graphics.bb2"
 XINCLUDE "Title.bb2"
 XINCLUDE "Intro.bb2"
 XINCLUDE "script.bb2"
+XINCLUDE "NoBattery.bb2"
 
 XINCLUDE "GameState.bb2"
 
@@ -138,6 +139,10 @@ Statement setGameState{newState}
         unloadMainTitle{}
     endif
 
+    If gameState = #gs_deadBattery
+        unloadNoBattery{}
+    endif
+
     gameState = newState
 
     if gameState = #gs_intro
@@ -152,6 +157,9 @@ Statement setGameState{newState}
         loadMainTitle{}
     endif
 
+    If gameState = #gs_deadBattery
+        loadNoBattery{}
+    endif
 
 End Statement
 
@@ -182,6 +190,13 @@ Statement mainLoop{}
         endif
     endif
 
+    if gameState = #gs_deadBattery
+        option.w = doNoBattery{}
+        if option.w = 2
+            setGameState{#gs_title}
+        endif
+    endif
+    
     ;drawBitmapText{mx.w, my.w, "X"}
 
     DisplaySprite 0,gd\mousecur,mx,my,0
