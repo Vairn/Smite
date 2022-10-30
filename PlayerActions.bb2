@@ -4,6 +4,7 @@ XINCLUDE "types.bb2"
 XINCLUDE "bitfont.bb2"
 XINCLUDE "Items.bb2"
 XINCLUDE "script.bb2"
+XINCLUDE "GameScript.bb2"
 ; Movement Commands
 Function .w mazeMove{originalPos.w, dir.b}
     Shared *currentLevel.Level
@@ -107,59 +108,21 @@ function handleButtons {}
     mainWindow:
     ; find where in the main zone we have clicked.
     if mx < 5  : if my < 5
-        if JoyB(0)=1 then gameEnd = 2
-        saveGameState{}
-        function return 0
+        if JoyB(0)=1
+            gameEnd = 2
+            saveGameState{}
+            function return 0
+        end if
     endif : endif
     
-    px = gd\playerLocation MOD 32;
-	py = gd\playerLocation/32;div(int(pos), 32).quot;
+  
 
-    realFacing.b = gd\playerFacing
-    xn.b=0: yn.b=0
-    
-    if realFacing.b = 0
-        xn.b=0 : yn.b=-1
-    endif
-    
-    if realFacing.b = 3
-        yn.b=0 : xn.b=-1
-    endif
-    
-    if realFacing.b = 2
-        xn.b=0 : yn.b=1
-    endif
-    
-    if realFacing.b = 1
-        yn.b=0 : xn.b=1
-    endif
-    nx = px + xn
-    ny = py + yn
-    
-    np.w = ((ny & $1f) * 32) + (nx & $1F)
-    wmi.b = *currentLevel\walldata[np*4]
-    dbugprintstring{str$(nx)+ " " + str$(ny) + " " + str$( wmi.b)}
-    if JoyB(0) =1
-        if nx = 1 and ny = 3 and wmi.b = 1
-            doChangeWall{nx,ny,3}
-        end if
-        if wmi.b =2
-            doOpenDoor{nx,ny}
-            function return 1
-        end if
-
-        if wmi.b =3
-            doCloseDoor{nx,ny}
-            function return 1
-        end if
-
-        ; sprite tests...
-        ; gd\mousecur +1
-        ; if  gd\mousecur = 26
-        ;     gd\mousecur =0
-        ; end if
-
-    endif
+    retval = processLevelEvents{}
+    dbugprintval{retval}
+    if (retval <> 0)
+        dbugprintstring{"Rah"}
+        function return 1
+    end if
     goto done:
 
 

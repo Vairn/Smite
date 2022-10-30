@@ -119,10 +119,25 @@ NEWTYPE .MazePos
   facing.b
 End NEWTYPE
 
+; Quick and dirty events for the level
+; since my scripting is incomplete. :(
+NEWTYPE .LevelEvent
+ mapX.b
+ mapY.b
+ facing.b
+ wmi.b
+ eventType.b
+ eventLocX.b
+ eventLocY.b
+ eventVal.b
+End NewType
 ; Arrays
 
 Dim CMazeDr.MazeDir(4)
 Dim CMazePos.MazePos(18)
+
+Dim le.LevelEvent(50)
+
 ; there are upto 32 different wall decorations
 ;Dim wallslookup.Wallset(6,4,32)
 ; Lists 
@@ -201,3 +216,4 @@ gameEnd = 0
 gameState = #gs_title
 Dim currentView(17)
 gd\mousecur = 22
+eventCount =0

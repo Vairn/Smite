@@ -1,0 +1,105 @@
+Statement CreateLevelEvents{}
+    ; Oh the pain, but i wasted too much time, so I had to hard code these....
+    ; Post Jam, I need to finish my scripting language.
+
+    Shared le.LevelEvent()
+    Shared eventCount
+    restore demoEvents
+    read eventCount
+    for  i=0 to eventCount - 1
+        temp.b =0
+        read temp.b : le(i)\mapX = temp.b
+        read temp.b : le(i)\mapY = temp.b
+        read temp.b : le(i)\facing = temp.b
+        read temp.b : le(i)\wmi = temp.b
+        read temp.b : le(i)\eventType = temp.b
+        read temp.b : le(i)\eventLocX = temp.b
+        read temp.b : le(i)\eventLocY = temp.b
+        read temp.b : le(i)\eventVal = temp.b
+    next
+demoEvents:
+    data .b 2
+    data .b 1,3,2,1,3,1,3,0
+    data .b 2,6,2,1,4,1,6,0
+
+End Statement
+
+function processLevelEvents{}
+    Shared gd.GameData
+    shared bkgindex, gameEnd
+    shared gShowMap
+    shared *player
+    Shared le.LevelEvent()
+    shared *currentLevel.Level
+    shared eventCount
+    px = gd\playerLocation MOD 32;
+	py = gd\playerLocation/32;div(int(pos), 32).quot;
+    realFacing.b = gd\playerFacing
+    xn.b=0: yn.b=0
+    dbugprintval{realFacing}
+    if realFacing.b = 0
+        xn.b=0 : yn.b=-1
+    endif
+    
+    if realFacing.b = 3
+        yn.b=0 : xn.b=-1
+    endif
+    
+    if realFacing.b = 2
+        xn.b=0 : yn.b=1
+    endif
+    
+    if realFacing.b = 1
+        yn.b=0 : xn.b=1
+    endif
+    nx = px + xn
+    ny = py + yn
+    
+    np.w = ((ny & $1f) * 32) + (nx & $1F)
+    wmi.b = *currentLevel\walldata[np*4]
+    dbugprintstring{str$(nx)+ " " + str$(ny) + " " + str$( wmi.b)}
+    if JoyB(0) =1
+        ;if nx = 1 and ny = 3 and wmi.b = 1
+        ;    doChangeWall{nx,ny,3}
+        ;    function return 1
+        ;end if
+
+        for  i=0 to eventCount - 1
+            ;       dbugprintstring{"E:" + str$(le(i)\mapX)+ " " + str$(le(i)\mapY) + " " + str$( le(i)\wmi)}
+            if nx = le(i)\mapX
+                if ny = le(i)\mapY
+                    if wmi = le(i)\wmi
+                        if realFacing = le(i)\facing or le(i)\facing=5
+                        Select (le(i)\eventType)
+                            Case 1
+                                doOpenDoor{le(i)\eventLocX, le(i)\eventLocY}
+                            Case 2
+                                doCloseDoor{le(i)\eventLocX, le(i)\eventLocY}
+                            case 3
+                                doChangeWall{le(i)\eventLocX, le(i)\eventLocY, le(i)\eventVal}
+                            case 4
+                                doSetwall{le(i)\eventLocX, le(i)\eventLocY}
+                            case 5                        
+                                doSetFlag{le(i)\eventVal}
+                            case 6
+                                doClearFlag{le(i)\eventVal}
+                        End Select
+                        function return 1
+                        end if
+                    end if
+                end if
+            end if
+        Next
+
+        if wmi.b =2
+            doOpenDoor{nx,ny}
+            function return 1
+        end if
+
+        if wmi.b =3
+            doCloseDoor{nx,ny}
+            function return 1
+        end if
+    endif
+    function return 0
+End Function

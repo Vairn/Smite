@@ -22,6 +22,7 @@ Statement loadGameAssets{}
     dbugprintstring{"Make Demo Map"}
      
     *currentLevel = MakeDemoMap{}
+    CreateLevelEvents{}
     ;*currentLevel = LoadMap{"maze1.maz"}
     dbugprintstring{"Load Assets"}
 
@@ -51,7 +52,7 @@ Statement loadGameAssets{}
     Cls 0
     BlockScroll 0,0,320,256,0,0,#guiframe
     drawView{}
-
+    
     AGA_FADE_IN{0,1,2,30,0}
 
 end statement

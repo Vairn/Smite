@@ -68,8 +68,9 @@ Statement doSetwall{x,y}
   Shared gd.GameData
   Shared *currentLevel.Level
 
-  mazePos.w = ((y  & $1f) * 32) + (x & $1F) 
-  *currentLevel\walldata[mazePos.w*4] = 1
+  mazePos.w = ((y  & $1f) * 32) + (x & $1F)
+  dbugprintstring{"doSetWall:" + str$(x) + " " + str$(y)}
+  *currentLevel\walldata[mazePos.w*4] = 1-*currentLevel\walldata[mazePos.w*4]
 End Statement
 
 Statement doChangeWall{x,y,value}
