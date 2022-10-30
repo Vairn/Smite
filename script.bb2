@@ -64,27 +64,33 @@ Statement RunScript{}
 
 End Statement
 
-Statement doSetwall{x,y,value}
+Statement doSetwall{x,y}
   Shared gd.GameData
   Shared *currentLevel.Level
+
+  mazePos.w = ((y  & $1f) * 32) + (x & $1F) 
+  *currentLevel\walldata[mazePos.w*4] = 1
 End Statement
 
 Statement doChangeWall{x,y,value}
   Shared *currentLevel.Level
   Shared gd.GameData
-
+  mazePos.w = ((y  & $1f) * 32) + (x & $1F) 
+  *currentLevel\walldata[mazePos.w*4] = value
 End Statement
 
 Statement doOpenDoor{x,y}
   Shared *currentLevel.Level
   Shared gd.GameData
-
+  mazePos.w = ((y  & $1f) * 32) + (x & $1F) 
+  *currentLevel\walldata[mazePos.w*4] = 3
 End Statement
 
 Statement doCloseDoor{x,y}
   Shared *currentLevel.Level
   Shared gd.GameData
-
+   mazePos.w = ((y  & $1f) * 32) + (x & $1F) 
+  *currentLevel\walldata[mazePos.w*4] = 2
 
 End Statement
 

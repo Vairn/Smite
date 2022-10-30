@@ -28,8 +28,8 @@ function .b LoadBitmapFont{fileName.s}
         BitMap 3, ILBMWidth,ILBMHeight,ILBMDepth
         LoadBitMap 3,iffFile.s
         Use BitMap 3
-        for y=0 to (ILBMHeight/8) -1
-            for x=0 to (ILBMWidth/8) -1
+        for y=0 to (ILBMHeight/8) - 1
+            for x=0 to (ILBMWidth/8) - 1
                 GetaShape shapeIndex.w, x*8, y*8, 8,8
                 shapeIndex+1
             Next ; x
@@ -56,7 +56,8 @@ Statement drawBitmapText{scX.w, scY.w, strtext.s}
             scY + 8
         endif
 
-        ascii-31 ; string font starts from the space character
+        ascii-32 ; string font starts from the space character
+        if ascii > 32 then ascii + 1
         BBlit currentBuffer,#fontShapeStart + ascii.w, scX.w + ((c-1)*8), scY,%0000000
     next
 End Statement

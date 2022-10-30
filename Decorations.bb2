@@ -1,0 +1,82 @@
+; Decorations.bb2
+
+; 
+Statement InitDecorations{}
+    Shared decs()
+    ; These are meant to be loaded from an external file, but I ran out of time to implement the editor.
+    ; so Hardcoded values for the Jam.
+    ; Only 2 types atm, door buttons, and switches.
+    ResetList decs()
+    ; Switch OFF
+    AddItem decs()
+    decs()\id=0
+    decs()\screenX[0] = 100 : decs()\screenY[0] = 100 : decs()\shapeIndex[0] = #decorationshapes
+    decs()\screenX[1] = 100 : decs()\screenY[1] = 100 : decs()\shapeIndex[1] = decs()\shapeIndex[0] +8
+    decs()\screenX[2] = 100 : decs()\screenY[2] = 100 : decs()\shapeIndex[2] = decs()\shapeIndex[0] +16
+    
+    ; Switch Mid
+    AddItem decs()
+    decs()\id=1
+    decs()\screenX[0] = 100 : decs()\screenY[0] = 100 : decs()\shapeIndex[0] = #decorationshapes +1
+    decs()\screenX[1] = 100 : decs()\screenY[1] = 100 : decs()\shapeIndex[1] = decs()\shapeIndex[0] +8
+    decs()\screenX[2] = 100 : decs()\screenY[2] = 100 : decs()\shapeIndex[2] = decs()\shapeIndex[0] +16
+    
+    ; Switch On
+    AddItem decs()
+    decs()\id=2
+    decs()\screenX[0] = 100 : decs()\screenY[0] = 100 : decs()\shapeIndex[0] = #decorationshapes +2
+    decs()\screenX[1] = 100 : decs()\screenY[1] = 100 : decs()\shapeIndex[1] = decs()\shapeIndex[0] +8
+    decs()\screenX[2] = 100 : decs()\screenY[2] = 100 : decs()\shapeIndex[2] = decs()\shapeIndex[0] +16
+    
+    ; Door Button Off
+    AddItem decs()
+    decs()\id=3
+    decs()\screenX[0] = 100 : decs()\screenY[0] = 100 : decs()\shapeIndex[0] = #decorationshapes +3
+    decs()\screenX[1] = 100 : decs()\screenY[1] = 100 : decs()\shapeIndex[1] = decs()\shapeIndex[0] +8
+    decs()\screenX[2] = 100 : decs()\screenY[2] = 100 : decs()\shapeIndex[2] = decs()\shapeIndex[0] +16
+    ; Door Button On
+    AddItem decs()
+    decs()\id=4
+    decs()\screenX[0] = 100 : decs()\screenY[0] = 100 : decs()\shapeIndex[0] = #decorationshapes +4
+    decs()\screenX[1] = 100 : decs()\screenY[1] = 100 : decs()\shapeIndex[1] = decs()\shapeIndex[0] +8
+    decs()\screenX[2] = 100 : decs()\screenY[2] = 100 : decs()\shapeIndex[2] = decs()\shapeIndex[0] +16
+End Statement
+
+Statement InitProps{}
+    ; props use the decoration shapes.
+    ; only 2 atm
+    ; a door switch
+    ; a button.
+    ; Lame.
+
+    Shared props()
+    ResetList props()
+
+    ; Switch Standard
+    additem props()
+    props()\id=0
+    props()\archtype = 1
+    props()\_frames =2
+    props()\_index[0]=0
+    props()\_index[1]=2
+
+    ; door button
+    additem props()
+    props()\id=0
+    props()\archtype = 2
+    props()\_frames = 2
+    props()\_index[0]=3
+    props()\_index[1]=4
+
+    
+; Switch 3 way
+    additem props()
+    props()\id=2
+    props()\archtype = 3
+    props()\_frames =3
+    props()\_index[0]=0
+    props()\_index[1]=1
+    props()\_index[2]=2
+    
+
+End Statement

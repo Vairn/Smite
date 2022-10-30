@@ -8,6 +8,7 @@ DEFTYPE .b
 XINCLUDE "debug.bb2"
 XINCLUDE "types.bb2"
 XINCLUDE "fileaccess.bb2"
+XINCLUDE "Decorations.bb2"
 XINCLUDE "Monster.bb2"
 XINCLUDE "Map.bb2"
 XINCLUDE "Graphics.bb2"

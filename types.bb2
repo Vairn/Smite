@@ -19,15 +19,21 @@ NEWTYPE .Wallset
 End NEWTYPE
 
 
-NewType .decorations
+NewType .Decorations
   id.w  
-  screenX.w
-  screenY.w
+  screenX.w[3]
+  screenY.w[3]
   width.w
   height.w
-  shapeIndex.w
+  shapeIndex.w[3]
 End NewType
 
+NewType .Prop
+  id.w
+  archtype.w
+  _frames.b
+  _index.b[5]
+End Newtype
 
 NEWTYPE .MonsterInstance
   archetype.Monster
@@ -122,6 +128,8 @@ Dim CMazePos.MazePos(18)
 ; Lists 
 ;Dim List currentScript.LevelScript(1024)
 dim List walls.Wallset(100)
+dim list decs.Decorations(10)
+dim list props.Prop(4)
 DEFTYPE .Wallset *wallsPtr
 wallSetCount.w = 0
 

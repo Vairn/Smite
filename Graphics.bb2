@@ -248,6 +248,76 @@ End Statement
 
 Statement LoadDecorations{fileName$}
 QAMIGA
+     shapeIndex.w = #decorationshapes
+    dbugprintval{shapeIndex}
+    returntype.b =0
+    shapefile.s = "assets/" + fileName$ + ".propshp"
+    shapesource.s = "assets/" + fileName$ + ".iff"
+    shapespal.s = "assets/" + fileName$ + ".pal"
+
+    dbugprintstring{"Loading Prop Shapes"}
+    if Exists (shapefile)
+       dbugprintstring {"Baked " + shapefile.s }
+          LoadShapes shapeIndex.w, shapefile
+          ; Decorations use index 64 onwards
+          LoadPalette 1, shapespal.s, 64
+          DisplayPalette 0,1
+          SavePalette 1, "assets/test.pal"
+        returntype = -1
+    else    
+        dbugprintstring {"Building " + shapesource.s }
+        ILBMinfo shapesource.s
+        BitMap 3, ILBMWidth,ILBMHeight,ILBMDepth
+        InitPalette 3, 32
+        LoadBitMap 3,shapesource.s,3
+        dbugprintval{ILBMWidth}
+        dbugprintval{ILBMHeight}
+        dbugprintval{ILBMDepth}
+        Use BitMap 3
+        for i=0 to 3
+            dbugprintval{i}
+        ; Wall Switch
+            startIndex.w = shapeIndex
+            GetaShape shapeIndex, 26,146,38,45
+            shapeIndex+1
+            GetaShape shapeIndex, 64,146,38,45
+            shapeIndex+1
+            GetaShape shapeIndex, 102,146,38,45
+            shapeIndex+1
+            
+            ; Door Button
+            GetaShape shapeIndex, 124,16,16,16
+            shapeIndex+1
+            GetaShape shapeIndex, 144,16,16,16
+            shapeIndex+1
+            
+            GetaShape shapeIndex, 176,16,16,16
+            shapeIndex+1
+            
+            ;
+            GetaShape shapeIndex, 144,48,32,32
+            shapeIndex+1
+            
+            ; Chest
+            GetaShape shapeIndex, 279,112,16,16
+            shapeIndex+1
+            GetaShape shapeIndex, 299,112,16,16
+            shapeIndex+1
+            EndIndex.w = shapeIndex-1
+            dbugprintstring{"Reseizing"}
+                for s.w=startIndex to EndIndex
+                dbugprintval{s}
+                if i > 0
+                    Scale s, 1/(i+1), 1/(i+1)
+                end if
+                next
+            
+        next
+        Free BitMap 3
+        SaveShapes #decorationshapes, shapeIndex.w, shapefile.s 
+        SavePalette 3,shapespal.s  
+        returntype = -1
+    endif
 Blitz
 End Statement
 

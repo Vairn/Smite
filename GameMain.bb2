@@ -24,15 +24,17 @@ Statement loadGameAssets{}
     *currentLevel = MakeDemoMap{}
     ;*currentLevel = LoadMap{"maze1.maz"}
     dbugprintstring{"Load Assets"}
-   
+
     res.b = LoadUIGfx{"ui_icons"}
     LoadFrame{"assets/" + "playfield2.iff"}
     loadWalls{"factory"}
+    LoadDecorations{"prop"}
     ;loadWalls{"doors"}
     dbugprintstring{"Doors"}
     LoadDoors{"Doors"}
     dbugprintstring{"Reset Walls"}
-    
+    InitDecorations{}
+    InitProps{}
     ResetList walls()
 
     dbugprintstring{"Present Screen"}
@@ -67,7 +69,7 @@ Statement InitMainScreens{}
     Buffer #backbuffer, 13684
     
     ; init our palette
-    InitPalette 1,16
+    InitPalette 1,256
 
     mx.w = 0
     my.w = 0
@@ -197,8 +199,10 @@ Statement mainLoop{}
         endif
     endif
     
-    ;drawBitmapText{mx.w, my.w, "X"}
-
+    ;drawBitmapText{mx.w, my.w, "X"+str$(mx.w)}
+    ;  px = gd\playerLocation MOD 32;
+    ; py = gd\playerLocation / 32;div(int(pos), 32).quot;
+    ; drawBitmapText{20,200,str$(px)+" "+str$(py)}
     DisplaySprite 0,gd\mousecur,mx,my,0
 
 end statement

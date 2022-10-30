@@ -3,8 +3,8 @@ XINCLUDE "debug.bb2"
 XINCLUDE "types.bb2"
 XINCLUDE "bitfont.bb2"
 XINCLUDE "Items.bb2"
+XINCLUDE "script.bb2"
 ; Movement Commands
-
 Function .w mazeMove{originalPos.w, dir.b}
     Shared *currentLevel.Level
     shared bkgindex
@@ -90,6 +90,8 @@ function handleButtons {}
     shared gShowMap
     shared *player
 
+    shared *currentLevel.Level
+  
     realFacing.b = 0
     mx.w = MouseX
     my.w = MouseY
@@ -107,12 +109,56 @@ function handleButtons {}
     if mx < 5  : if my < 5
         if JoyB(0)=1 then gameEnd = 2
         saveGameState{}
+        function return 0
     endif : endif
+    
+    px = gd\playerLocation MOD 32;
+	py = gd\playerLocation/32;div(int(pos), 32).quot;
+
+    realFacing.b = gd\playerFacing
+    xn.b=0: yn.b=0
+    
+    if realFacing.b = 0
+        xn.b=0 : yn.b=-1
+    endif
+    
+    if realFacing.b = 3
+        yn.b=0 : xn.b=-1
+    endif
+    
+    if realFacing.b = 2
+        xn.b=0 : yn.b=1
+    endif
+    
+    if realFacing.b = 1
+        yn.b=0 : xn.b=1
+    endif
+    nx = px + xn
+    ny = py + yn
+    
+    np.w = ((ny & $1f) * 32) + (nx & $1F)
+    wmi.b = *currentLevel\walldata[np*4]
+    dbugprintstring{str$(nx)+ " " + str$(ny) + " " + str$( wmi.b)}
     if JoyB(0) =1
-        gd\mousecur +1
-        if  gd\mousecur = 26
-            gd\mousecur =0
+        if nx = 1 and ny = 3 and wmi.b = 1
+            doChangeWall{nx,ny,3}
         end if
+        if wmi.b =2
+            doOpenDoor{nx,ny}
+            function return 1
+        end if
+
+        if wmi.b =3
+            doCloseDoor{nx,ny}
+            function return 1
+        end if
+
+        ; sprite tests...
+        ; gd\mousecur +1
+        ; if  gd\mousecur = 26
+        ;     gd\mousecur =0
+        ; end if
+
     endif
     goto done:
 
@@ -176,7 +222,7 @@ function handleButtons {}
     if mx > 65  : if my > 190
         if mx < 88  : if my < 230
 
-            drawBitmapText{5, 240,  "BATTERY LEVEL 00"}
+            drawBitmapText{5, 240,  "BATTERY LEVEL " +Str$(gd\player\sp)}
             ;drawColouredText{5, 240, 255,128,0, "TEST TEXT"}
         endif : endif
     endif : endif
