@@ -1,0 +1,45 @@
+; Win.bb2
+XINCLUDE "bitfont.bb2"
+
+Statement loadWin{}
+    QAMIGA
+    ILBMinfo "assets/" + "Win.iff"
+    BitMap #titlescreenbitmap, ILBMWidth,ILBMHeight,ILBMDepth
+    InitPalette #titlepalette, 256
+    LoadBitMap #titlescreenbitmap,"assets/" + "Win.iff",#titlepalette
+
+    BLITZ
+    InitPalette 2, 256
+    AGA_FADE_OUT{0,#titlepalette,2,1,0}
+    ;DisplayPalette 0, #titlepalette
+    !cycleBuffer{currentBuffer}
+    BlockScroll 0,0,320,256,0,0,#titlescreenbitmap
+    !cycleBuffer{currentBuffer}
+    BlockScroll 0,0,320,256,0,0,#titlescreenbitmap
+    !cycleBuffer{currentBuffer}
+    
+    DisplayPalette 0,2
+    AGA_FADE_IN{0,#titlepalette,2,20,0}
+
+End Statement
+
+Statement unloadWin{}
+    Free Palette #titlepalette
+    Free Bitmap #titlescreenbitmap
+
+End Statement
+
+function doWin{}
+    shared currentBuffer
+    shared gameEnd
+    shared introCounter.w
+    
+    retVal.b = 1
+  
+    if JoyB(0)=1
+            retVal = 2
+            AGA_FADE_OUT{0,#titlepalette,2,20,0}
+            function return retVal.b
+     endif
+    function return retVal.b
+End function

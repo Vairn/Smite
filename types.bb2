@@ -137,6 +137,7 @@ Dim CMazeDr.MazeDir(4)
 Dim CMazePos.MazePos(18)
 
 Dim le.LevelEvent(50)
+Dim stringTable.s(255)
 
 ; there are upto 32 different wall decorations
 ;Dim wallslookup.Wallset(6,4,32)
@@ -211,6 +212,7 @@ bkgindex.b=0
 #gs_game = %01000
 #gs_paused = %10000
 #gs_deadBattery = %00011
+#gs_win = %00101
 gShowMap = 0
 gameEnd = 0
 gameState = #gs_title

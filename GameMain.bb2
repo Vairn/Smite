@@ -9,7 +9,7 @@ XINCLUDE "Title.bb2"
 XINCLUDE "Intro.bb2"
 XINCLUDE "script.bb2"
 XINCLUDE "NoBattery.bb2"
-
+XINCLUDE "Escaped.bb2"
 XINCLUDE "GameState.bb2"
 
 Statement loadGameAssets{}
@@ -146,6 +146,10 @@ Statement setGameState{newState}
         unloadNoBattery{}
     endif
 
+    If gameState = #gs_win
+        unloadWin{}
+    endif
+
     gameState = newState
 
     if gameState = #gs_intro
@@ -162,6 +166,10 @@ Statement setGameState{newState}
 
     If gameState = #gs_deadBattery
         loadNoBattery{}
+    endif
+    
+    If gameState = #gs_win
+        loadWin{}
     endif
 
 End Statement
@@ -195,6 +203,13 @@ Statement mainLoop{}
 
     if gameState = #gs_deadBattery
         option.w = doNoBattery{}
+        if option.w = 2
+            setGameState{#gs_title}
+        endif
+    endif
+
+    if gameState = #gs_win
+        option.w = doWin{}
         if option.w = 2
             setGameState{#gs_title}
         endif

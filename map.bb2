@@ -461,18 +461,18 @@ Statement drawView{}
           ; .draw the required walltile
           ResetList walls()
           While(NextItem (walls()))
-            if(walls()\walltype = wmi or (walls()\walltype = 2 and wmi.b=3))
+            if(walls()\walltype = wmi or (walls()\walltype = 1 and wmi.b = 2 ) or (walls()\walltype = 2 and wmi.b=3))
               tx.b =-walls()\locationX
               ty.b= walls()\locationY
               if (tx = CMazePos(i)\xDelta) 
                 if (ty = CMazePos(i)\yDelta)
-                if wmi.b = 2
+                ;if wmi.b = 2
                   ; closed door
-                  Boxf walls()\screenX+4, walls()\screenY+4, walls()\screenX+walls()\width, walls()\screenY+walls()\height,48
-                endif
+                ;  Boxf walls()\screenX+4, walls()\screenY+4, walls()\screenX+walls()\width, walls()\screenY+walls()\height,48
+                ;endif
                   Blit walls()\shapeIndex, walls()\screenX+4, walls()\screenY+4
                 
-                Pop While              
+               ; Pop While              
               EndIf : Endif
             Endif
           Wend    

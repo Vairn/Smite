@@ -24,7 +24,6 @@ dbugprintstring{"InitMainScreens {"}
 InitMainScreens{}
 dbugprintstring{"InitMainScreens }"}
 
-; Extra Comment for test
 
 BLITZ
 
@@ -45,5 +44,10 @@ Repeat
         gameEnd = 0
         setGameState{#gs_deadBattery}
     end if
+    if gameEnd = 4
+        gameEnd = 0
+        setGameState{#gs_win}
+    end if
+
 Until gameEnd
 End

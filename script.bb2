@@ -110,7 +110,7 @@ Statement doStealItem{}
 
 End Statement
 
-Statement doMessage{text$}
+Statement doMessage{x,y,text$}
   Shared gd.GameData
 
 End Statement

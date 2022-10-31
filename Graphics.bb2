@@ -229,7 +229,7 @@ QAMIGA
         ReadMem 0, &count.w,2
         ResetList walls()
         for idx.w=0 to count.w
-            AddItem walls() 
+            AddLast walls() 
             ReadMem 0, walls(), sizeWall.w
             walls()\walltype=2
             walls()\shapeIndex + 100
