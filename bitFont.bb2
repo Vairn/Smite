@@ -45,12 +45,13 @@ End Function
 
 Statement drawBitmapText{scX.w, scY.w, strtext.s}
     shared currentBuffer
+    if scX<0 then scX = 256+scX
+    if scY<0 then scY = 256+scY
+    lengthOfString.w = Len (strtext.s)
     
-    strLen.w = Len (strtext.s)
-    
-    if strLen = 0 then Statement Return
+    if lengthOfString = 0 then Statement Return
 
-    for c =1 to strLen.w
+    for c =1 to lengthOfString.w
         ascii.w = Asc(Mid$(strtext.s,c,1))
         if ascii.w = 10
             scY + 8
@@ -58,14 +59,17 @@ Statement drawBitmapText{scX.w, scY.w, strtext.s}
 
         ascii-32 ; string font starts from the space character
         if ascii > 32 then ascii + 1
-        BBlit currentBuffer,#fontShapeStart + ascii.w, scX.w + ((c-1)*8), scY,%0000000
+        BBlit currentBuffer,#fontShapeStart + ascii.w, scX.w + ((c-1)*8), scY,%00000001
     next
+    VWait 1
 End Statement
 
 Statement drawColouredText{scX.w, scY.w, R.w, G.w, B.w, strtext.s}
-    ;; Set Colour
+    
     AGAPalRGB  1,1,R,G,B
     DisplayPalette 0,1
     ;; Draw Text 
     drawBitmapText{scX, scY, strtext}
+
+    
 End Statement

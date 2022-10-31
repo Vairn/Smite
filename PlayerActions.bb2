@@ -196,5 +196,7 @@ function handleButtons {}
     goto done:
 
     done:
+        processLevelEventsCell{}
+       
     function return 0
 End Function

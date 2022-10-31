@@ -519,9 +519,9 @@ Statement  drawBattery{}
   else
     gameEnd = 3
   end if
-      BBlit currentBuffer, #decorationshapes + (propidx/10), 10,10,%10
-      propidx.w+1
-      if propidx > 350
-        propidx = 0
-      endif
+      ; BBlit currentBuffer, #decorationshapes + (propidx/10), 10,10,%10
+      ; propidx.w+1
+      ; if propidx > 350
+      ;   propidx = 0
+      ; endif
 End Statement

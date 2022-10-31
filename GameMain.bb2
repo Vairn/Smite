@@ -112,8 +112,10 @@ Statement doMainGameLoop{}
 
 
     ;dbugprintstring {"Mouse X" + str$(mX) + " Mouse Y:" + str$(my)}
-
+        AGAPalRGB  1,3,0,255,0
+        DisplayPalette 0,1
     if doRedraw > 0
+
         drawView{}   
         drawDecals{}
         drawItems{} 
@@ -126,6 +128,8 @@ Statement doMainGameLoop{}
    
     endif
         drawBattery{} 
+
+        
 end Statement
 
 Statement setGameState{newState}
@@ -220,5 +224,5 @@ Statement mainLoop{}
     ; py = gd\playerLocation / 32;div(int(pos), 32).quot;
     ; drawBitmapText{20,200,str$(px)+" "+str$(py)}
     DisplaySprite 0,gd\mousecur,mx,my,0
-
+    
 end statement

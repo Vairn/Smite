@@ -23,17 +23,28 @@ Statement CreateLevelEvents{}
     read stringCount
     for i=0 to stringCount - 1
         read stringTable(i)
+        stringTable(i) =stringTable(i)
         ;dbugprintstring{stringTable(i)}
     next
+    
 demoEvents:
-    data .b 3
+    data .b 8
     data .b 1,3,2,1,3,1,3,0
     data .b 2,6,2,1,4,1,6,0
-    data .b 1,1,5,5,9,0,0,1
+    data .b 1,1,5,5,9,5,240,1
+    data .b 1,2,5,5,9,5,240,2
+    data .b 7,11,5,5,11,100,0,4
+    data .b 9,25,5,5,11,100,0,4
+    data .b 17,30,5,5,11,100,0,4
+    data .b 8,1,1,1,11,2,0,0
+
 stringTable:
-    data .b 2
-    data .s "THIS IS A TEST STRING"
+    data .b 4
+    data .s "HELLO"
     data .s "WELCOME TO MY LIFE SUCKS"
+    data .s "YOU FEEL A DRAFT"
+    data .s "CHARGING BATTERY"
+
 End Statement
 
 function processLevelEvents{}
@@ -96,7 +107,13 @@ function processLevelEvents{}
                             case 5                        
                                 doSetFlag{le(i)\eventVal}
                             case 6
-                                doClearFlag{le(i)\eventVal}  
+                                doClearFlag{le(i)\eventVal}
+                            case 11
+                                if (le(i)\eventLocX >0) 
+                                    gd\player\sp+2
+                                    le(i)\eventLocX-1
+                                endif
+
                         End Select
                         function return 1
                         end if
@@ -114,12 +131,31 @@ function processLevelEvents{}
             doCloseDoor{nx,ny}
             function return 1
         end if
+    endif
+    function return 0
+End Function
 
-        else
+
+statement processLevelEventsCell{}
+    Shared gd.GameData
+    shared bkgindex, gameEnd
+    shared gShowMap
+    shared *player
+    Shared le.LevelEvent()
+    shared *currentLevel.Level
+    shared eventCount
+    shared stringTable()
+
+    px = gd\playerLocation MOD 32;
+	py = gd\playerLocation/32;div(int(pos), 32).quot;
+    realFacing.b = gd\playerFacing
+   
+    wmi.b = *currentLevel\walldata[gd\playerLocation*4]
+    ;dbugprintstring{str$(nx)+ " " + str$(ny) + " " + str$( wmi.b)}
             for  i=0 to eventCount - 1
             ;       dbugprintstring{"E:" + str$(le(i)\mapX)+ " " + str$(le(i)\mapY) + " " + str$( le(i)\wmi)}
-            if nx = le(i)\mapX
-                if ny = le(i)\mapY
+            if px = le(i)\mapX
+                if py = le(i)\mapY
                     if wmi = le(i)\wmi or le(i)\wmi =5
                         if realFacing = le(i)\facing or le(i)\facing=5
                         Select (le(i)\eventType)
@@ -131,14 +167,25 @@ function processLevelEvents{}
                             case 9
                                 ;dbugprintstring{stringTable(le(i)\eventVal)}
                                 drawColouredText{le(i)\eventLocX, le(i)\eventLocY, 200,100,0,stringTable(le(i)\eventVal)}
-                               
+                                    
+                            case 10
+                                gameEnd = 4
+
+                            case 11
+                                if (le(i)\eventLocX >0 and gd\player\sp<100) 
+                                    gd\player\sp+1
+                                    le(i)\eventLocX-1
+                                    
+                                    chrg.s + "CHARGING " + str$(le(i)\eventLocX-1) + " CHARGE LEFT"
+                                    drawColouredText{5,240, 200,100,0, chrg.s}
+                                endif
                         End Select
-                        function return 0
+                        
                         end if
                     end if
                 end if
             end if
         Next
-    endif
-    function return 0
-End Function
+    
+
+End Statement
