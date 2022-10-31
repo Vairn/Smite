@@ -7,6 +7,11 @@ Statement CreateLevelEvents{}
     Shared eventCount
     Shared *currentLevel.Level 
     restore demoEvents
+    for i=0 to 255
+        le(i)\mapX = 40
+        le(i)\mapY = 40
+        le(i)\eventType=0
+    next
     read eventCount
     for  i=0 to eventCount - 1
         temp.b =0

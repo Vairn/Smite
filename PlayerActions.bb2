@@ -107,13 +107,13 @@ function handleButtons {}
 
     mainWindow:
     ; find where in the main zone we have clicked.
-    if mx < 5  : if my < 5
-        if JoyB(0)=1
-            gameEnd = 2
-            saveGameState{}
-            function return 0
-        end if
-    endif : endif
+    ; if mx < 5  : if my < 5
+    ;     if JoyB(0)=1
+    ;         gameEnd = 2
+    ;         saveGameState{}
+    ;         function return 0
+    ;     end if
+    ; endif : endif
     
   
 

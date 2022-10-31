@@ -53,6 +53,8 @@ function .l MakeDemoMap{}
         *newLevel\walldata[(i*4)+1] = 1
       else
         *newLevel\walldata[i*4] = tmp.b
+         *newLevel\walldata[(i*4)+1] = 0
+
       end if
     Next
     function Return *newLevel  
@@ -215,7 +217,7 @@ Statement preFillPosData{}
   data .b -1, -3     ; 2
   data .b  3, -3     ; 3
   data .b  2, -3     ; 4
-  data .b  1, -3     ; 5+
+  data .b  1, -3     ; 5
   data .b  0, -3     ; 6
   data .b -2, -2     ; 7
   data .b -1, -2     ; 8
@@ -550,23 +552,25 @@ Statement drawView{}
               ty.b= walls()\locationY
               if (tx = CMazePos(i)\xDelta) 
                 if (ty = CMazePos(i)\yDelta)
-                  if ()
+                  Blit walls()\shapeIndex, walls()\screenX+4, walls()\screenY+4,%1
+
+                  if (i = 14)
                   if (wmi.b = 3)
                     ix.w = CMazeItem(i)\xs
                     iy.w = CMazeItem(i)\ys
-                   boxf ix+20,iy-130,ix-10, iy-120,88
+                   boxf ix+20,iy-110,ix-10, iy-100,88
                    endif
                    if (wmi.b = 2)
                     ix.w = CMazeItem(i)\xs
                     iy.w = CMazeItem(i)\ys
-                   boxf ix+20,iy-130,ix-10, iy-120,66
+                   boxf ix+20,iy-110,ix-10, iy-100,66
+                   endif
                    endif
                 ;if wmi.b = 2
                   ; closed door
                 ;  Boxf walls()\screenX+4, walls()\screenY+4, walls()\screenX+walls()\width, walls()\screenY+walls()\height,48
                 ;endif
-                  Blit walls()\shapeIndex, walls()\screenX+4, walls()\screenY+4,%1
-
+                  
                ; Pop While              
               EndIf : Endif
             Endif
