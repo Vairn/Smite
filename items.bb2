@@ -48,21 +48,33 @@ statement loadItemDetails{}
     items()\level = 1
     items()\pos =  ((2 & $1f) * 32) + (7 & $1F)
     
-    AddItem items()
-    items()\name = "RED KEYCARD"
-    items()\icon = 2
-    items()\itemtype = 1
-    items()\level = 1
+    ; UNCOMMENT TO MAKE RANDOM ITEMS APPEAR FOR LAME FUN
+    ; for i=0 to 25
+    ;     additem items()
+    ;     items()\icon = i
+    ;     y = 1+Rnd(30) : x = 1+ rnd(30)
+    ;     items()\level = 1
+    ;     items()\itemtype = 2
+    ;     items()\pos = ((y & $1f) * 32) + (x & $1F)
+    ; next
 
-    AddItem items()
-    items()\name = "YELLOW KEYCARD"
-    items()\icon = 3
-    items()\itemtype = 1
-    items()\level = 1
+    ; AddItem items()
+    ; items()\name = "RED KEYCARD"
+    ; items()\icon = 2
+    ; items()\itemtype = 1
+    ; items()\level = 1
 
-    AddItem items()
-    items()\name = "PURPLE KEYCARD"
-    items()\icon = 4
-    items()\itemtype = 1
-    items()\level = 1
+    ; AddItem items()
+    ; items()\name = "YELLOW KEYCARD"
+    ; items()\icon = 3
+    ; items()\itemtype = 1
+    ; items()\level = 1
+
+    ; AddItem items()
+    ; items()\name = "PURPLE KEYCARD"
+    ; items()\icon = 4
+    ; items()\itemtype = 1
+    ; items()\level = 1
+
+    
 end statement

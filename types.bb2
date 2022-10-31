@@ -222,5 +222,6 @@ gameEnd = 0
 gameState = #gs_title
 Dim currentView(17)
 Dim itemviews(17)
+Dim propviews(17)
 gd\mousecur = 22
 eventCount =0

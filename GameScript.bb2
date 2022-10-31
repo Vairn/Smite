@@ -58,7 +58,7 @@ Statement CreateLevelEvents{}
     ;data .b 9,25,5,5,11,100,0,4
     
 demoEvents:
-    data .b 12
+    data .b 21
     data .b 1,3,2,1,3,1,3,0
     data .b 2,6,2,1,4,1,6,0
     data .b 1,1,5,5,9,5,240,1
@@ -66,32 +66,50 @@ demoEvents:
     data .b 8,1,1,1,11,2,0,0
     data .b 4,1,1,5,12,7,4,22
     data .b 4,10,2,5,12,2,11,22
+    data .b 30,1,5,5,10,0,0,0
     data .b 4,15,5,5,9,5,240,13
     data .b 4,16,5,5,9,5,240,14
     data .b 4,27,5,5,9,5,240,15
-    data .b 5,30,2,2,9,5,240,16
-    data .b 30,1,5,5,10,0,0,0
+    data .b 12,29,5,5,9,5,240,16
+    data .b 14,23,5,5,9,5,240,17
+    data .b 9,23,5,5,9,5,240,13
+    data .b 18,23,5,5,9,5,240,18
+    data .b 4,23,5,5,9,5,240,19
+    data .b 28,3,5,5,9,5,240,22
+    data .b 4,25,5,5,9,5,240,25
+    data .b 27,1,5,5,12,2,20,22
+    data .b 25,16,5,5,12,2,23,22
+    data .b 26,19,1,1,1,26,20,0
+    data .b 2,6,2,1,4,1,6,0
 stringTable:
 ;           "==========================="
-    data .b 17
-    data .s "HELLO"
-    data .s "WELCOME TO MY LIFE SUCKS"
-    data .s "YOU FEEL A DRAFT"
-    data .s "CHARGING BATTERY"
-    data .s "EVERY ACTION YOU TAKE"
-    data .s "USES ENERGY. YOUR ORIGINAL"
-    data .s "BATTERY HAS ONLY 100 UNITS"
-    data .s "ONCE ALL GONE YOURE DEAD.."
-    data .s "YOU CAN RECHARGE AT "
-    data .s "A CHARGE STATION OR "
-    data .s "BY REFILLING YOUR OIL"
-    data .s "YOU HEAR A BUZZING"
-    data .s "NOISE TO YOUR LEFT"
-    data .s "PRETTY DUSTY HERE..."
-    data .s "I HATE DUST."
-    data .s "DOES IT EVER END?"
-    data .s "THE DOOR IS LOCKED."
-
+    data .b 26
+    data .s "HELLO" ;0
+    data .s "WELCOME TO MY LIFE SUCKS" ;1
+    data .s "YOU FEEL A DRAFT" ;2 
+    data .s "CHARGING BATTERY" ;3
+    data .s "EVERY ACTION YOU TAKE" ;4
+    data .s "USES ENERGY. YOUR ORIGINAL" ;5
+    data .s "BATTERY HAS ONLY 100 UNITS" ;6
+    data .s "ONCE ALL GONE YOURE DEAD.." ;7
+    data .s "YOU CAN RECHARGE AT " ;8
+    data .s "A CHARGE STATION OR " ;9
+    data .s "BY REFILLING YOUR OIL" ; 10
+    data .s "YOU HEAR A BUZZING" ;11
+    data .s "NOISE TO YOUR LEFT" ;12 
+    data .s "PRETTY DUSTY HERE..." ;13
+    data .s "I HATE DUST." ;14
+    data .s "DOES IT EVER END?" ;15
+    data .s "THIS WAY, NO THAT WAY." ;16
+    data .s "HMM, STILL DUSTY" ;17
+    data .s "I WONDER IF IT WILL RAIN." ;18
+    data .s "SO EMPTY, ALL ALONE" ; 19
+    data .s "SOME STAIRS DOWN," ;20
+    data .s "BUT I CAN'T TAKE STAIRS" ;21
+    data .s "I SEE LIGHT.. LIGHT." ;22
+    data .s "IM GOING TO GOSUB SPACE," ;;23
+    data .s "AND NOT RETURN" ;24
+    data .s "WALKING WALKING BAH" ;25
 End Statement
 
 function processLevelEvents{}
@@ -145,6 +163,7 @@ function processLevelEvents{}
                                 doCloseDoor{le(i)\eventLocX, le(i)\eventLocY}
                             case 3
                                 doChangeWall{le(i)\eventLocX, le(i)\eventLocY, le(i)\eventVal}
+                                le(i)\eventType = 0
                             case 4
                                 doSetwall{le(i)\eventLocX, le(i)\eventLocY}
                             case 5                        
