@@ -59,7 +59,7 @@ function .l MakeDemoMap{}
 
   demomap:
   data .b 1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1
-  data .b 1,0,0,3,0,3,0,0,1,0,0,0,0,1,0,1,0,0,0,1,0,0,1,0,0,1,0,2,0,4,0,1
+  data .b 1,0,0,3,0,3,0,0,1,0,0,0,0,1,0,1,0,0,0,1,0,6,1,0,0,1,0,2,0,3,0,0
   data .b 1,0,0,1,0,1,0,0,1,0,0,0,0,1,0,1,1,0,0,1,0,1,1,0,0,1,1,1,2,1,1,1
   data .b 1,1,1,1,0,1,1,1,1,0,0,0,0,1,0,0,0,0,0,1,0,0,0,0,0,1,0,0,0,0,0,1
   data .b 1,0,0,2,0,2,0,0,1,1,1,1,0,1,1,1,1,1,2,1,1,1,1,1,2,1,1,1,1,2,1,1
@@ -78,19 +78,58 @@ function .l MakeDemoMap{}
   data .b 1,0,0,1,0,1,0,0,1,0,0,1,0,0,1,0,0,1,0,1,1,1,0,1,0,0,1,0,1,1,0,1
   data .b 1,1,1,1,0,1,1,1,1,0,0,1,0,0,1,0,0,1,0,0,0,0,0,1,0,0,1,0,0,0,0,1
   data .b 1,0,0,2,0,2,0,0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0,0,1,1,1,1,1,1
-  data .b 1,0,0,1,0,1,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,2,0,0,0,1,1
-  data .b 1,1,1,1,0,1,1,1,1,1,1,1,1,1,1,1,1,1,0,0,0,0,0,0,1,1,1,1,0,1,0,1
+  data .b 1,0,0,1,0,1,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,4,0,0,0,1,1
+  data .b 1,1,1,1,0,1,1,1,1,1,1,1,1,1,1,1,1,1,2,2,1,5,1,3,1,1,1,1,0,1,0,1
   data .b 1,0,0,2,0,2,0,0,1,1,1,1,1,1,1,1,1,1,0,0,0,0,0,0,0,0,0,1,0,0,0,1
   data .b 1,0,0,1,0,1,0,0,1,0,0,0,2,0,0,0,2,0,0,0,0,1,1,1,1,0,1,1,1,1,4,1
   data .b 1,1,1,1,0,1,1,1,1,1,1,1,1,1,2,1,1,1,2,1,1,1,0,0,0,0,0,0,0,1,0,1
   data .b 1,0,0,2,0,2,0,0,1,5,1,1,0,1,0,1,0,0,0,0,1,1,0,1,1,1,1,1,0,1,0,1
   data .b 1,5,0,1,0,1,0,0,1,0,5,1,0,1,0,1,0,0,1,0,0,1,0,0,0,1,0,0,0,1,0,1
   data .b 1,1,1,1,0,1,1,0,1,0,1,1,0,0,0,1,0,1,0,0,1,1,0,1,1,1,1,1,0,1,0,1
-  data .b 1,0,0,4,0,1,1,1,1,0,1,1,0,0,0,1,0,0,1,0,0,1,0,0,0,1,0,0,0,1,0,1
+  data .b 1,0,0,2,0,1,1,1,1,0,1,1,0,0,0,1,0,0,1,0,0,1,0,0,0,1,0,0,0,1,0,1
   data .b 1,0,0,1,0,1,0,0,0,0,0,0,0,1,0,1,0,1,0,0,1,1,0,1,1,1,1,1,0,1,0,1
-  data .b 1,1,1,1,0,4,0,1,0,0,1,1,0,1,0,1,0,0,1,0,0,1,0,0,5,1,5,0,0,1,0,1
+  data .b 1,1,1,1,0,2,0,1,0,0,1,1,0,1,0,1,0,0,1,0,0,1,0,0,5,1,5,0,0,1,0,1
   data .b 1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1
 End Function
+
+Statement preFillItemPos{}
+  shared CMazeItem()
+  tmp.w =0
+  restore mazeItemPos
+  for i=0 to 17
+    read tmp.w : CMazeItem(i)\xs = tmp.w
+    read tmp.w : CMazeItem(i)\ys = tmp.w
+  next
+  ;    |-3|-2|-1| 0| 1| 2| 3|
+  ;--------------------------
+  ; -3 |00|01|02|06|05|04|03|
+  ;--------------------------
+  ; -2 |  |07|08|11|10|09|  |
+  ;--------------------------       
+  ; -1 +|  |  |12|14|13|  |  |
+  ;--------------------------       
+  ;  0 |  |  |15|16|17|  |  |
+  ;--------------------------
+mazeItemPos:
+data .w 0,0 
+data .w 0,0
+data .w 64,88
+data .w 0,0
+data .w 0,0
+data .w 200, 88
+data .w 124, 88
+data .w 0,0
+data .w 40, 115
+data .w 0,0
+data .w 192, 115
+data .w 120, 115
+data .w 35, 141
+data .w 218, 141
+data .w 123, 141
+data .w 0,0
+data .w 0,0
+data .w 0,0
+End Statement
 
 Statement preFillFacing{}
 
@@ -109,6 +148,8 @@ Statement preFillFacing{}
   data .b	 -1, 1    ; east
   data .b -1, -1    ; south
   data .b 1, -1     ; west
+
+
 
 End Statement
 
@@ -208,8 +249,8 @@ Statement drawMiniMap{}
   shared wallslookup(), currentView()
   Shared *currentLevel.Level, currentBuffer
   Shared bkgindex
-    BitPlanesBitMap currentBuffer, currentBuffer+5, %00011111
-  use bitmap currentBuffer+5
+     BitPlanesBitMap currentBuffer, currentBuffer+5, %00011111
+   use bitmap currentBuffer+5
   Boxf 179,193, 179+64, 193+34,0
   px = gd\playerLocation MOD 32;
   py = gd\playerLocation/32;div(int(pos), 32).quot;
@@ -247,7 +288,7 @@ Statement drawMiniMap{}
       endif : endif
     next ;y
   next ;x  
-  use bitmap currentBuffer
+ use bitmap currentBuffer
 
 End Statement
 
@@ -259,8 +300,8 @@ Statement drawMap{}
   shared wallslookup(), currentView()
   Shared *currentLevel.Level
   Shared bkgindex,currentBuffer
-  BitPlanesBitMap currentBuffer, currentBuffer+5, %00011111
-  use bitmap currentBuffer+5
+  ;BitPlanesBitMap currentBuffer, currentBuffer+5, %00011111
+  ;use bitmap currentBuffer+5
   ;Boxf 179,193, 179+64, 193+34,0
   
   px = gd\playerLocation MOD 32;
@@ -284,7 +325,7 @@ Statement drawMap{}
       endif : endif
     next ;y
   next ;x  
-  Use Bitmap currentBuffer
+  ;Use Bitmap currentBuffer
 
 End Statement
 
@@ -296,8 +337,8 @@ Statement drawRadar{}
   shared wallslookup(), currentView()
   Shared *currentLevel.Level
   Shared bkgindex, currentBuffer
-  BitPlanesBitMap currentBuffer, currentBuffer+5, %00011111
-  use bitmap currentBuffer+5
+  ;BitPlanesBitMap currentBuffer, currentBuffer+5, %00011111
+  ;use bitmap currentBuffer+5
   px = gd\playerLocation MOD 32;
 	py = gd\playerLocation /32;div(int(pos), 32).quot;
   realFacing.b = gd\playerFacing
@@ -357,7 +398,7 @@ Statement drawRadar{}
   else
     blit #UIWEST+1,92,195
   endif
-  use bitmap currentBuffer
+  ;use bitmap currentBuffer
 end Statement
 
 
@@ -366,9 +407,11 @@ Statement drawView{}
   Shared gd.GameData
   Shared walls()
   Shared CMazeDr.MazeDir(), CMazePos.MazePos()
+  Shared CMazeItem()
   shared wallslookup(), currentView()
   Shared *currentLevel.Level
   Shared bkgindex, currentBuffer
+  Shared items(), itemviews()
   ; render the background, saves shapes, and does a cls of the view.
   ; drawing this rect makes the palette shift to the next colour bank by abusing the way blitz only writes the 5 bitplanes
   ; of the shape, therefore by clearing with a colour that sets the 6th bitplane, I can shift the images up a colour bank
@@ -411,12 +454,21 @@ Statement drawView{}
       arx = CMazePos(i)\xDelta+3
       ary = CMazePos(i)\yDelta+3
       currentView(i) = wmi.b
+      itemviews(i) = 0
+      resetlist items()
+      while NextItem(items())
+        if items()\pos = mazePos.w and items()\level = 1
+          itemviews(i) = 1+items()\icon
+        end if
+      wend
+      
     next
         if currentView(14) > 0
           if  currentView(15) > 0
             if currentView(16) > 0
         for i=0 to 13
           currentView(i) = 0
+          
         next
         
       endif : endif : endif
@@ -466,6 +518,7 @@ Statement drawView{}
           wmi.b = 2
         end if
         if (wmi.b <> 0)
+    ;    use bitmap currentBuffer+5
           ; .draw the required walltile
           ResetList walls()
           While(NextItem (walls()))
@@ -478,13 +531,23 @@ Statement drawView{}
                   ; closed door
                 ;  Boxf walls()\screenX+4, walls()\screenY+4, walls()\screenX+walls()\width, walls()\screenY+walls()\height,48
                 ;endif
-                  Blit walls()\shapeIndex, walls()\screenX+4, walls()\screenY+4
-                
+                  Blit walls()\shapeIndex, walls()\screenX+4, walls()\screenY+4,%1
+
                ; Pop While              
               EndIf : Endif
             Endif
           Wend    
         Endif
+        if (itemviews(i) > 0 and i < 15)
+     ;     use bitmap currentBuffer
+          ix.w = CMazeItem(i)\xs
+          iy.w = CMazeItem(i)\ys
+          if ix = 0 and iy=0
+          else
+          Blit #UIItems + itemviews(i)-1, ix-8,iy-8,%01
+          end if
+        endif
+
     Next
       use bitmap currentBuffer
     else
@@ -494,7 +557,7 @@ Statement drawView{}
 End Statement
 
 
-statement  drawDecals{}
+statement drawDecals{}
   Shared gd.GameData
   Shared walls()
   Shared CMazeDr.MazeDir(), CMazePos.MazePos()

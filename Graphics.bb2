@@ -296,7 +296,7 @@ QAMIGA
             GetaShape shapeIndex, 176,16,16,16
             shapeIndex+1
             
-            ;
+            ; Key slot thingy
             GetaShape shapeIndex, 144,48,32,32
             shapeIndex+1
             
@@ -325,6 +325,10 @@ End Statement
 
 Statement LoadMonsterGfx{fileName$}
 QAMIGA
+; HAHAHAHAHAHAHAHAHAHAHA
+; HAHAHAHA
+; CRIES
+; SNIFF
 BLITZ
 End Statement
 

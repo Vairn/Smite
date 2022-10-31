@@ -27,9 +27,42 @@ statement loadItemGraphics{filename$}
         SaveShapes #UIItems, shapeIndex, shapefile.s
         
     endif
+    
     BLITZ
 end statement
 
 statement loadItemDetails{}
     shared items()
+    ResetList items()
+    AddItem items()
+    items()\name = "BLUE KEYCARD"
+    items()\icon = 0 
+    items()\itemtype = 1
+    items()\level = 1  
+    items()\pos =  ((27 & $1f) * 32) + (7 & $1F)
+    
+    AddItem items()
+    items()\name = "GREEN KEYCARD"
+    items()\icon = 10
+    items()\itemtype = 1
+    items()\level = 1
+    items()\pos =  ((2 & $1f) * 32) + (7 & $1F)
+    
+    AddItem items()
+    items()\name = "RED KEYCARD"
+    items()\icon = 2
+    items()\itemtype = 1
+    items()\level = 1
+
+    AddItem items()
+    items()\name = "YELLOW KEYCARD"
+    items()\icon = 3
+    items()\itemtype = 1
+    items()\level = 1
+
+    AddItem items()
+    items()\name = "PURPLE KEYCARD"
+    items()\icon = 4
+    items()\itemtype = 1
+    items()\level = 1
 end statement

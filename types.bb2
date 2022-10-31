@@ -74,7 +74,8 @@ NEWTYPE .Character
 XINCLUDE "vmtype.bb2"
 
 
-NEWTYPE .Item 
+NEWTYPE .Item
+  name.s
 	nameUnid.w;
 	nameId.w;
 	flags.w;
@@ -109,8 +110,8 @@ NEWTYPE .Level
 End NEWTYPE 
 
 NEWTYPE .MazeDir
-  xs.b
-  ys.b
+  xs.w
+  ys.w
 End NEWTYPE
 
 NEWTYPE .MazePos
@@ -137,6 +138,7 @@ End NewType
 
 Dim CMazeDr.MazeDir(4)
 Dim CMazePos.MazePos(18)
+Dim CMazeItem.MazeDir(18)
 
 Dim le.LevelEvent(255)
 Dim stringTable.s(255)
@@ -219,5 +221,6 @@ gShowMap = 0
 gameEnd = 0
 gameState = #gs_title
 Dim currentView(17)
+Dim itemviews(17)
 gd\mousecur = 22
 eventCount =0
