@@ -130,13 +130,15 @@ NEWTYPE .LevelEvent
  eventLocX.b
  eventLocY.b
  eventVal.b
+ eventExtra1.b
+ eventExtra2.b
 End NewType
 ; Arrays
 
 Dim CMazeDr.MazeDir(4)
 Dim CMazePos.MazePos(18)
 
-Dim le.LevelEvent(50)
+Dim le.LevelEvent(255)
 Dim stringTable.s(255)
 
 ; there are upto 32 different wall decorations

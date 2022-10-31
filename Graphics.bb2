@@ -231,8 +231,10 @@ QAMIGA
         for idx.w=0 to count.w
             AddLast walls() 
             ReadMem 0, walls(), sizeWall.w
-            walls()\walltype=2
-            walls()\shapeIndex + 100
+            if (walls()\walltype=1)
+                walls()\walltype=2
+                walls()\shapeIndex + 100
+            end if
         next
 
       LoadShapes 100,shapefile.s
@@ -262,7 +264,7 @@ QAMIGA
           ; Decorations use index 64 onwards
           LoadPalette 1, shapespal.s, 64
           DisplayPalette 0,1
-          SavePalette 1, "assets/test.pal"
+          ;SavePalette 1, "assets/test.pal"
         returntype = -1
     else    
         dbugprintstring {"Building " + shapesource.s }

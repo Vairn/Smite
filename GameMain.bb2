@@ -66,8 +66,8 @@ Statement InitMainScreens{}
     ; Create a front and back buffer of 256 colours
     BitMap #frontbuffer,320,256,8
     BitMap #backbuffer,320,256,8
-    Buffer #frontbuffer, 13684
-    Buffer #backbuffer, 13684
+    Buffer #frontbuffer, 32767
+    Buffer #backbuffer, 32767
     
     ; init our palette
     InitPalette 1,256

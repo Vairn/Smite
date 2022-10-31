@@ -5,6 +5,7 @@ Statement CreateLevelEvents{}
     Shared le.LevelEvent()
     shared stringTable()
     Shared eventCount
+    Shared *currentLevel.Level 
     restore demoEvents
     read eventCount
     for  i=0 to eventCount - 1
@@ -17,8 +18,14 @@ Statement CreateLevelEvents{}
         read temp.b : le(i)\eventLocX = temp.b
         read temp.b : le(i)\eventLocY = temp.b
         read temp.b : le(i)\eventVal = temp.b
-    next
 
+        if (le(i)\eventType = 13) ; Use Item Key
+            read temp.b : le(i)\eventExtra1 = temp.b
+            read temp.b : le(i)\eventExtra2 = temp.b
+        end if 
+         
+    next
+    
     restore stringTable
     read stringCount
     for i=0 to stringCount - 1
@@ -26,24 +33,64 @@ Statement CreateLevelEvents{}
         stringTable(i) =stringTable(i)
         ;dbugprintstring{stringTable(i)}
     next
+
+    ; The Map has all charge Locations on it.
+    ; process it to create the events.
+    for y=0 to 31 : for x=0 to 31
+        mapoff.w =  ((y & $1f) * 32) + (x & $1F)
+        wmi.b = *currentLevel\walldata[(mapoff*4)+1]
+        dbugprintstring{"val " + str$(x) + ", " +str$(y)}
+        if ( wmi.b = 1)
+            dbugprintstring{"CHARGE " + str$(x) + ", " +str$(y)}
+            le(eventCount)\mapX = x
+            le(eventCount)\mapY = y
+            le(eventCount)\facing = 5
+            le(eventCount)\wmi = 5
+            le(eventCount)\eventType = 11
+            le(eventCount)\eventLocX = 100
+            le(eventCount)\eventLocY = 0
+            le(eventCount)\eventVal = 4
+            eventCount + 1
+        end if
+    next : next
+    
+    ;data .b 7,11,5,5,11,100,0,4
+    ;data .b 9,25,5,5,11,100,0,4
     
 demoEvents:
-    data .b 8
+    data .b 10
     data .b 1,3,2,1,3,1,3,0
     data .b 2,6,2,1,4,1,6,0
     data .b 1,1,5,5,9,5,240,1
     data .b 1,2,5,5,9,5,240,2
-    data .b 7,11,5,5,11,100,0,4
-    data .b 9,25,5,5,11,100,0,4
-    data .b 17,30,5,5,11,100,0,4
     data .b 8,1,1,1,11,2,0,0
+    data .b 4,1,1,5,12,7,4,22
+    data .b 4,10,2,5,12,2,11,22
+    data .b 4,15,5,5,9,5,240,13
+    data .b 4,16,5,5,9,5,240,14
+    data .b 4,27,5,5,9,5,240,15
+    data .b 5,30,2,2,9,5,240,16
 
 stringTable:
-    data .b 4
+;           "==========================="
+    data .b 17
     data .s "HELLO"
     data .s "WELCOME TO MY LIFE SUCKS"
     data .s "YOU FEEL A DRAFT"
     data .s "CHARGING BATTERY"
+    data .s "EVERY ACTION YOU TAKE"
+    data .s "USES ENERGY. YOUR ORIGINAL"
+    data .s "BATTERY HAS ONLY 100 UNITS"
+    data .s "ONCE ALL GONE YOURE DEAD.."
+    data .s "YOU CAN RECHARGE AT "
+    data .s "A CHARGE STATION OR "
+    data .s "BY REFILLING YOUR OIL"
+    data .s "YOU HEAR A BUZZING"
+    data .s "NOISE TO YOUR LEFT"
+    data .s "PRETTY DUSTY HERE..."
+    data .s "I HATE DUST."
+    data .s "DOES IT EVER END?"
+    data .s "THE DOOR IS LOCKED."
 
 End Statement
 
@@ -52,8 +99,8 @@ function processLevelEvents{}
     shared bkgindex, gameEnd
     shared gShowMap
     shared *player
-    Shared le.LevelEvent()
-    shared *currentLevel.Level
+    Shared le.LevelEvent() 
+    shared *currentLevel.Level 
     shared eventCount
     shared stringTable()
 
@@ -84,11 +131,7 @@ function processLevelEvents{}
     wmi.b = *currentLevel\walldata[np*4]
     dbugprintstring{str$(nx)+ " " + str$(ny) + " " + str$( wmi.b)}
     if JoyB(0) =1
-        ;if nx = 1 and ny = 3 and wmi.b = 1
-        ;    doChangeWall{nx,ny,3}
-        ;    function return 1
-        ;end if
-
+       
         for  i=0 to eventCount - 1
             ;       dbugprintstring{"E:" + str$(le(i)\mapX)+ " " + str$(le(i)\mapY) + " " + str$( le(i)\wmi)}
             if nx = le(i)\mapX
@@ -108,6 +151,9 @@ function processLevelEvents{}
                                 doSetFlag{le(i)\eventVal}
                             case 6
                                 doClearFlag{le(i)\eventVal}
+                            case 9
+                                ;dbugprintstring{stringTable(le(i)\eventVal)}
+                                drawColouredText{le(i)\eventLocX, le(i)\eventLocY, 200,100,0,stringTable(le(i)\eventVal)}
                             case 11
                                 if (le(i)\eventLocX >0) 
                                     gd\player\sp+2
@@ -130,6 +176,9 @@ function processLevelEvents{}
         if wmi.b =3
             doCloseDoor{nx,ny}
             function return 1
+        end if
+        if wmi.b =4
+            drawBitmapText{40,240, "DOOR IS LOCKED!"}
         end if
     endif
     function return 0
@@ -178,6 +227,18 @@ statement processLevelEventsCell{}
                                     
                                     chrg.s + "CHARGING " + str$(le(i)\eventLocX-1) + " CHARGE LEFT"
                                     drawColouredText{5,240, 200,100,0, chrg.s}
+                                endif
+
+                            case 12
+                             if (le(i)\eventVal >0) 
+                                Boxf 10,30, 230,50 + (10*le(i)\eventLocX),9
+                                for t=0 to le(i)\eventLocX -1
+                                    dbugprintval{t}
+                                    dbugprintval{le(i)\eventLocY+t}
+                                    dbugprintstring{ stringTable(le(i)\eventLocY+t)}
+                                    drawBitmapTextNoClear{20, 40 + (10*t), stringTable(le(i)\eventLocY+t)}
+                                next
+                                le(i)\eventVal -1
                                 endif
                         End Select
                         

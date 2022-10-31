@@ -30,7 +30,7 @@ Function .w mazeMove{originalPos.w, dir.b}
     ;long newPos = ((y & 0x1f) * 32) + (x & 0x1F);
 
 	wmi.b = *currentLevel\walldata[newPos*4]
-	if (wmi = 1 or wmi = 2)
+	if (wmi = 1 or wmi = 2 OR wmi = 4)
 		function return originalPos;
 	end if
     ;dbugprintstring{ str$(x) + " " + str$(y)}

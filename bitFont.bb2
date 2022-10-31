@@ -55,11 +55,34 @@ Statement drawBitmapText{scX.w, scY.w, strtext.s}
         ascii.w = Asc(Mid$(strtext.s,c,1))
         if ascii.w = 10
             scY + 8
-        endif
+        else
 
         ascii-32 ; string font starts from the space character
         if ascii > 32 then ascii + 1
         BBlit currentBuffer,#fontShapeStart + ascii.w, scX.w + ((c-1)*8), scY,%00000001
+        end if
+    next
+    VWait 1
+End Statement
+
+Statement drawBitmapTextNoClear{scX.w, scY.w, strtext.s}
+    shared currentBuffer
+    if scX<0 then scX = 256+scX
+    if scY<0 then scY = 256+scY
+    lengthOfString.w = Len (strtext.s)
+    
+    if lengthOfString = 0 then Statement Return
+
+    for c =1 to lengthOfString.w
+        ascii.w = Asc(Mid$(strtext.s,c,1))
+        if ascii.w = 10
+            scY + 8
+        else
+
+        ascii-32 ; string font starts from the space character
+        if ascii > 32 then ascii + 1
+        Blit #fontShapeStart + ascii.w, scX.w + ((c-1)*8), scY,%00000001
+        end if
     next
     VWait 1
 End Statement
