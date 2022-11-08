@@ -545,52 +545,52 @@ Statement drawView{}
         if (wmi.b <> 0)
     ;    use bitmap currentBuffer+5
           ; .draw the required walltile
-          ResetList walls()
-          While(NextItem (walls()))
-            if(walls()\walltype = wmi or (walls()\walltype = 1 and wmi.b = 2 ) or (walls()\walltype = 2 and wmi.b=3))
-              tx.b =-walls()\locationX
-              ty.b= walls()\locationY
-              if (tx = CMazePos(i)\xDelta) 
-                if (ty = CMazePos(i)\yDelta)
-                  Blit walls()\shapeIndex, walls()\screenX, walls()\screenY,%1
+          ; ResetList walls()
+          ; While(NextItem (walls()))
+          ;   if(walls()\walltype = wmi or (walls()\walltype = 1 and wmi.b = 2 ) or (walls()\walltype = 2 and wmi.b=3))
+          ;     tx.b =-walls()\locationX
+          ;     ty.b= walls()\locationY
+          ;     if (tx = CMazePos(i)\xDelta) 
+          ;       if (ty = CMazePos(i)\yDelta)
+          ;         Blit walls()\shapeIndex, walls()\screenX, walls()\screenY,%1
 
-                  if (i = 14)
-                    if (wmi.b = 3)
-                      ix.w = CMazeItem(i)\xs
-                      iy.w = CMazeItem(i)\ys
-                      boxf ix+20,iy-110,ix-10, iy-100,88
-                    endif
-                    if (wmi.b = 2)
-                      ix.w = CMazeItem(i)\xs
-                      iy.w = CMazeItem(i)\ys
-                      boxf ix+20,iy-110,ix-10, iy-100,66
-                    endif
-                   endif
-                ;if wmi.b = 2
-                  ; closed door
-                ;  Boxf walls()\screenX+4, walls()\screenY+4, walls()\screenX+walls()\width, walls()\screenY+walls()\height,48
-                ;endif
+          ;         if (i = 14)
+          ;           if (wmi.b = 3)
+          ;             ix.w = CMazeItem(i)\xs
+          ;             iy.w = CMazeItem(i)\ys
+          ;             boxf ix+20,iy-110,ix-10, iy-100,88
+          ;           endif
+          ;           if (wmi.b = 2)
+          ;             ix.w = CMazeItem(i)\xs
+          ;             iy.w = CMazeItem(i)\ys
+          ;             boxf ix+20,iy-110,ix-10, iy-100,66
+          ;           endif
+          ;          endif
+          ;       ;if wmi.b = 2
+          ;         ; closed door
+          ;       ;  Boxf walls()\screenX+4, walls()\screenY+4, walls()\screenX+walls()\width, walls()\screenY+walls()\height,48
+          ;       ;endif
                   
-              ;Pop While              
-              EndIf : Endif
-            Endif
-          Wend
+          ;     ;Pop While              
+          ;     EndIf : Endif
+          ;   Endif
+          ; Wend
        
        
-          ; tx.b = -CMazePos(i)\xDelta
-          ; ty.b = CMazePos(i)\yDelta
-          ; sx.w = wl(tx+4,-ty,wmi,1)\screenX
-          ; sy.w = wl(tx+4,-ty,wmi,1)\screenY
-          ; si.w = wl(tx+4,-ty,wmi,1)\shapeIndex
-          ; if (si)
-          ;   Blit si,sx,sy,%1
-          ; endif
-          ; sx.w = wl(tx+4,-ty,wmi,0)\screenX
-          ; sy.w = wl(tx+4,-ty,wmi,0)\screenY
-          ; si.w = wl(tx+4,-ty,wmi,0)\shapeIndex
-          ; if (si)
-          ;   Blit si,sx,sy,%1
-          ; endif
+          tx.b = -CMazePos(i)\xDelta
+          ty.b = CMazePos(i)\yDelta
+          sx.w = wl(tx+4,-ty,wmi,1)\screenX
+          sy.w = wl(tx+4,-ty,wmi,1)\screenY
+          si.w = wl(tx+4,-ty,wmi,1)\shapeIndex
+          if (si)
+            Blit si,sx,sy,%1
+          endif
+          sx.w = wl(tx+4,-ty,wmi,0)\screenX
+          sy.w = wl(tx+4,-ty,wmi,0)\screenY
+          si.w = wl(tx+4,-ty,wmi,0)\shapeIndex
+          if (si)
+            Blit si,sx,sy,%1
+          endif
           
         Endif
         if (itemviews(i) > 0 and i < 15)
