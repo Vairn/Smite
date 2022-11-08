@@ -14,8 +14,8 @@ XINCLUDE "GameState.bb2"
 
 Statement loadGameAssets{}
     shared *currentLevel.Level, currentBuffer,  walls()
-    Bitmap #wallBuffer,240,176,6
-    bitmap #DungeonFloorBitmap, 480,176,5
+    Bitmap #wallBuffer,250,186,6
+    bitmap #DungeonFloorBitmap, 480,180,5
     ; These populate the two arrays needed to draw the scene
     dbugprintstring{"Pre Fill"}
     preFillFacing{}
@@ -63,7 +63,7 @@ Statement loadGameAssets{}
     ;ShowBitMap #guiframe
     drawView{}
     BlockScroll 0,0,320,256,0,0,#guiframe
-    BlockScroll 0,0,240,176,0,4,#wallBuffer
+    BlockScroll 0,0,240,176,8,6,#wallBuffer
     
     !cycleBuffer{currentBuffer}
     Cls 0
@@ -77,19 +77,22 @@ end statement
 
 statement unloadGameAssets{}
     ; free assets here
-    
+    dbugprintval{ChipFree}
     AGA_FADE_OUT{0,1,2,30,0}
 
     shared walls()
-    
+    dbugprintstring {"Free Walls"}
     resetlist walls()
     while (NextItem(walls()))
-        free shape walls()\shapeIndex
+        if (walls()\shapeIndex >1)
+            free shape walls()\shapeIndex
+        end if
     wend
-
+    dbugprintval{ChipFree}
+    dbugprintstring {"Free WallsBuffer"}
     free bitmap #wallBuffer
+    ;dbugprintstring {"Free Floors"}
     free bitmap #DungeonFloorBitmap
-    
 end statement
 
 Statement InitMainScreens{}
@@ -157,7 +160,7 @@ endif
         drawRadar{}
         drawMiniMap{}
 
-        BlockScroll 0,0,240,176,0,0,#wallBuffer
+        BlockScroll 0,0,240,176,8,6,#wallBuffer
 
         if (gShowMap)
             drawMap{}
@@ -175,7 +178,7 @@ endif
         doRedraw=1
         drawRadar{}
         drawMiniMap{}
-        BlockScroll 0,0,240,176,0,0,#wallBuffer
+        BlockScroll 0,0,240,176,8,6,#wallBuffer
         if (gShowMap)
             drawMap{}
         endif
@@ -188,47 +191,74 @@ end Statement
 
 Statement setGameState{newState}
     shared gameState
-    if gameState = #gs_intro
-        unloadIntro{}
-    endif
+    dbugprintstring{"Changing Game State from: "+ str$(gameState)}
+    Select gameState
+        case #gs_intro
+            unloadIntro{}
+        case #gs_game
+            unloadGameAssets{}
+        case #gs_title
+            unloadMainTitle{}
+        case #gs_deadBattery
+            unloadNoBattery{}
+        case #gs_win
+            unloadWin{}
+    end Select
 
-    if gameState = #gs_game
-        unloadGameAssets{}
-    endif
+    ; if gameState = #gs_intro
+    ;     unloadIntro{}
+    ; endif
 
-    if gameState = #gs_title
-        unloadMainTitle{}
-    endif
+    ; if gameState = #gs_game
+    ;     unloadGameAssets{}
+    ; endif
 
-    If gameState = #gs_deadBattery
-        unloadNoBattery{}
-    endif
+    ; if gameState = #gs_title
+    ;     unloadMainTitle{}
+    ; endif
 
-    If gameState = #gs_win
-        unloadWin{}
-    endif
+    ; If gameState = #gs_deadBattery
+    ;     unloadNoBattery{}
+    ; endif
+
+    ; If gameState = #gs_win
+    ;     unloadWin{}
+    ; endif
 
     gameState = newState
-
-    if gameState = #gs_intro
-        loadIntro{}
-    endif
-
-    if gameState = #gs_game
-        loadGameAssets{}
-    endif
-
-    if gameState = #gs_title
-        loadMainTitle{}
-    endif
-
-    If gameState = #gs_deadBattery
-        loadNoBattery{}
-    endif
     
-    If gameState = #gs_win
-        loadWin{}
-    endif
+    dbugprintstring{"Changing Game State to: "+ str$(newState)}
+    Select gameState
+        case #gs_intro
+            loadIntro{}
+        case #gs_game
+            loadGameAssets{}
+        case #gs_title
+            loadMainTitle{}
+        case #gs_deadBattery
+            loadNoBattery{}
+        case #gs_win
+            loadWin{}
+    end Select
+    ; if gameState = #gs_intro
+    ;     loadIntro{}
+    ; endif
+
+    ; if gameState = #gs_game
+    ;     loadGameAssets{}
+    ; endif
+
+    ; if gameState = #gs_title
+    ;     loadMainTitle{}
+    ; endif
+
+    ; If gameState = #gs_deadBattery
+    ;     loadNoBattery{}
+    ; endif
+    
+    ; If gameState = #gs_win
+    ;     loadWin{}
+    ; endif
 
 End Statement
 
@@ -240,38 +270,66 @@ Statement mainLoop{}
     my.w = MouseY
 
     !cycleBuffer{currentBuffer}
+    Select gameState
+        case #gs_intro
+            option.w = doIntro{}
+            if option.w = 2
+                setGameState{#gs_title}
+            end if
+        
+        case #gs_title
+            option.w = doMainTitle{}
+            if option.w = 1
+                setGameState{#gs_game}
+            endif
+        
+        Case #gs_game
+            doMainGameLoop{}    
+        
+        case #gs_deadBattery
+            option.w = doNoBattery{}
+            if option.w = 2
+                setGameState{#gs_title}
+            endif
+        
+        case #gs_win
+            option.w = doWin{}
+            if option.w = 2
+                setGameState{#gs_title}
+            endif
 
-    if gameState = #gs_game
-    ; test for player movement
-        doMainGameLoop{}
-    endif
-    if gameState = #gs_intro
-        option.w = doIntro{}
-        if option.w = 2
-            setGameState{#gs_title}
-        end if
-    end if
+    End Select
+    ; if gameState = #gs_game
+    ; ; test for player movement
+    ;     doMainGameLoop{}
+    ; endif
+    ; if gameState = #gs_intro
+    ;     option.w = doIntro{}
+    ;     if option.w = 2
+    ;         setGameState{#gs_title}
+    ;     end if
+    ; end if
 
-    if gameState = #gs_title
-        option.w = doMainTitle{}
-        if option.w = 1
-            setGameState{#gs_game}
-        endif
-    endif
+    ; if gameState = #gs_title
+    ;     option.w = doMainTitle{}
+    ;     if option.w = 1
+    ;         setGameState{#gs_game}
+    ;     endif
+    ; endif
 
-    if gameState = #gs_deadBattery
-        option.w = doNoBattery{}
-        if option.w = 2
-            setGameState{#gs_title}
-        endif
-    endif
+    ; if gameState = #gs_deadBattery
+    ;     option.w = doNoBattery{}
+    ;     if option.w = 2
+    ;         setGameState{#gs_title}
+    ;     endif
+    ; endif
 
-    if gameState = #gs_win
-        option.w = doWin{}
-        if option.w = 2
-            setGameState{#gs_title}
-        endif
-    endif
+    ; if gameState = #gs_win
+    ;     option.w = doWin{}
+    ;     if option.w = 2
+    ;         setGameState{#gs_title}
+    ;     endif
+    ; endif
     
     ;drawBitmapText{mx.w, my.w, "X."+str$(mx.w) + " Y." +str$(my.w)}
     ;  px = gd\playerLocation MOD 32;
