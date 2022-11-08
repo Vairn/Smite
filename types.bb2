@@ -172,13 +172,14 @@ bkgindex.b=0
 ; Buffers
 #frontbuffer = 0
 #backbuffer = 1
-#wallBuffer = 5
-#blitbuffer = 0
-#backgroundImage = 2
-#guiframe = 3
-#DungeonFloorBitmap = 4
+#wallBuffer = 2
+#DungeonFloorBitmap = 3
+#guiframe = 4
 #bkgndBitmap = 5
 #spriteBitmap = 6
+#titlescreenbitmap = 7
+#titlepalette = 3
+#titlescreenitems = 8
 
 ; Dungeon Shapes
 #wallshapes = 0
@@ -193,9 +194,6 @@ bkgindex.b=0
 #UISOUTH=516
 #UIWEST=518
 #UIItems = 520
-#titlescreenbitmap = 6
-#titlepalette = 3
-#titlescreenitems = 7
 #itemshapes = 5
 ; gui
 #itemiconshapes = 10
