@@ -14,6 +14,8 @@ XINCLUDE "GameState.bb2"
 
 Statement loadGameAssets{}
     shared *currentLevel.Level, currentBuffer,  walls()
+    Bitmap #wallBuffer,240,176,6
+    bitmap #DungeonFloorBitmap, 480,176,5
     ; These populate the two arrays needed to draw the scene
     dbugprintstring{"Pre Fill"}
     preFillFacing{}
@@ -42,35 +44,61 @@ Statement loadGameAssets{}
     ResetList walls()
 
     dbugprintstring{"Present Screen"}
+    
+
     BLITZ
+    
+    use bitmap #DungeonFloorBitmap
+    blit 0,0,0
+    blit 1,240,0
+    use bitmap currentBuffer
+    free shape 0
+    free shape 1
+
     AGA_FADE_OUT{0,1,2,1,0}
     ;DisplayPalette 0,1
     !cycleBuffer{currentBuffer}
     Cls 0
-    BlockScroll 0,0,320,256,0,0,#guiframe
+    
     ;ShowBitMap #guiframe
     drawView{}
-
+    BlockScroll 0,0,320,256,0,0,#guiframe
+    BlockScroll 0,0,240,176,0,4,#wallBuffer
+    
     !cycleBuffer{currentBuffer}
     Cls 0
-    BlockScroll 0,0,320,256,0,0,#guiframe
-    drawView{}
+    BlockScroll 0,0,320,256,0,0,1-currentBuffer
+    ;drawView{}
     
+
     AGA_FADE_IN{0,1,2,30,0}
 
 end statement
 
 statement unloadGameAssets{}
     ; free assets here
-      AGA_FADE_OUT{0,1,2,30,0}
+    
+    AGA_FADE_OUT{0,1,2,30,0}
+
+    shared walls()
+    
+    resetlist walls()
+    while (NextItem(walls()))
+        free shape walls()\shapeIndex
+    wend
+
+    free bitmap #wallBuffer
+    free bitmap #DungeonFloorBitmap
+    
 end statement
 
 Statement InitMainScreens{}
     ; Create a front and back buffer of 256 colours
     BitMap #frontbuffer,320,256,8
     BitMap #backbuffer,320,256,8
-    Buffer #frontbuffer, 32767
-    Buffer #backbuffer, 32767
+    
+    Buffer #frontbuffer, 10000
+    Buffer #backbuffer, 10000
     
     ; init our palette
     InitPalette 1,256
@@ -78,7 +106,7 @@ Statement InitMainScreens{}
     mx.w = 0
     my.w = 0
     MouseArea 0,0,320,256
-    InitCopList 0,44,256,$10008,8,256,0
+    InitCopList 0,44,256,$11008,8,256,0
     CreateDisplay 0
     DisplayPalette 0,1
     res.b = LoadBitmapFont{"font8x8"}
@@ -91,9 +119,15 @@ Statement InitMainScreens{}
    
 End Statement
 
+
+lastDrawn.b=0
+
+
 Statement doMainGameLoop{}
     shared gd.GameData, doRedraw,gShowMap
+    shared lastDrawn, currentBuffer
 ; test for player movement
+   if doRedraw = 0
     if handleMovementKeys{}
         gd\playerFacing = gd\playerFacing MOD 4
         doRedraw = 2
@@ -112,25 +146,42 @@ Statement doMainGameLoop{}
     if action = 2 ; Show Map.
         doRedraw = 2
     endif
+endif
 
-
-    ;dbugprintstring {"Mouse X" + str$(mX) + " Mouse Y:" + str$(my)}
-        AGAPalRGB  1,3,0,255,0
-        DisplayPalette 0,1
-    if doRedraw > 0
-
-        drawView{}   
-        drawDecals{}
-        drawItems{} 
-        doRedraw-1
+;        AGAPalRGB  1,3,0,255,0
+ ;       DisplayPalette 0,1
+    if doRedraw = 1
+        ;dbugprintstring{"Redraw 2"}
+        dbugprintstring{"Redraw " + str$(currentBuffer)}
+       
         drawRadar{}
         drawMiniMap{}
+
+        BlockScroll 0,0,240,176,0,0,#wallBuffer
+
         if (gShowMap)
             drawMap{}
         endif
-   
+        doRedraw = 0
     endif
-        drawBattery{} 
+    
+    if doRedraw = 2
+        ;!cycleBuffer{currentBuffer}
+        lastDrawn = 1-currentBuffer
+        dbugprintstring{"Redraw " + str$(currentBuffer)}
+        drawView{}   
+        drawDecals{}
+        drawItems{} 
+        doRedraw=1
+        drawRadar{}
+        drawMiniMap{}
+        BlockScroll 0,0,240,176,0,0,#wallBuffer
+        if (gShowMap)
+            drawMap{}
+        endif
+        
+    end if
+         drawBattery{} 
 
         
 end Statement

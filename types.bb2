@@ -172,9 +172,13 @@ bkgindex.b=0
 ; Buffers
 #frontbuffer = 0
 #backbuffer = 1
+#wallBuffer = 5
 #blitbuffer = 0
 #backgroundImage = 2
 #guiframe = 3
+#DungeonFloorBitmap = 4
+#bkgndBitmap = 5
+#spriteBitmap = 6
 
 ; Dungeon Shapes
 #wallshapes = 0
@@ -189,9 +193,6 @@ bkgindex.b=0
 #UISOUTH=516
 #UIWEST=518
 #UIItems = 520
-
-#spriteBitmap = 4
-#bkgndBitmap = 5
 #titlescreenbitmap = 6
 #titlepalette = 3
 #titlescreenitems = 7
@@ -225,3 +226,5 @@ Dim itemviews(17)
 Dim propviews(17)
 gd\mousecur = 22
 eventCount =0
+
+Dim wl.Wallset(9,5,5,2)

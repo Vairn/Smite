@@ -251,8 +251,8 @@ Statement drawMiniMap{}
   shared wallslookup(), currentView()
   Shared *currentLevel.Level, currentBuffer
   Shared bkgindex
-     BitPlanesBitMap currentBuffer, currentBuffer+5, %00011111
-   use bitmap currentBuffer+5
+  ;    BitPlanesBitMap currentBuffer, currentBuffer+5, %00011111
+  ;  use bitmap currentBuffer+5
   Boxf 179,193, 179+64, 193+34,0
   px = gd\playerLocation MOD 32;
   py = gd\playerLocation/32;div(int(pos), 32).quot;
@@ -290,7 +290,7 @@ Statement drawMiniMap{}
       endif : endif
     next ;y
   next ;x  
- use bitmap currentBuffer
+ ;use bitmap currentBuffer
 
 End Statement
 
@@ -407,7 +407,7 @@ end Statement
 Statement drawView{}
 
   Shared gd.GameData
-  Shared walls()
+  Shared walls(),wl()
   Shared CMazeDr.MazeDir(), CMazePos.MazePos()
   Shared CMazeItem()
   shared wallslookup(), currentView()
@@ -420,18 +420,18 @@ Statement drawView{}
   ; and not have the extra draw times, renders the level FASTER!
   
   shouldDraw = True
+  
   if shouldDraw = True
     realFacing.b = gd\playerFacing
-    BitPlanesBitMap currentBuffer, currentBuffer+5, %00111111
-    use bitmap currentBuffer+5
+    BitPlanesBitMap #wallBuffer, 6, %00111111
+    use bitmap 6
 
-    Boxf 2,60,244,92, 32
-    Boxf 240,00,244,186, 32
+    Boxf 0,00,240,176, 32
 
-
-    Blit bkgindex,4,4,%1
-    BitPlanesBitMap currentBuffer, currentBuffer+5, %00011111
-    use bitmap currentBuffer+5
+   ; Blit bkgindex,0,0,%1
+    BlockScroll bkgindex*240,0,240,176,0,0,#DungeonFloorBitmap 
+    BitPlanesBitMap #wallBuffer, 6, %00011111
+    use bitmap 6
 
     px = gd\playerLocation MOD 32;
     py = gd\playerLocation / 32;div(int(pos), 32).quot;
@@ -465,9 +465,9 @@ Statement drawView{}
       wend
       mex.w = (x + px)
       mey.w = (y + py)
-      dbugprintval{eventCount}
+      ;dbugprintval{eventCount}
       for p=0 to eventCount -1
-        dbugprintstring{str$(mex) + " " + str$(mey)}
+        ;dbugprintstring{str$(mex) + " " + str$(mey)}
         if ( mex= le(p)\mapX and mey = le(p)\mapY)
           Select (le(p)\eventType)
             case 11
@@ -552,29 +552,46 @@ Statement drawView{}
               ty.b= walls()\locationY
               if (tx = CMazePos(i)\xDelta) 
                 if (ty = CMazePos(i)\yDelta)
-                  Blit walls()\shapeIndex, walls()\screenX+4, walls()\screenY+4,%1
+                  Blit walls()\shapeIndex, walls()\screenX, walls()\screenY,%1
 
                   if (i = 14)
-                  if (wmi.b = 3)
-                    ix.w = CMazeItem(i)\xs
-                    iy.w = CMazeItem(i)\ys
-                   boxf ix+20,iy-110,ix-10, iy-100,88
-                   endif
-                   if (wmi.b = 2)
-                    ix.w = CMazeItem(i)\xs
-                    iy.w = CMazeItem(i)\ys
-                   boxf ix+20,iy-110,ix-10, iy-100,66
-                   endif
+                    if (wmi.b = 3)
+                      ix.w = CMazeItem(i)\xs
+                      iy.w = CMazeItem(i)\ys
+                      boxf ix+20,iy-110,ix-10, iy-100,88
+                    endif
+                    if (wmi.b = 2)
+                      ix.w = CMazeItem(i)\xs
+                      iy.w = CMazeItem(i)\ys
+                      boxf ix+20,iy-110,ix-10, iy-100,66
+                    endif
                    endif
                 ;if wmi.b = 2
                   ; closed door
                 ;  Boxf walls()\screenX+4, walls()\screenY+4, walls()\screenX+walls()\width, walls()\screenY+walls()\height,48
                 ;endif
                   
-               ; Pop While              
+              ;Pop While              
               EndIf : Endif
             Endif
-          Wend    
+          Wend
+       
+       
+          ; tx.b = -CMazePos(i)\xDelta
+          ; ty.b = CMazePos(i)\yDelta
+          ; sx.w = wl(tx+4,-ty,wmi,1)\screenX
+          ; sy.w = wl(tx+4,-ty,wmi,1)\screenY
+          ; si.w = wl(tx+4,-ty,wmi,1)\shapeIndex
+          ; if (si)
+          ;   Blit si,sx,sy,%1
+          ; endif
+          ; sx.w = wl(tx+4,-ty,wmi,0)\screenX
+          ; sy.w = wl(tx+4,-ty,wmi,0)\screenY
+          ; si.w = wl(tx+4,-ty,wmi,0)\shapeIndex
+          ; if (si)
+          ;   Blit si,sx,sy,%1
+          ; endif
+          
         Endif
         if (itemviews(i) > 0 and i < 15)
      ;     use bitmap currentBuffer
@@ -582,7 +599,8 @@ Statement drawView{}
           iy.w = CMazeItem(i)\ys
           if ix = 0 and iy=0
           else
-          Blit #UIItems + itemviews(i)-1, ix-8,iy-8,%01
+
+          Blit #UIItems + itemviews(i)-1, ix-8,iy-8,%10
           end if
         endif
 
@@ -597,7 +615,7 @@ Statement drawView{}
           end if
         endif
     Next
-      use bitmap currentBuffer
+    use bitmap currentBuffer
     else
     drawMap{}
     end if
@@ -631,16 +649,11 @@ Statement  drawBattery{}
   shared propidx.w
   ratio.q = gd\player\sp / gd\player\maxsp
   round.w = ratio.q * 10
-  dbugprintval{round.w}
+  ;dbugprintval{round.w}
   
   if (round > -1)
     BBlit currentBuffer, #UIShapeStart + round, 67,195
   else
     gameEnd = 3
   end if
-      ; BBlit currentBuffer, #decorationshapes + (propidx/10), 10,10,%10
-      ; propidx.w+1
-      ; if propidx > 350
-      ;   propidx = 0
-      ; endif
 End Statement

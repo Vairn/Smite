@@ -44,9 +44,9 @@ Statement CreateLevelEvents{}
     for y=0 to 31 : for x=0 to 31
         mapoff.w =  ((y & $1f) * 32) + (x & $1F)
         wmi.b = *currentLevel\walldata[(mapoff*4)+1]
-        dbugprintstring{"val " + str$(x) + ", " +str$(y)}
+        ;dbugprintstring{"val " + str$(x) + ", " +str$(y)}
         if ( wmi.b = 1)
-            dbugprintstring{"CHARGE " + str$(x) + ", " +str$(y)}
+            ;dbugprintstring{"CHARGE " + str$(x) + ", " +str$(y)}
             le(eventCount)\mapX = x
             le(eventCount)\mapY = y
             le(eventCount)\facing = 5
@@ -131,7 +131,7 @@ function processLevelEvents{}
 	py = gd\playerLocation/32;div(int(pos), 32).quot;
     realFacing.b = gd\playerFacing
     xn.b=0: yn.b=0
-    dbugprintval{realFacing}
+    ;dbugprintval{realFacing}
     if realFacing.b = 0
         xn.b=0 : yn.b=-1
     endif
@@ -152,7 +152,7 @@ function processLevelEvents{}
     
     np.w = ((ny & $1f) * 32) + (nx & $1F)
     wmi.b = *currentLevel\walldata[np*4]
-    dbugprintstring{str$(nx)+ " " + str$(ny) + " " + str$( wmi.b)}
+   ; dbugprintstring{str$(nx)+ " " + str$(ny) + " " + str$( wmi.b)}
     if JoyB(0) =1
        
         for  i=0 to eventCount - 1
@@ -257,9 +257,9 @@ statement processLevelEventsCell{}
                              if (le(i)\eventVal >0) 
                                 Boxf 10,30, 230,50 + (10*le(i)\eventLocX),9
                                 for t=0 to le(i)\eventLocX -1
-                                    dbugprintval{t}
-                                    dbugprintval{le(i)\eventLocY+t}
-                                    dbugprintstring{ stringTable(le(i)\eventLocY+t)}
+                                    ;dbugprintval{t}
+                                    ;dbugprintval{le(i)\eventLocY+t}
+                                    ;dbugprintstring{ stringTable(le(i)\eventLocY+t)}
                                     drawBitmapTextNoClear{20, 40 + (10*t), stringTable(le(i)\eventLocY+t)}
                                 next
                                 le(i)\eventVal -1

@@ -4,15 +4,13 @@ XINCLUDE "types.bb2"
 XINCLUDE "fade.bb2"
 
 Macro cycleBuffer
-;Show `1
 
 DisplayBitMap 0,`1
 `1 = 1-`1
 Use BitMap `1
 
 UnBuffer `1
-;BitMapOutput `1
-;Locate 0,0
+
 End Macro
 
 Statement LoadFrame{filename$}
@@ -138,9 +136,9 @@ If ReadFile(0,wallFile.s)
      Next
     CloseFile 0
     Use BitMap #bkgndBitmap
-    GetaShape 0, 1,1,1,1 ; background frame 1
-    GetaShape 1, 1,1,1,1 ; background frame 2
-   ; XFlip 1                  ; fliping the background for when you walk or turn to make it look that you are moving
+    GetaShape 0, 1,1,240,180 ; background frame 1
+    GetaShape 1, 1,1,240,180 ; background frame 2
+    XFlip 1                  ; fliping the background for when you walk or turn to make it look that you are moving
 
     SaveShapes 0,shapeIndex,outfile.s
     SavePalette 1, palfile.s
@@ -182,6 +180,7 @@ End Statement
 
 Statement loadWalls{filename$}
 shared walls()
+shared wl()
 QAMIGA
 sizeWall.w = SizeOf .Wallset
 
@@ -210,11 +209,19 @@ else
     ProcessWallset{filename$}    
 endif
 
+    ; resetlist walls()
+    ; while (NextItem (walls()))
+    ;     USEPATH walls()
+    ;     wl(\locationX,\locationY, \walltype)\screenX = \screenX
+    ;     wl(\locationX,\locationY, \walltype)\screenX = \screenY
+    ;     wl(\locationX,\locationY, \walltype)\shapeIndex = \shapeIndex
+    ; wend
+
 BLITZ
 End Statement
 
 Statement LoadDoors{filename$}
-shared walls()
+shared walls(), wl()
 QAMIGA
     ; todo - Save the walls to the wallset shape file.
     ; walls need to have been already loaded for this to do it's magic.
@@ -245,6 +252,30 @@ QAMIGA
     ;     ;shapeIndex+1 
     ;  end if
     ; wend
+
+    resetlist walls()
+    while (NextItem (walls()))
+        USEPATH walls()
+        if wl(\locationX+4,-\locationY, \walltype,0)\shapeIndex =0
+            wl(\locationX+4,-\locationY, \walltype,0)\screenX =\screenX
+            wl(\locationX+4,-\locationY, \walltype,0)\screenY= \screenY
+            wl(\locationX+4,-\locationY, \walltype,0)\shapeIndex = \shapeIndex
+            if(\walltype=2)
+            wl(\locationX+4,-\locationY, 3,0)\screenX =\screenX
+            wl(\locationX+4,-\locationY, 3,0)\screenY= \screenY
+            wl(\locationX+4,-\locationY, 3,0)\shapeIndex = \shapeIndex
+            wl(\locationX+4,-\locationY, 2,1)\screenX =wl(\locationX+4,-\locationY, 1,0)\screenX
+            wl(\locationX+4,-\locationY, 2,1)\screenY= wl(\locationX+4,-\locationY, 1,0)\screenY
+            wl(\locationX+4,-\locationY, 2,1)\shapeIndex = wl(\locationX+4,-\locationY, 1,0)\shapeIndex
+            
+            endif
+        else
+        wl(\locationX+4,-\locationY, \walltype,1)\screenX =\screenX
+            wl(\locationX+4,-\locationY, \walltype,1)\screenY= \screenY
+            wl(\locationX+4,-\locationY, \walltype,1)\shapeIndex = \shapeIndex
+        endif
+    wend
+
 BLITZ
 End Statement
 
@@ -255,7 +286,7 @@ QAMIGA
     returntype.b =0
     shapefile.s = "assets/" + fileName$ + ".propshp"
     shapesource.s = "assets/" + fileName$ + ".iff"
-    shapespal.s = "assets/" + fileName$ + ".pal"
+    shapespal.s = "assets/" + fileName$ + ".proppal"
 
     dbugprintstring{"Loading Prop Shapes"}
     if Exists (shapefile)

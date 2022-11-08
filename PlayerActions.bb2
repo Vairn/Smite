@@ -120,7 +120,7 @@ function handleButtons {}
     retval = processLevelEvents{}
     dbugprintval{retval}
     if (retval <> 0)
-        dbugprintstring{"Rah"}
+        ;dbugprintstring{"Rah"}
         function return 1
     end if
     goto done:
