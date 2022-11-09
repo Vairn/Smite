@@ -43,7 +43,7 @@ statement loadItemDetails{}
     
     AddItem items()
     items()\name = "GREEN KEYCARD"
-    items()\icon = 10
+    items()\icon = 1
     items()\itemtype = 1
     items()\level = 1
     items()\pos =  ((2 & $1f) * 32) + (7 & $1F)
@@ -78,3 +78,17 @@ statement loadItemDetails{}
 
     
 end statement
+
+function .l getItemAtLocation{pos}
+shared items()
+DEFTYPE .Item *itemptr
+ResetList items()
+while (NextItem(items()))
+    if (items()\pos = pos)
+        *itemptr = items() 
+        pop while
+    end if
+wend
+function return *itemptr
+    
+end function

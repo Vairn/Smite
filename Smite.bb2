@@ -35,6 +35,9 @@ currentBuffer =0
 setGameState{#gs_intro}
 
 Repeat
+ ;   dbugprintval{ChipFree}
+ ;   dbugprintval{FastFree}
+
     mainLoop{}
     if gameEnd = 2
     gameEnd =0

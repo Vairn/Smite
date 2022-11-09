@@ -1,7 +1,37 @@
 ; Monsters.bb2
 
 Statement LoadMonsters{}
+    Shared monsters()
+    Shared aliveMonsters()
+    resetlist monsters()
+    AddItem monsters()
+    monsters()\name = "Patrol Droid"
+    monsters()\hp = 15
+    monsters()\xp = 10
+    monsters()\damage = 0
+    monsters()\frameIndex[0] = 0 :  monsters()\frameIndex[1] = 1 :  monsters()\frameIndex[2] = 2
+    monsters()\frameIndex[3] = 3 :  monsters()\frameIndex[4] = 0 :  monsters()\frameIndex[5] = 0 
+    
+    AddItem monsters()
+    monsters()\name = "Combat Droid"
+    monsters()\hp = 25
+    monsters()\xp = 20
+    monsters()\damage = 5
+    monsters()\frameIndex[0] = 4 :  monsters()\frameIndex[1] = 5 :  monsters()\frameIndex[2] = 6
+    monsters()\frameIndex[3] = 7 :  monsters()\frameIndex[4] = 0 :  monsters()\frameIndex[5] = 0 
+
+
+
+    resetlist aliveMonsters()
+    AddItem aliveMonsters()
+    USEPATH aliveMonsters()
+
+    \x=2
+    \y=3
+    \archetype = monsters(0)
+    \hp = \archetype\hp
     QAMIGA
-    VWait 50
+    
     BLITZ
 End Statement
+

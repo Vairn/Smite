@@ -1,9 +1,11 @@
 ; Smite Types
 NEWTYPE .Monster
-  name$
+  name.s
   hp.w
   xp.w
   damage.b
+  frameIndex.w[6]
+
 End NEWTYPE
 
 NEWTYPE .Wallset
@@ -36,10 +38,12 @@ NewType .Prop
 End Newtype
 
 NEWTYPE .MonsterInstance
-  archetype.Monster
+  *archetype.Monster
   x.b
   y.b
   hp.b
+  subpos.b
+  facing.b
 End NEWTYPE
 
 NEWTYPE .Character
@@ -226,3 +230,5 @@ gd\mousecur = 22
 eventCount =0
 
 Dim wl.Wallset(9,5,5,2)
+
+

@@ -118,7 +118,7 @@ function handleButtons {}
   
 
     retval = processLevelEvents{}
-    dbugprintval{retval}
+    ;dbugprintval{retval}
     if (retval <> 0)
         ;dbugprintstring{"Rah"}
         function return 1

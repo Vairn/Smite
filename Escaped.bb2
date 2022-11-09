@@ -26,6 +26,7 @@ End Statement
 Statement unloadWin{}
     Free Palette #titlepalette
     Free Bitmap #titlescreenbitmap
+    
 
 End Statement
 

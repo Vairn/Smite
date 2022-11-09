@@ -27,8 +27,7 @@ End Statement
 Statement unloadIntro{}
     Free Palette #titlepalette
     Free Bitmap #titlescreenbitmap
-
-
+    
 End Statement
 
 function doIntro{}
@@ -56,7 +55,8 @@ function doIntro{}
     if introCounter = 200
         AGA_FADE_OUT{0,#titlepalette,2,20,0}
         QAMIGA 
-       
+        Free Bitmap #titlescreenbitmap
+        Free Palette #titlepalette
         ILBMinfo "assets/" + "dt.iff"
         BitMap #titlescreenbitmap, ILBMWidth,ILBMHeight,ILBMDepth
         InitPalette #titlepalette, 256

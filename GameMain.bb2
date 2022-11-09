@@ -18,6 +18,7 @@ Statement loadGameAssets{}
     bitmap #DungeonFloorBitmap, 480,180,5
     ; These populate the two arrays needed to draw the scene
     dbugprintstring{"Pre Fill"}
+    
     preFillFacing{}
     preFillPosData{}
     preFillItemPos{}
@@ -30,10 +31,11 @@ Statement loadGameAssets{}
     dbugprintstring{"Load Assets"}
 
     res.b = LoadUIGfx{"ui_icons"}
-       loadItemGraphics{"items"}
+    loadItemGraphics{"items"}
     loadItemDetails{}
     LoadFrame{"assets/" + "playfield2.iff"}
     loadWalls{"factory"}
+    LoadMonsters{}
     LoadDecorations{"prop"}
     ;loadWalls{"doors"}
     dbugprintstring{"Doors"}
@@ -77,7 +79,6 @@ end statement
 
 statement unloadGameAssets{}
     ; free assets here
-    dbugprintval{ChipFree}
     AGA_FADE_OUT{0,1,2,30,0}
 
     shared walls()
@@ -93,6 +94,7 @@ statement unloadGameAssets{}
     free bitmap #wallBuffer
     ;dbugprintstring {"Free Floors"}
     free bitmap #DungeonFloorBitmap
+
 end statement
 
 Statement InitMainScreens{}
@@ -160,7 +162,7 @@ endif
         drawRadar{}
         drawMiniMap{}
 
-        BlockScroll 0,0,240,176,8,6,#wallBuffer
+        BlockScroll 0,0,240,176,8,8,#wallBuffer
 
         if (gShowMap)
             drawMap{}
@@ -178,7 +180,7 @@ endif
         doRedraw=1
         drawRadar{}
         drawMiniMap{}
-        BlockScroll 0,0,240,176,8,6,#wallBuffer
+        BlockScroll 0,0,240,176,8,8,#wallBuffer
         if (gShowMap)
             drawMap{}
         endif
@@ -205,26 +207,6 @@ Statement setGameState{newState}
             unloadWin{}
     end Select
 
-    ; if gameState = #gs_intro
-    ;     unloadIntro{}
-    ; endif
-
-    ; if gameState = #gs_game
-    ;     unloadGameAssets{}
-    ; endif
-
-    ; if gameState = #gs_title
-    ;     unloadMainTitle{}
-    ; endif
-
-    ; If gameState = #gs_deadBattery
-    ;     unloadNoBattery{}
-    ; endif
-
-    ; If gameState = #gs_win
-    ;     unloadWin{}
-    ; endif
-
     gameState = newState
     
     dbugprintstring{"Changing Game State to: "+ str$(newState)}
@@ -240,26 +222,7 @@ Statement setGameState{newState}
         case #gs_win
             loadWin{}
     end Select
-    ; if gameState = #gs_intro
-    ;     loadIntro{}
-    ; endif
-
-    ; if gameState = #gs_game
-    ;     loadGameAssets{}
-    ; endif
-
-    ; if gameState = #gs_title
-    ;     loadMainTitle{}
-    ; endif
-
-    ; If gameState = #gs_deadBattery
-    ;     loadNoBattery{}
-    ; endif
-    
-    ; If gameState = #gs_win
-    ;     loadWin{}
-    ; endif
-
+   
 End Statement
 
 Statement mainLoop{}
@@ -299,42 +262,8 @@ Statement mainLoop{}
             endif
 
     End Select
-    ; if gameState = #gs_game
-    ; ; test for player movement
-    ;     doMainGameLoop{}
-    ; endif
-    ; if gameState = #gs_intro
-    ;     option.w = doIntro{}
-    ;     if option.w = 2
-    ;         setGameState{#gs_title}
-    ;     end if
-    ; end if
-
-    ; if gameState = #gs_title
-    ;     option.w = doMainTitle{}
-    ;     if option.w = 1
-    ;         setGameState{#gs_game}
-    ;     endif
-    ; endif
-
-    ; if gameState = #gs_deadBattery
-    ;     option.w = doNoBattery{}
-    ;     if option.w = 2
-    ;         setGameState{#gs_title}
-    ;     endif
-    ; endif
-
-    ; if gameState = #gs_win
-    ;     option.w = doWin{}
-    ;     if option.w = 2
-    ;         setGameState{#gs_title}
-    ;     endif
-    ; endif
-    
-    ;drawBitmapText{mx.w, my.w, "X."+str$(mx.w) + " Y." +str$(my.w)}
-    ;  px = gd\playerLocation MOD 32;
-    ; py = gd\playerLocation / 32;div(int(pos), 32).quot;
-    ;drawBitmapText{20,200,str$(px)+" "+str$(py)}
+   
+    ; Draw a mouse pointer.
     DisplaySprite 0,gd\mousecur,mx,my,0
     
 end statement

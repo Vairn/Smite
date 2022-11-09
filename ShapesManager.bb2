@@ -1,0 +1,47 @@
+; ShapesManager.bb2
+
+; Dynamic shape index allocation
+; Since the level can have different amount of shapes per level, 
+; instead of saying I can have max of 100 for walls etc. 
+; I created these functions to be able to dynamically give index's
+; is it worth it? not sure. But I can free all shapes with one command.
+totalShapes.w = 0
+nextFreeShape.w=0
+lastFreeShape.w=0
+
+; Quick accessors.
+wallStart.w=0
+wallsEnd.w =0
+uistart.w=0
+uiend.w=0
+fontstart.w=0
+fontend.w=0
+
+levelMarker.w=0
+levelEnd.w=0
+
+function .w getNextFreeShape{}
+shared totalShapes, nextFreeShape, lastFreeShape
+    lastFreeShape = nextFreeShape 
+    nextFreeShape+1
+    totalShapes+1
+function return nextFreeShape
+end function
+
+statement freeAllShapes{}
+    shared totalShapes, nextFreeShape, lastFreeShape
+    for s=0 to lastFreeShape
+        free shape s
+    next
+    totalShapes = 0
+    nextFreeShape =0
+    lastFreeShape =0
+End Statement
+
+function .w grabShape{X.w, Y.w, Width.w, Height.w}
+    shapeIndex.w = getNextFreeShape{}
+    GetaShape shapeIndex.w,X,Y,Width,Height
+    function return shapeIndex.w
+end function
+
+LoadShapes
