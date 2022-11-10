@@ -26,8 +26,8 @@ Statement LoadMonsters{}
     AddItem aliveMonsters()
     USEPATH aliveMonsters()
 
-    \x=2
-    \y=3
+    \x=6
+    \y=2
     \archetype = monsters(0)
     \hp = \archetype\hp
     QAMIGA

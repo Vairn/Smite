@@ -67,21 +67,26 @@ Statement drawView{}
       wend
 
       resetlist aliveMonsters()
-      realx = x+px
-      realy = y+py
+      realx.w = x+px
+      realy.w = y+py
       dbugprintstring{"RealX: " +Str$(realx) + " RealY: " +Str$(realy)}
       while NextItem(aliveMonsters())
-      dbugprintstring{"MonX: " +Str$(aliveMonsters()\x) + " MonY: " +Str$(aliveMonsters()\y)}
-        if (aliveMonsters()\x = realX)
-            if (aliveMonsters()\y = realY)
-            for mi=0 to 3
-                if (monsterviews(i,mi) = 0)
-                    monsterviews(i,mi) = &aliveMonsters()
-                pop for
-                end if
-            next
+        
+        dbugprintstring{"MonX: " +Str$(aliveMonsters()\x) + " MonY: " +Str$(aliveMonsters()\y)}
+        
+        if (aliveMonsters()\x = realx)
+            if (aliveMonsters()\y = realy)
+                ;for mi = 0 to 3
+                 ;   dbugprintstring{"MATCHED " + str$(mi)}
+                    
+                    if (monsterviews(i,mi) = 0)
+                        monsterviews(i,mi) = &aliveMonsters()
+                  ;      goto skipmon
+                    end if
+            ;next
             end if
         end if
+        ;skipmon:
       wend
       mex.w = (x + px)
       mey.w = (y + py)
@@ -113,6 +118,7 @@ Statement drawView{}
             if currentView(16) > 0
         for i=0 to 13
           currentView(i) = 0 : propviews(i)=0 : itemviews(i) =0
+          monsterviews(i,0) = 0
           
         next
         
@@ -123,6 +129,7 @@ Statement drawView{}
           if  currentView(14) > 0
             for i=0 to 11
               currentView(i) = 0 : propviews(i)=0 : itemviews(i) =0
+               monsterviews(i,0) = 0
             next
         
       endif : endif : endif
@@ -140,6 +147,7 @@ Statement drawView{}
       if currentView(14) > 0
         currentView(11) = 0 : propviews(11)=0 : itemviews(11) =0
         currentView(6) = 0 : propviews(6)=0 : itemviews(6) =0
+        
       endif
       if currentView(15) > 0
         currentView(0) = 0 : propviews(0)=0 : itemviews(0) =0
