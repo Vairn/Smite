@@ -90,18 +90,18 @@ stringTable:
 ;           "==========================="
     data .b 26
     data .s "HELLO" ;0
-    data .s "WELCOME TO MY LIFE SUCKS" ;1
-    data .s "YOU FEEL A DRAFT" ;2 
-    data .s "CHARGING BATTERY" ;3
-    data .s "EVERY ACTION YOU TAKE" ;4
-    data .s "USES ENERGY. YOUR ORIGINAL" ;5
-    data .s "BATTERY HAS ONLY 100 UNITS" ;6
-    data .s "ONCE ALL GONE YOURE DEAD.." ;7
-    data .s "YOU CAN RECHARGE AT " ;8
-    data .s "A CHARGE STATION OR " ;9
-    data .s "BY REFILLING YOUR OIL" ; 10
-    data .s "YOU HEAR A BUZZING" ;11
-    data .s "NOISE TO YOUR LEFT" ;12 
+    data .s "WELCOME TO MY LIFE SUCKS, MLS-2000 Online." ;1
+    data .s "YOU FEEL A DRAFT." ;2 
+    data .s "CHARGING BATTERY." ;3
+    data .s "EVERY IN GAME ACTION THAT YOU TAKE USES ONE UNIT " ;4
+    data .s "OF ENERGY. THE STARTING CHARGE FOR THE BATTERY." ;5
+    data .s "HAS ONLY 100 UNITS, SO 100 ACTIONS." ;6
+    data .s "ONCE YOU HAVE USED UP ALL YOUR BATTERY YOU'RE DEAD.." ;7
+    data .s "YOU CAN RECHARGE THE BATTERY AT ANY OF THE CHARGING" ;8
+    data .s "STATIONS.   YOU CAN SEE YOUR REMANING BATTERY BY" ;9
+    data .s "HOVERING YOUR MOUSE OVER THE BATTERY GAGE" ; 10
+    data .s "YOU HEAR A BUZZING NOISE FROM BEHIND THE " ;11
+    data .s "DOOR TO YOUR LEFT. MAYBE IT IS USEFUL" ;12 
     data .s "PRETTY DUSTY HERE..." ;13
     data .s "I HATE DUST." ;14
     data .s "DOES IT EVER END?" ;15
@@ -112,9 +112,9 @@ stringTable:
     data .s "SOME STAIRS DOWN," ;20
     data .s "BUT I CAN'T TAKE STAIRS" ;21
     data .s "I SEE LIGHT.. LIGHT." ;22
-    data .s "IM GOING TO GOSUB SPACE," ;;23
-    data .s "AND NOT RETURN" ;24
-    data .s "WALKING WALKING BAH" ;25
+    data .s "I AM DONE WITH ALL THIS DUST!. IF I EVER GET OUT." ;;23
+    data .s "IM GOING TO GOSUB SPACE AND NEVER EVER RETURN!" ;24
+    data .s "WHY AM I HERE, WHAT IS MY PURPOSE" ;25
 End Statement
 
 function processLevelEvents{}
@@ -239,8 +239,8 @@ statement processLevelEventsCell{}
                                 doClearFlag{le(i)\eventVal}
                             case 9
                                 ;dbugprintstring{stringTable(le(i)\eventVal)}
-                                drawColouredText{le(i)\eventLocX, le(i)\eventLocY, 200,100,0,stringTable(le(i)\eventVal)}
-                                    
+                               ; drawColouredText{le(i)\eventLocX, le(i)\eventLocY, 200,100,0,stringTable(le(i)\eventVal)}
+                                drawBitmapText{le(i)\eventLocX, le(i)\eventLocY, stringTable(le(i)\eventVal)}
                             case 10
                                 gameEnd = 4
 
@@ -249,18 +249,19 @@ statement processLevelEventsCell{}
                                     gd\player\sp+1
                                     le(i)\eventLocX-1
                                     
-                                    chrg.s + "CHARGING " + str$(le(i)\eventLocX-1) + " CHARGE LEFT"
+                                    chrg.s + "CHARGING " + str$(le(i)\eventLocX-1) + " UNITS LEFT"
+                                    ;drawBitmapText{5,240, stringTable(le(i)\eventVal)}
                                     drawColouredText{5,240, 200,100,0, chrg.s}
                                 endif
 
                             case 12
                              if (le(i)\eventVal >0) 
-                                Boxf 10,30, 230,50 + (10*le(i)\eventLocX),9
+                                Boxf 10,30, 230,50 + (10*le(i)\eventLocX),12
                                 for t=0 to le(i)\eventLocX -1
                                     ;dbugprintval{t}
                                     ;dbugprintval{le(i)\eventLocY+t}
                                     ;dbugprintstring{ stringTable(le(i)\eventLocY+t)}
-                                    drawBitmapTextNoClear{20, 40 + (10*t), stringTable(le(i)\eventLocY+t)}
+                                    drawBitmapTextNoClear{20, 40 + (8*t), stringTable(le(i)\eventLocY+t)}
                                 next
                                 le(i)\eventVal -1
                                 endif

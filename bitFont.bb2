@@ -6,93 +6,52 @@
 
 XINCLUDE "types.bb2"
 
-NEWTYPE .fontData
-    startIndex.w
-    shapeCount.w
-end NEWTYPE
+function LoadBitmapFont{fileName$}
+qamiga
+z=0
+BitMap 8, 130,30,1 : Use BitMap 8
+LoadBitMap 8, fileName$
+For y=0 To 3
+  For x=0 To 31
+    GetaShape #fontShapeStart+z,x*4,y*6,4,7
+    z=z+1
+  Next x
+Next y
+Free BitMap 8
+blitz
+End function
 
-function .b LoadBitmapFont{fileName.s}
-     QAMIGA
-
-    shapeIndex.w = #fontShapeStart
-
-    iffFile.s = "assets/" + fileName.s + ".iff"
-    ;shpDesc.s = fileName.s + "fntDsc"
-    shpFile.s = "assets/" + fileName.s + ".fntShp"
-
-    if Exists (shpFile)
-        LoadShapes shapeIndex.w, shpFile
-        Function Return -1
-    else
-        ILBMinfo iffFile.s
-        BitMap 3, ILBMWidth,ILBMHeight,ILBMDepth
-        LoadBitMap 3,iffFile.s
-        Use BitMap 3
-        for y=0 to (ILBMHeight/8) - 1
-            for x=0 to (ILBMWidth/8) - 1
-                GetaShape shapeIndex.w, x*8, y*8, 8,8
-                shapeIndex+1
-            Next ; x
-        Next ; y
-        SaveShapes #fontShapeStart, shapeIndex.w, shpFile.s 
-        Free BitMap 3
-        Function Return -1
-    endif
-        Function Return 0
-
-    BLITZ
-End Function
-
-Statement drawBitmapText{scX.w, scY.w, strtext.s}
+Statement drawBitmapText{txtx.w,txty.w,txt$}
     shared currentBuffer
-    if scX<0 then scX = 256+scX
-    if scY<0 then scY = 256+scY
-    lengthOfString.w = Len (strtext.s)
-    
-    if lengthOfString = 0 then Statement Return
-
-    for c =1 to lengthOfString.w
-        ascii.w = Asc(Mid$(strtext.s,c,1))
-        if ascii.w = 10
-            scY + 8
-        else
-
-        ascii-32 ; string font starts from the space character
-        if ascii > 32 then ascii + 1
-        BBlit currentBuffer,#fontShapeStart + ascii.w, scX.w + ((c-1)*8), scY,%00000001
-        end if
-    next
-    VWait 1
+    if txtx<0 then txtx = 256+txtx
+    if txty<0 then txty = 256+txty
+    BlitMode SolidMode
+    For i.b=1 To Len(txt$)
+        BBlit currentBuffer,Asc(Mid$(txt$,i,1))+#fontShapeStart-32,txtx+(i*4)-4,txty,%0000000
+    Next
+    BlitMode CookieMode
 End Statement
 
-Statement drawBitmapTextNoClear{scX.w, scY.w, strtext.s}
-    shared currentBuffer
-    if scX<0 then scX = 256+scX
-    if scY<0 then scY = 256+scY
-    lengthOfString.w = Len (strtext.s)
-    
-    if lengthOfString = 0 then Statement Return
 
-    for c =1 to lengthOfString.w
-        ascii.w = Asc(Mid$(strtext.s,c,1))
-        if ascii.w = 10
-            scY + 8
-        else
-
-        ascii-32 ; string font starts from the space character
-        if ascii > 32 then ascii + 1
-        Blit #fontShapeStart + ascii.w, scX.w + ((c-1)*8), scY,%00000001
-        end if
-    next
-    VWait 1
+Statement drawBitmapTextNoClear{txtx.w,txty.w,txt$}
+    if txtx<0 then txtx = 256+txtx
+    if txty<0 then txty = 256+txty
+    BlitMode SolidMode
+    For i.b=1 To Len(txt$)
+        Blit Asc(Mid$(txt$,i,1))+#fontShapeStart-32,txtx+(i*4)-4,txty,%0000000
+    Next
+    BlitMode CookieMode
 End Statement
 
-Statement drawColouredText{scX.w, scY.w, R.w, G.w, B.w, strtext.s}
+
+Statement drawColouredText{txtx.w, txty.w, R.w, G.w, B.w, strtext.s}
     
     AGAPalRGB  1,1,R,G,B
     DisplayPalette 0,1
+    VWait
     ;; Draw Text 
-    drawBitmapText{scX, scY, strtext}
+    drawBitmapText{txtx, txty, strtext}
+
 
     
 End Statement

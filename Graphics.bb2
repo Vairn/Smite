@@ -360,6 +360,10 @@ QAMIGA
 ; HAHAHAHA
 ; CRIES
 ; SNIFF
+    shapeIndex.w = #monstershapes
+    if(Exists(fileName$))
+        LoadShapes shapeIndex.w, fileName$
+    end if
 BLITZ
 End Statement
 

@@ -36,6 +36,7 @@ Statement loadGameAssets{}
     LoadFrame{"assets/" + "playfield2.iff"}
     loadWalls{"factory"}
     LoadMonsters{}
+    LoadMonsterGfx{"assets/Monsters.shapes"}
     LoadDecorations{"prop"}
     ;loadWalls{"doors"}
     dbugprintstring{"Doors"}
@@ -102,8 +103,8 @@ Statement InitMainScreens{}
     BitMap #frontbuffer,320,256,8
     BitMap #backbuffer,320,256,8
     
-    Buffer #frontbuffer, 10000
-    Buffer #backbuffer, 10000
+    Buffer #frontbuffer, 20000
+    Buffer #backbuffer, 20000
     
     ; init our palette
     InitPalette 1,256
@@ -114,7 +115,7 @@ Statement InitMainScreens{}
     InitCopList 0,44,256,$11008,8,256,0
     CreateDisplay 0
     DisplayPalette 0,1
-    res.b = LoadBitmapFont{"font8x8"}
+    res.b = LoadBitmapFont{"assets/tiny.iff"}
     loadItemGraphics{"items"}
     GetaSprite 0,#UIItems+22
     for i =0 to 25
@@ -131,6 +132,7 @@ lastDrawn.b=0
 Statement doMainGameLoop{}
     shared gd.GameData, doRedraw,gShowMap
     shared lastDrawn, currentBuffer
+        
 ; test for player movement
    if doRedraw = 0
     if handleMovementKeys{}
@@ -153,8 +155,8 @@ Statement doMainGameLoop{}
     endif
 endif
 
-;        AGAPalRGB  1,3,0,255,0
- ;       DisplayPalette 0,1
+    ;drawColouredText{20,20,20,200,120,"Testing, 1234 !@#$%^&*()"}
+    
     if doRedraw = 1
         ;dbugprintstring{"Redraw 2"}
         dbugprintstring{"Redraw " + str$(currentBuffer)}
@@ -188,6 +190,10 @@ endif
     end if
          drawBattery{} 
 
+
+; Reset font colour
+    AGAPalRGB 1,1,255,255,255
+    DisplayPalette 0,1
         
 end Statement
 

@@ -1,5 +1,6 @@
 statement drawMonsterAtLocation{location, subloc,  *monster.MonsterInstance}
-    boxf 30,30,200,200,23
+    ;boxf 30,30,200,200,23
+    ;Blit #monstershapes, 30,30
 end statement
 Statement drawView{}
 
@@ -147,7 +148,7 @@ Statement drawView{}
       if currentView(14) > 0
         currentView(11) = 0 : propviews(11)=0 : itemviews(11) =0
         currentView(6) = 0 : propviews(6)=0 : itemviews(6) =0
-        
+
       endif
       if currentView(15) > 0
         currentView(0) = 0 : propviews(0)=0 : itemviews(0) =0
