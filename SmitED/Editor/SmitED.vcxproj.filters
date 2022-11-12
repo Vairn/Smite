@@ -60,6 +60,9 @@
     <ClCompile Include="..\External\imgui\misc\cpp\imgui_stdlib.cpp">
       <Filter>ImGUI</Filter>
     </ClCompile>
+    <ClCompile Include="imgui\CMonsterEditor.cpp">
+      <Filter>windows</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\External\imgui\imconfig.h">
@@ -126,6 +129,9 @@
       <Filter>libSmite</Filter>
     </ClInclude>
     <ClInclude Include="imgui\TextEditor.h">
+      <Filter>windows</Filter>
+    </ClInclude>
+    <ClInclude Include="imgui\CMonsterEditor.h">
       <Filter>windows</Filter>
     </ClInclude>
   </ItemGroup>

@@ -12,6 +12,7 @@
 #include <iterator>
 #include <algorithm>
 #include <iosfwd>
+#include "CMonsterEditor.h"
 
 //std::map<std::string, SmitED::SFileType*> SmitED::CGUIResource::s_mapFileTypeMatcher;
 //#define ADDRESOURCE(x, y, z) s_mapFileTypeMatcher.insert(std::make_pair(x, new SmitED::SFileType(y, x,z))); 
@@ -146,6 +147,11 @@ void SmitED::CGUIResource::update()
 
 				}
 
+				if (ImGui::Selectable("Monster Editor"))
+				{
+					pViewer = new CMonsterEditor();
+					pViewer->WindowName("New Monsters");
+				}
 				if (pViewer)
 				{
 					pOwner->AddWindowNextFrame(pViewer);

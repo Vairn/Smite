@@ -250,6 +250,7 @@
     <ClCompile Include="imgui\CGUIResource.cpp" />
     <ClCompile Include="imgui\CHexViewer.cpp" />
     <ClCompile Include="imgui\CMazViewer.cpp" />
+    <ClCompile Include="imgui\CMonsterEditor.cpp" />
     <ClCompile Include="imgui\CShapeViewer.cpp" />
     <ClCompile Include="imgui\CWallViewer.cpp" />
     <ClCompile Include="imgui\ImGuiManager.cpp" />
@@ -274,6 +275,7 @@
     <ClInclude Include="imgui\CGUIResource.h" />
     <ClInclude Include="imgui\CHexViewer.h" />
     <ClInclude Include="imgui\CMazViewer.h" />
+    <ClInclude Include="imgui\CMonsterEditor.h" />
     <ClInclude Include="imgui\CShapeViewer.h" />
     <ClInclude Include="imgui\CWallViewer.h" />
     <ClInclude Include="imgui\ImGuiManager.h" />
