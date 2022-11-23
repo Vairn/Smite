@@ -1,0 +1,50 @@
+WBStartup
+; FadeTest
+
+Statement AGA_FADE_IN{clist.w,source.w,destination.w,speed.w,offset.w}
+    For a.q=0 To 1 Step 1/speed.w
+        VWait
+        FadePalette source.w,destination.w,a.q
+        DisplayPalette clist.w,destination.w,offset.w
+    Next
+End Statement
+;---------------------------------------------------------------------------------------------------------------------------#
+
+Statement AGA_FADE_OUT{clist.w,source.w,destination.w,speed.w,offset.w}
+    For a.q= 1 To 0 Step -1/speed.w
+        VWait
+        FadePalette source.w,destination.w,a.q
+        DisplayPalette clist.w,destination.w,offset.w
+    Next
+End Statement
+;---------------------------------------------------------------------------------------------------------------------------#
+
+; for fade (black)
+InitPalette 0, 256
+
+; title screen
+InitPalette 1, 256
+BitMap 1, 320, 256, 8
+LoadBitMap "CityScape.iff", 1,1
+
+InitCopList 0, 44, 256, $10008, 8, 256, 0
+
+
+
+BLITZ
+CreateDisplay 0
+DisplayPalette 0, 0
+DisplayBitmap 0,1
+AGA_FADE_IN{0,1,0,10,0}
+splashover = False
+
+Repeat
+    VWait
+
+     ; press Q to end
+    If RawStatus($10)
+        splashover = True
+    End If
+Until splashover = True
+
+End
