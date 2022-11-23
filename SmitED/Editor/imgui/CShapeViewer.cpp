@@ -121,7 +121,6 @@ void SmitED::CShapeViewer::DoFileDialog_Open()
 			}
 			ifsFile.close();
 			m_uiCurrentID = 0;
-
 			palette.clear();
 
 			std::string newfilename = result[0].substr(0, result[0].size() - 3) + "pal";

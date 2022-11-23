@@ -23,6 +23,7 @@ namespace SmitED
 		int8_t location[2];
 		int16_t screen[2];
 		int16_t coords[4];
+		int16_t fullwidth;	
 		FIBITMAP* pFrame = nullptr;
 		bool flip = false;
 	};
@@ -32,6 +33,10 @@ namespace SmitED
 		CWallViewer();
 		virtual ~CWallViewer();
 		void update() override;
+
+		void DrawMazeControls();
+
+		void DrawMazeView();
 
 		void RenderBackground(FIBITMAP* pDst);
 
@@ -53,6 +58,7 @@ namespace SmitED
 		int windowWidth = 240;
 		int windowHeight = 180;
 		int width,depth;
+		int m_uiCurrentTileID, m_uiCurrentTypeID;
 
 		std::map<int, std::vector<sWallSetTile*>> m_wallSetTiles;
 		void SaveTileset(std::string& result);
@@ -60,6 +66,8 @@ namespace SmitED
 		//std::ofstream WriteBackground(std::ofstream fout);
 
 		uint8_t GetTypeIndex(std::string& typeStr);
+
+		uint8_t importVersion;
 	};
 
 }

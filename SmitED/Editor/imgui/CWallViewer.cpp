@@ -20,6 +20,13 @@ int16_t dwColorMapTable[16*16*16];
 static int32_t iPosition = ((1 & 0x1f) * 32) + (1 & 0x1F);;
 static int8_t iFacing = 0;
 
+std::string str_tolower(std::string s) {
+	std::transform(s.begin(), s.end(), s.begin(),
+		[](unsigned char c) { return std::tolower(c); } // correct
+	);
+	return s;
+}
+
 void createPaletteTable()
 {
 	int  nColorMapIdx = 0;
@@ -70,8 +77,19 @@ bool sortWallset(SmitED::sWallSetTile* first, SmitED::sWallSetTile* second)
 		return true;
 
 	if (second->location[1] == first->location[1])
+	{
+		if (second->type.compare("front") == 0 && first->type.compare("side") == 0)
+		{
+			return true;
+		}
+
+		if (second->type.compare("side") == 0 && first->type.compare("front") == 0)
+		{
+			return false;
+		}
+
 		return (second->location[0] < first->location[0]);
-	
+	}
 	return 0;
 }
 typedef struct _sMazeDir
@@ -174,6 +192,8 @@ SmitED::CWallViewer::CWallViewer()
 {
 	//currentShape = 0;
 	//createPaletteTable();
+	m_uiCurrentTypeID = 0;
+	m_uiCurrentTileID = 0;
 }
 
 SmitED::CWallViewer::~CWallViewer()
@@ -192,183 +212,74 @@ void SmitED::CWallViewer::update()
 	{
 		if (ImGui::BeginTabItem("Graphics"))
 		{
-			if (!m_wallSetTiles.empty())
+		
+
+
+			ImGuiIO& io = ImGui::GetIO();
+			ImDrawList* draw_list = ImGui::GetWindowDrawList();
+			if (m_wallSetTiles.empty() == false)
 			{
-				FreeImage_Paste(pScreenImage, pBackgroundImage, 0, 0, 255);
 				
-				//RenderBackground(pScreenImage);
-				// Draw the Fake Level!
-				// Do Floor and Roofie
-
-				int x = 0, y = 0, dr = 0, wmi = 0;
-
-				for (int i = 0; i < 26; i++)
+				ImGui::SliderInt("Current Item Type", &m_uiCurrentTypeID, 0, m_wallSetTiles.size()-1);
+				auto currentSet = m_wallSetTiles[m_uiCurrentTypeID];
+				if (currentSet.size() > 0)
 				{
-					if ((iFacing % 2) != 0)
-					{
-						x = CMazeDr[iFacing].xs * CMazePos[i].yDelta;
-						y = CMazeDr[iFacing].ys * CMazePos[i].xDelta;
-					}
-					else
-					{
-						x = CMazeDr[iFacing].xs * CMazePos[i].xDelta;
-						y = CMazeDr[iFacing].ys * CMazePos[i].yDelta;
-					}
 
-					//x += (iPosition % 32);
-					//y += div(int(iPosition), 32).quot;
-					dr = ((iFacing + CMazePos[i].facing) & 0x03);
-					//wmi = m_pMazeInfo->_mazeCells[((y & 0x1F) * 32) + (x & 0x1F)].wall[dr];
-					//if (x<0 || y<0)
-					//	continue;
-					int wmi = mazeData[y + div(int(iPosition), 32).quot][x + (iPosition % 32)];
-					if (wmi == 0)
-						continue;
-					printf("x:%i y:%i - %i\n", x, y, wmi);
-					// floor;
-					//RenderBackground();
-					//continue;
-					for (const auto& tilesets : m_wallSetTiles)
+					if (m_uiCurrentTileID >= currentSet.size())
 					{
-						for (const auto tile : tilesets.second)
+						m_uiCurrentTileID = 0;
+					}
+					ImGui::SliderInt("Tile", &m_uiCurrentTileID, 0, currentSet.size()-1);
+					ImVec2 sp = ImGui::GetCursorScreenPos();
+					auto tile = m_wallSetTiles[m_uiCurrentTypeID][m_uiCurrentTileID];
+		
+					ImVec2 canvas_sz = ImVec2(windowWidth * 3, windowHeight * 3);
+					ImGui::InvisibleButton("canvas", canvas_sz, ImGuiButtonFlags_MouseButtonLeft | ImGuiButtonFlags_MouseButtonRight);
+					for (auto y = 0; y < tile->coords[3]; y++)
+					{
+						for (auto x = 0; x < tile->coords[2]; x++)
 						{
-							auto idx = GetTypeIndex(tile->sName);
-							if (idx != 2 && idx != 3)
-							{
+							//auto index = sprite->chunkyBuffer[(y * width) + x];
 
-								int tx = -tile->location[0];// *CMazeDr[iFacing].xs;
-								int ty = tile->location[1];// *CMazeDr[iFacing].ys;
-								//if ((iFacing % 2) != 0)
-								//{
-								//	tx *= -1;// CMazeDr[iFacing].ys;
-									// ty *= -1;//CMazeDr[iFacing].xs;
-								//}
-								//else
-								//{
-									//ty *= -1;// CMazeDr[iFacing].ys;
-								//}
-								if (tx == CMazePos[i].xDelta && ty == CMazePos[i].yDelta)
-								{
-									//printf("%d, %d\n", tx, ty);
-									//FreeImage_Paste(pScreenImage, tile->pFrame, tile->screen[0], tile->screen[1],254);
-									for (int16_t py = 0; py < tile->coords[3]; py++)
-									{
-										for (int16_t px = 0; px < tile->coords[2]; px++)
-										{
-											RGBQUAD rgb;
-											FreeImage_GetPixelColor(tile->pFrame, px, py, &rgb);
-											if (rgb.rgbRed == 0 && rgb.rgbGreen == 0 && rgb.rgbBlue == 0) continue;
-											FreeImage_SetPixelColor(pScreenImage, tile->screen[0] + px, tile->screen[1] + py, &rgb);
-										}
-									}
-								}
-								//tx *= -1;
-								////if (tx == x && ty == y)
-								//{
-								//	FreeImage_FlipHorizontal(tile->pFrame);
-								//	//FreeImage_Paste(pScreenImage, tile->pFrame, tile->screen[0], tile->screen[1],254);
-								//	for (int16_t py = 0; py < tile->coords[3]; py++)
-								//	{
-								//		for (int16_t px = 0; px < tile->coords[2]; px++)
-								//		{
-								//			RGBQUAD rgb;
-								//			FreeImage_GetPixelColor(tile->pFrame, px, py, &rgb);
-								//			if (rgb.rgbRed == 4 && rgb.rgbGreen == 58 && rgb.rgbBlue == 132) continue;
-								//			FreeImage_SetPixelColor(pScreenImage, (240-tile->coords[2] - tile->screen[0]) + px, tile->screen[1] + py, &rgb);
-								//		}
-								//	}
-								//	FreeImage_FlipHorizontal(tile->pFrame);
-								//}
-							}
+							RGBQUAD rgb;
+							FreeImage_GetPixelColor(tile->pFrame, x, y, &rgb); 
+							ImU32 col = ImGui::GetColorU32(IM_COL32(rgb.rgbRed, rgb.rgbGreen, rgb.rgbBlue, 255));
+
+							int sx = tile->screen[0] + x;
+							int sy = tile->screen[1] + y;
+							auto st = ImVec2((sx * 3), sy * 3);
+							auto ed = ImVec2((sx + 1) * 3, (sy + 1) * 3);
+							if(st.x < 240*3)
+								draw_list->AddRectFilled(sp + st, sp + ed, col);
 						}
 					}
-					//DrawWall(wmi, i);
+					ImGui::InputScalar("Screen X:", ImGuiDataType_S16, &tile->screen[0]);
+					ImGui::SameLine();
+					ImGui::InputScalar("Screen Y:", ImGuiDataType_S16,&tile->screen[1]);
+					
+					ImGui::InputScalar("Width:", ImGuiDataType_S16, &tile->coords[2]);
+					ImGui::SameLine(); 
+					ImGui::InputScalar("Height:", ImGuiDataType_S16, &tile->coords[3]);
+
+					ImGui::InputScalar("Location X:", ImGuiDataType_S8, &tile->location[0]);
+					ImGui::SameLine();
+					ImGui::InputScalar("Location Y:", ImGuiDataType_S8, &tile->location[1]);
+
+
+
 				}
-				ImDrawList* draw_list = ImGui::GetWindowDrawList();
-				const ImVec2 sp = ImGui::GetCursorScreenPos();
-				for (int y = 0; y < windowHeight; y++)
+				else
 				{
-					for (int x = 0; x < windowWidth; x++)
-					{
-						//auto p = pCPS->_pal._data[pCPS->_bitmap->pData[y * 320 + x]];
-						//U32 col = p.r << 24 | p.g << 16 | p.b << 8 | 0x0F;
-						RGBQUAD p;
-						FreeImage_GetPixelColor(pScreenImage, x, y, &p);
-
-						ImU32 col = ImGui::GetColorU32(IM_COL32(p.rgbRed, p.rgbGreen, p.rgbBlue, 255));
-
-						auto st = ImVec2((x * 3), y * 3);
-						auto ed = ImVec2((x + 1) * 3, (y + 1) * 3);
-						draw_list->AddRectFilled(sp + st, sp + ed, col);
-						//draw_list->AddLine(sp, sp+ImVec2(20,30), col);
-					}
+					std::string text = "No Tiles in Set";
+					ShowPlaceholder(text);
 				}
-
-				ImGui::Dummy(ImVec2(windowWidth * 3, windowHeight * 3));
-				//ImGui::PopItemWidth();
-				//Sleep(20);
-				// iFacing++;
-				//iFacing  = iFacing % 4;
-
-
 			}
+			else
 			{
-				int x = 0, y = 0;
+				std::string text = "Import in a Wallset to edit.";
+				ShowPlaceholder(text);
 
-				x += (iPosition % 32);
-				y += iPosition / 32;//div(int(position), 32).quot;
-				ImGui::SliderInt("X###1", &x, 0, 31);
-
-				ImGui::SliderInt("Y###2", &y, 0, 31);
-				//iPosition = ((y & 0x1f) * 32) + (x & 0x1F);
-				iPosition = ((y & 0x1F) * 32) + (x & 0x1F);
 			}
-			ImGui::SliderInt("facing", (int*)&iFacing, 0, 3);
-			if (ImGui::Button("TL", ImVec2(30, 30)))
-			{
-				iFacing--;
-				if (iFacing < 0)
-					iFacing = 3;
-				FreeImage_FlipHorizontal(pBackgroundImage);
-			}
-			ImGui::SameLine();
-			if (ImGui::Button("/\\", ImVec2(30, 30)))
-			{
-				
-				iPosition = mazeMove(iPosition, (iFacing ) % 4);
-				FreeImage_FlipHorizontal(pBackgroundImage);
-			}
-			ImGui::SameLine();
-			if (ImGui::Button("TR", ImVec2(30, 30)))
-			{
-
-				iFacing++;
-				if (iFacing > 3)
-					iFacing = 0;
-				FreeImage_FlipHorizontal(pBackgroundImage);
-			}
-
-			if (ImGui::Button("<", ImVec2(30, 30)))
-			{
-				iPosition = mazeMove(iPosition, (iFacing + 3) % 4);
-				FreeImage_FlipHorizontal(pBackgroundImage);
-				
-			}
-			ImGui::SameLine();
-			if (ImGui::Button("V", ImVec2(30, 30)))
-			{
-				iPosition = mazeMove(iPosition, (iFacing+2) % 4);
-				FreeImage_FlipHorizontal(pBackgroundImage);
-			}
-
-			ImGui::SameLine();
-			if (ImGui::Button(">", ImVec2(30, 30)))
-			{
-				iPosition = mazeMove(iPosition, (iFacing + 1) % 4);
-				FreeImage_FlipHorizontal(pBackgroundImage);
-			}
-
-
 			ImGui::EndTabItem();
 		}
 		if (ImGui::BeginTabItem("Palette"))
@@ -377,14 +288,20 @@ void SmitED::CWallViewer::update()
 			ImGui::EndTabItem();
 
 		}
+		if (ImGui::BeginTabItem("Maze Simulation"))
+		{
+			DrawMazeView();
 
+			DrawMazeControls();
+			ImGui::EndTabItem();
+		}
 		if (ImGui::BeginTabItem("HexView"))
 		{
 			const ImVec2 sp = ImGui::GetCursorScreenPos();
 
 			memEdit->DrawContents(pData, uiDataSize);
 			ImGui::EndTabItem();
-			ImGui::SetCursorScreenPos(sp);
+			//ImGui::SetCursorScreenPos(sp);
 		}
 		ImGui::SameLine(0);
 		if (ImGui::Button("Import"))
@@ -436,6 +353,201 @@ void SmitED::CWallViewer::update()
 	}
 }
 
+void SmitED::CWallViewer::DrawMazeControls()
+{
+	{
+		int x = 0, y = 0;
+
+		x += (iPosition % 32);
+		y += iPosition / 32;//div(int(position), 32).quot;
+		ImGui::SliderInt("X###1", &x, 0, 31);
+
+		ImGui::SliderInt("Y###2", &y, 0, 31);
+		//iPosition = ((y & 0x1f) * 32) + (x & 0x1F);
+		iPosition = ((y & 0x1F) * 32) + (x & 0x1F);
+	}
+	ImGui::SliderInt("facing", (int*)&iFacing, 0, 3);
+	if (ImGui::Button("TL", ImVec2(30, 30)))
+	{
+		iFacing--;
+		if (iFacing < 0)
+			iFacing = 3;
+		FreeImage_FlipHorizontal(pBackgroundImage);
+	}
+	ImGui::SameLine();
+	if (ImGui::Button("/\\", ImVec2(30, 30)))
+	{
+
+		iPosition = mazeMove(iPosition, (iFacing) % 4);
+		FreeImage_FlipHorizontal(pBackgroundImage);
+	}
+	ImGui::SameLine();
+	if (ImGui::Button("TR", ImVec2(30, 30)))
+	{
+
+		iFacing++;
+		if (iFacing > 3)
+			iFacing = 0;
+		FreeImage_FlipHorizontal(pBackgroundImage);
+	}
+
+	if (ImGui::Button("<", ImVec2(30, 30)))
+	{
+		iPosition = mazeMove(iPosition, (iFacing + 3) % 4);
+		FreeImage_FlipHorizontal(pBackgroundImage);
+
+	}
+	ImGui::SameLine();
+	if (ImGui::Button("V", ImVec2(30, 30)))
+	{
+		iPosition = mazeMove(iPosition, (iFacing + 2) % 4);
+		FreeImage_FlipHorizontal(pBackgroundImage);
+	}
+
+	ImGui::SameLine();
+	if (ImGui::Button(">", ImVec2(30, 30)))
+	{
+		iPosition = mazeMove(iPosition, (iFacing + 1) % 4);
+		FreeImage_FlipHorizontal(pBackgroundImage);
+	}
+}
+
+void SmitED::CWallViewer::DrawMazeView()
+{
+	if (!m_wallSetTiles.empty())
+	{
+		FreeImage_Paste(pScreenImage, pBackgroundImage, 0, 0, 255);
+
+		//RenderBackground(pScreenImage);
+		/*for (int y = 0; y < 176; y++)
+		{
+			for (int x = 0; x < 240; x++)
+			{
+				RGBQUAD rgb;
+				rgb.rgbRed = 32;
+				rgb.rgbBlue= 32;
+				rgb.rgbGreen= 32;
+				FreeImage_SetPixelColor(pScreenImage, x, y, &rgb);
+			}
+		}*/
+		//FreeImage_ ( pScreenImage
+		// Draw the Fake Level!
+		// Do Floor and Roofie
+
+		int x = 0, y = 0, dr = 0, wmi = 0;
+
+		for (int i = 0; i < 26; i++)
+		{
+			if ((iFacing % 2) != 0)
+			{
+				x = CMazeDr[iFacing].xs * CMazePos[i].yDelta;
+				y = CMazeDr[iFacing].ys * CMazePos[i].xDelta;
+			}
+			else
+			{
+				x = CMazeDr[iFacing].xs * CMazePos[i].xDelta;
+				y = CMazeDr[iFacing].ys * CMazePos[i].yDelta;
+			}
+
+			//x += (iPosition % 32);
+			//y += div(int(iPosition), 32).quot;
+			dr = ((iFacing + CMazePos[i].facing) & 0x03);
+			//wmi = m_pMazeInfo->_mazeCells[((y & 0x1F) * 32) + (x & 0x1F)].wall[dr];
+			//if (x<0 || y<0)
+			//	continue;
+			int wmi = mazeData[y + div(int(iPosition), 32).quot][x + (iPosition % 32)];
+			if (wmi == 0)
+				continue;
+			printf("x:%i y:%i - %i\n", x, y, wmi);
+			// floor;
+			//RenderBackground();
+			//continue;
+			for (const auto& tilesets : m_wallSetTiles)
+			{
+				for (const auto tile : tilesets.second)
+				{
+					auto idx = GetTypeIndex(tile->sName);
+					if (idx != 0 && wmi == idx)
+					{
+
+						int tx = tile->location[0];// *CMazeDr[iFacing].xs;
+						int ty = tile->location[1];// *CMazeDr[iFacing].ys;
+						//if ((iFacing % 2) != 0)
+						//{
+						//	tx *= -1;// CMazeDr[iFacing].ys;
+							// ty *= -1;//CMazeDr[iFacing].xs;
+						//}
+						//else
+						//{
+							//ty *= -1;// CMazeDr[iFacing].ys;
+						//}
+						if (tx == CMazePos[i].xDelta && ty == CMazePos[i].yDelta)
+						{
+							// printf("%d, %d\n", tx, ty);
+							//FreeImage_Paste(pScreenImage, tile->pFrame, tile->screen[0], tile->screen[1],254);
+							for (int16_t py = 0; py < tile->coords[3]; py++)
+							{
+								for (int16_t px = 0; px < tile->coords[2]; px++)
+								{
+									RGBQUAD rgb;
+									FreeImage_GetPixelColor(tile->pFrame, px, py, &rgb);
+									if (rgb.rgbRed == 252 && rgb.rgbGreen == 254 && rgb.rgbBlue == 252) continue;
+									FreeImage_SetPixelColor(pScreenImage, tile->screen[0] + px, tile->screen[1] + py, &rgb);
+								}
+							}
+						}
+						//tx *= -1;
+						////if (tx == x && ty == y)
+						//{
+						//	FreeImage_FlipHorizontal(tile->pFrame);
+						//	//FreeImage_Paste(pScreenImage, tile->pFrame, tile->screen[0], tile->screen[1],254);
+						//	for (int16_t py = 0; py < tile->coords[3]; py++)
+						//	{
+						//		for (int16_t px = 0; px < tile->coords[2]; px++)
+						//		{
+						//			RGBQUAD rgb;
+						//			FreeImage_GetPixelColor(tile->pFrame, px, py, &rgb);
+						//			if (rgb.rgbRed == 4 && rgb.rgbGreen == 58 && rgb.rgbBlue == 132) continue;
+						//			FreeImage_SetPixelColor(pScreenImage, (240-tile->coords[2] - tile->screen[0]) + px, tile->screen[1] + py, &rgb);
+						//		}
+						//	}
+						//	FreeImage_FlipHorizontal(tile->pFrame);
+						//}
+					}
+				}
+			}
+			//DrawWall(wmi, i);
+		}
+		ImDrawList* draw_list = ImGui::GetWindowDrawList();
+		const ImVec2 sp = ImGui::GetCursorScreenPos();
+		for (int y = 0; y < windowHeight; y++)
+		{
+			for (int x = 0; x < windowWidth; x++)
+			{
+				//auto p = pCPS->_pal._data[pCPS->_bitmap->pData[y * 320 + x]];
+				//U32 col = p.r << 24 | p.g << 16 | p.b << 8 | 0x0F;
+				RGBQUAD p;
+				FreeImage_GetPixelColor(pScreenImage, x, y, &p);
+
+				ImU32 col = ImGui::GetColorU32(IM_COL32(p.rgbRed, p.rgbGreen, p.rgbBlue, 255));
+
+				auto st = ImVec2((x * 3), y * 3);
+				auto ed = ImVec2((x + 1) * 3, (y + 1) * 3);
+				draw_list->AddRectFilled(sp + st, sp + ed, col);
+				//draw_list->AddLine(sp, sp+ImVec2(20,30), col);
+			}
+		}
+
+		ImGui::Dummy(ImVec2(windowWidth * 3, windowHeight * 3));
+		//ImGui::PopItemWidth();
+		//Sleep(20);
+		// iFacing++;
+		//iFacing  = iFacing % 4;
+
+
+	}
+}
+
 void SmitED::CWallViewer::RenderBackground(FIBITMAP* pDst)
 {
 	for (const auto& tilesets : m_wallSetTiles)
@@ -443,7 +555,7 @@ void SmitED::CWallViewer::RenderBackground(FIBITMAP* pDst)
 		for (const auto tile : tilesets.second)
 		{
 			auto idx = GetTypeIndex(tile->sName);
-			if (idx == 2 || idx==3)
+			if (idx == 0)
 			//if (tlx == x && tly == y)
 			{
 				//FreeImage_Paste(pScreenImage, tile->pFrame, tile->screen[0], tile->screen[1],254);
@@ -453,7 +565,8 @@ void SmitED::CWallViewer::RenderBackground(FIBITMAP* pDst)
 					{
 						RGBQUAD rgb;
 						FreeImage_GetPixelColor(tile->pFrame, px, py, &rgb);
-						if (rgb.rgbRed == 0 && rgb.rgbGreen == 0 && rgb.rgbBlue == 0) continue; 
+						// if (rgb.rgbRed == 0 && rgb.rgbGreen == 0 && rgb.rgbBlue == 0) continue;
+						if (rgb.rgbRed == 252 && rgb.rgbGreen == 254 && rgb.rgbBlue == 252) continue;
 						//if (rgb.rgbRed == 12 && rgb.rgbGreen == 34 && rgb.rgbBlue == 36) continue;
 						FreeImage_SetPixelColor(pDst, tile->screen[0] + px, tile->screen[1] + py, &rgb);
 					}
@@ -490,13 +603,19 @@ bool SmitED::CWallViewer::ImportJson(const char* sFilename)
 	std::filesystem::path sImageName = sFilename;
 	sImageName.replace_extension(".png");
 
-
 	pSrcImage = FreeImage_Load(FIF_PNG,sImageName.string().c_str(), 0);
 	FreeImage_SetTransparentIndex(pSrcImage, 2);
 	std::filesystem::path sFolder = sFilename;
 	sFolder.replace_extension("");
 	std::filesystem::create_directory(sFolder);
-
+	std::string version;
+	version = m_wallsetJson.get("version", "0.0.0");
+	importVersion = 1;
+	if (version.compare("0.0.1") == 0)
+	{
+		importVersion = 0;
+	}
+	
 	windowWidth = m_wallsetJson.get("resolution.width",0);
 	windowHeight = m_wallsetJson.get("resolution.height",0);
 	width = m_wallsetJson.get("width", 0);
@@ -505,8 +624,8 @@ bool SmitED::CWallViewer::ImportJson(const char* sFilename)
 	auto layers = m_wallsetJson.get_child("layers");
 	//
 
-	printf("%x,%x - %x, %x, %x\n", windowWidth, windowHeight, width, depth, layers);
-	for (const auto layer : layers)
+	//printf("%x,%x - %x, %x, %x\n", windowWidth, windowHeight, width, depth, layers);
+	for (const auto& layer : layers)
 	{
 		int id = layer.second.get("id", -1);
 		if (id == -1)
@@ -524,21 +643,77 @@ bool SmitED::CWallViewer::ImportJson(const char* sFilename)
 			m_wallSetTiles[id].emplace_back(pTileInfo);
 			pTileInfo->pFrame = FreeImage_Copy(pSrcImage, pTileInfo->coords[0], pTileInfo->coords[1], pTileInfo->coords[0]+pTileInfo->coords[2], pTileInfo->coords[1]+pTileInfo->coords[3]);
 			index++;
-			if (pTileInfo->location[0] > 0 && pTileInfo->type.compare("side") == 0)
+
+			//if (pTileInfo->location[0] > 0 && pTileInfo->type.compare("side") == 0)
+			if (importVersion == 0)
 			{
-				auto pTileInfo = new sWallSetTile();
-				ReadTileInfo(pTileInfo, tile);
-				pTileInfo->sName = sName;
-				pTileInfo->location[0] *= -1;
-				pTileInfo->screen[0] = windowWidth - pTileInfo->coords[2]- pTileInfo->screen[0];
-				m_wallSetTiles[id].emplace_back(pTileInfo);
-				pTileInfo->pFrame = FreeImage_Copy(pSrcImage, pTileInfo->coords[0], pTileInfo->coords[1], pTileInfo->coords[0] + pTileInfo->coords[2], pTileInfo->coords[1] + pTileInfo->coords[3]);
-				//pTileInfo->pFrame = FreeImage_ConvertTo32Bits(pTileInfo->pFrame);
-				//FreeImage_SetPalette()
-				FreeImage_FlipHorizontal(pTileInfo->pFrame);
-				pTileInfo->flip = true;
-				//index++;
+				// website exporter says to flip it.
+				if (pTileInfo->flip)
+				{
+					pTileInfo->screen[0] -= pTileInfo->coords[2];
+					pTileInfo->pFrame = FreeImage_Copy(pSrcImage, pTileInfo->coords[0], pTileInfo->coords[1], pTileInfo->coords[0] + pTileInfo->coords[2], pTileInfo->coords[1] + pTileInfo->coords[3]);
+					FreeImage_FlipHorizontal(pTileInfo->pFrame);
+					pTileInfo->flip = true;
+				}
+
+				// Website version doesn't declare the front facing wall-set for anything other than 0.
+				if (pTileInfo->type.compare("front") == 0)
+				{
+					for (int x = -width; x < width; x++)
+					{
+						if (x == 0)
+							continue;
+
+						auto pTileInfo = new sWallSetTile();
+						ReadTileInfo(pTileInfo, tile);
+						pTileInfo->sName = sName;
+						pTileInfo->location[0] = x;
+						pTileInfo->screen[0] += (x * pTileInfo->fullwidth);
+						if (pTileInfo->screen[0] < 0 && (pTileInfo->screen[0] + pTileInfo->coords[2]) > 0)
+						{
+							pTileInfo->coords[2] += pTileInfo->screen[0];
+							pTileInfo->coords[0] += -pTileInfo->screen[0];
+							pTileInfo->screen[0] = 0;
+						}
+						if (pTileInfo->screen[0] + pTileInfo->coords[2] > 240)
+						{
+							auto newWidth = 240 - pTileInfo->screen[0] ;
+							
+
+							pTileInfo->coords[2] = newWidth;
+						}
+						if (pTileInfo->screen[0]>= 0 && pTileInfo->screen[0] <240)
+						{
+						//if (pTileInfo->screen[0]>)
+							m_wallSetTiles[id].emplace_back(pTileInfo);
+							pTileInfo->pFrame = FreeImage_Copy(pSrcImage, pTileInfo->coords[0], pTileInfo->coords[1], pTileInfo->coords[0] + pTileInfo->coords[2], pTileInfo->coords[1] + pTileInfo->coords[3]);
+						}
+						//pTileInfo->pFrame = FreeImage_ConvertTo32Bits(pTileInfo->pFrame);
+						//FreeImage_SetPalette()
+						//FreeImage_FlipHorizontal(pTileInfo->pFrame);
+						//pTileInfo->flip = true;
+					}
+				}
 			}
+			else
+			{
+				if (pTileInfo->location[0] > 0 && pTileInfo->type.compare("side") == 0)
+				{
+					auto pTileInfo = new sWallSetTile();
+					ReadTileInfo(pTileInfo, tile);
+					pTileInfo->sName = sName;
+					pTileInfo->location[0] *= -1;
+					pTileInfo->screen[0] = windowWidth - pTileInfo->coords[2] - pTileInfo->screen[0];
+					m_wallSetTiles[id].emplace_back(pTileInfo);
+					pTileInfo->pFrame = FreeImage_Copy(pSrcImage, pTileInfo->coords[0], pTileInfo->coords[1], pTileInfo->coords[0] + pTileInfo->coords[2], pTileInfo->coords[1] + pTileInfo->coords[3]);
+					//pTileInfo->pFrame = FreeImage_ConvertTo32Bits(pTileInfo->pFrame);
+					//FreeImage_SetPalette()
+					FreeImage_FlipHorizontal(pTileInfo->pFrame);
+					pTileInfo->flip = true;
+					//index++;
+				}
+			}
+			
 			
 		}
 	}
@@ -565,6 +740,7 @@ bool SmitED::CWallViewer::ImportJson(const char* sFilename)
 			//FreeImage_SetTransparentIndex(pTileInfo->pFrame, 2);
 			tile->pFrame = FreeImage_ConvertTo32Bits(tile->pFrame);
 			FreeImage_FlipVertical(tile->pFrame);
+			index++;
 		}
 	}
 
@@ -579,8 +755,19 @@ bool SmitED::CWallViewer::ImportJson(const char* sFilename)
 void SmitED::CWallViewer::ReadTileInfo(SmitED::sWallSetTile* pTileInfo, const std::pair<std::string, pt::ptree>& tile)
 {
 	pTileInfo->type = tile.second.get("type", "");
-	pTileInfo->location[0] = tile.second.get("tile.x", 0);
-	pTileInfo->location[1] = tile.second.get("tile.y", 0);
+
+	if (importVersion == 0)
+	{
+		pTileInfo->location[0] = tile.second.get("tile.x", 0);
+		//pTileInfo->location[0] *= -1;
+		pTileInfo->location[1] = tile.second.get("tile.z", 0);
+	}
+	else
+	{
+		pTileInfo->location[0] = tile.second.get("tile.x", 0);
+		
+		pTileInfo->location[1] = tile.second.get("tile.y", 0);
+	}
 	pTileInfo->screen[0] = tile.second.get("screen.x", 0);
 	pTileInfo->screen[1] = tile.second.get("screen.y", 0);
 
@@ -588,6 +775,8 @@ void SmitED::CWallViewer::ReadTileInfo(SmitED::sWallSetTile* pTileInfo, const st
 	pTileInfo->coords[1] = tile.second.get("coords.y", 0);
 	pTileInfo->coords[2] = tile.second.get("coords.w", 0);
 	pTileInfo->coords[3] = tile.second.get("coords.h", 0);
+	pTileInfo->flip = tile.second.get("flipped", false);
+	pTileInfo->fullwidth = tile.second.get("coords.fullWidth", 0);
 }
 
 void SmitED::CWallViewer::SaveTileset(std::string& result)
@@ -596,7 +785,21 @@ void SmitED::CWallViewer::SaveTileset(std::string& result)
 	std::ofstream fout(result, std::ios_base::binary);
 	fout << "WLL";
 	fout << (uint8_t)cCount;
+	bool bSwapped = false;
 	auto palette = FreeImage_GetPalette(pSrcImage);
+	for (BYTE c = 0; c < cCount; c++)
+	{
+		// are we the transparent colour.
+		if (palette[c].rgbRed == 252 && palette[c].rgbGreen == 254 && palette[c].rgbBlue == 252)
+		{
+			BYTE zero = 0;
+			//FreeImage_SwapColors(pSrcImage, &palette[c], &palette[0], false);
+			FreeImage_SwapPaletteIndices(pSrcImage, &c, &zero);
+			palette[c].rgbRed = 0; palette[c].rgbGreen = 0; palette[c].rgbBlue = 0;
+		}
+
+	}
+	 //palette = FreeImage_GetPalette(pSrcImage);
 	for (int c = 0; c < cCount; c++)
 	{
 		fout << int8_t(ceil(palette[c].rgbRed ));
@@ -614,7 +817,7 @@ void SmitED::CWallViewer::SaveTileset(std::string& result)
 		{
 			auto idx = GetTypeIndex(tile->sName);
 			// ignore floors and ceilings
-			if (idx != 2 && idx != 3)
+			if (idx != 0)
 				tilecount++;
 		}
 	}
@@ -673,14 +876,22 @@ void SmitED::CWallViewer::SaveTileset(std::string& result)
 
 uint8_t SmitED::CWallViewer::GetTypeIndex(std::string& typeStr)
 {
-	if (typeStr.compare("wall")==0)
+	
+	typeStr = str_tolower(typeStr);
+	if (typeStr.find("wall") != std::string::npos)
 		return 1;
-	if (typeStr.compare("ground") == 0)
+	if (typeStr.find("ground") != std::string::npos)
+		return 0;
+	if (typeStr.find("floor") != std::string::npos)
+		return 0;
+	if (typeStr.find("ceiling") != std::string::npos)
+		return 0;
+	if (typeStr.find("closed") != std::string::npos)
 		return 2;
-	if (typeStr.compare("ceiling") == 0)
+	if (typeStr.find("open") != std::string::npos)
 		return 3;
-	if (typeStr.compare("door") == 0)
-		return 4;
+	if (typeStr.find("door") != std::string::npos)
+		return 2;
 	
 	// all others are objects
 	return 5;
