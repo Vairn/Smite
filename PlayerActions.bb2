@@ -185,7 +185,7 @@ function handleButtons {}
     if mx > 65  : if my > 190
         if mx < 88  : if my < 230
 
-            drawBitmapText{5, 240,  "BATTERY LEVEL " +Str$(gd\player\sp)}
+            drawBitmapText{5, 245,  "BATTERY LEVEL " +Str$(gd\player\sp)}
             ;drawColouredText{5, 240, 255,128,0, "TEST TEXT"}
         endif : endif
     endif : endif

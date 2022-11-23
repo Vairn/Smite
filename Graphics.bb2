@@ -91,7 +91,7 @@ If ReadFile(0,wallFile.s)
             ReadMem 0, &locationX.b,1 : ReadMem 0, &locationY.b,1
             ReadMem 0, &screenX.w,2 : ReadMem 0, &screenY.w,2
             ReadMem 0, &width.w,2 : ReadMem 0, &height.w,2
-            If walltype.b = 1 OR walltype.b = 4 OR walltype.b = 5 OR walltype.b = 0
+            If walltype.b = 1 OR walltype.b = 2 OR walltype.b = 3; OR walltype.b = 0
                 If AddItem (walls())
 
                     dbugprintval{Loc(0)}
@@ -107,7 +107,7 @@ If ReadFile(0,wallFile.s)
             offx.w =0
             offy.w= 0
             skipCol.b=-1
-            If walltype.b = 1 OR walltype.b = 4 OR walltype.b = 5
+            If walltype.b = 1 OR walltype.b = 2 OR walltype.b = 3
             Use BitMap #spriteBitmap
             Cls 0
             Else
@@ -127,7 +127,7 @@ If ReadFile(0,wallFile.s)
                     EndIf
                 Next
             Next
-            If walltype.b = 1 OR walltype.b = 4 OR walltype.b = 5 OR walltype.b = 0
+            If walltype.b = 1 OR walltype.b = 2 OR walltype.b = 3 ;OR walltype.b = 0
                 GetaShape shapeIndex,1, 1, width.w,height.w
                 shapeIndex+1
             EndIf
@@ -202,6 +202,15 @@ if ReadFile(0, processed.s)
     for idx.w=0 to count.w
         AddItem walls() 
         ReadMem 0, walls(), sizeWall.w
+        wallinfo.s = "WLL locX: " +str$(walls()\locationX)
+        wallinfo.s + " locY: " +str$(walls()\locationY)
+        wallinfo.s + " sX: " +str$(walls()\screenX)
+        wallinfo.s + " sY: " +str$(walls()\screenY)
+        wallinfo.s + " w: " +str$(walls()\width)
+        wallinfo.s + " h: " +str$(walls()\height)
+        wallinfo.s + " wmi: " +str$(walls()\walltype)
+        wallinfo.s + " shape: " +str$(walls()\shapeIndex)
+        dbugprintstring{wallinfo.s}
     next
     CloseFile 0
     ResetList walls()
@@ -209,6 +218,20 @@ else
     ProcessWallset{filename$}    
 endif
 
+    resetlist walls()
+    while (NextItem (walls()))
+        USEPATH walls()
+        if wl(\locationX+4,-\locationY, \walltype,0)\shapeIndex =0
+            wl(\locationX+4,-\locationY, \walltype,0)\screenX =\screenX
+            wl(\locationX+4,-\locationY, \walltype,0)\screenY= \screenY
+            wl(\locationX+4,-\locationY, \walltype,0)\shapeIndex = \shapeIndex
+        else
+        wl(\locationX+4,-\locationY, \walltype,1)\screenX =\screenX
+            wl(\locationX+4,-\locationY, \walltype,1)\screenY= \screenY
+            wl(\locationX+4,-\locationY, \walltype,1)\shapeIndex = \shapeIndex
+        endif
+    wend
+    
     ; resetlist walls()
     ; while (NextItem (walls()))
     ;     USEPATH walls()
@@ -253,28 +276,7 @@ QAMIGA
     ;  end if
     ; wend
 
-    resetlist walls()
-    while (NextItem (walls()))
-        USEPATH walls()
-        if wl(\locationX+4,-\locationY, \walltype,0)\shapeIndex =0
-            wl(\locationX+4,-\locationY, \walltype,0)\screenX =\screenX
-            wl(\locationX+4,-\locationY, \walltype,0)\screenY= \screenY
-            wl(\locationX+4,-\locationY, \walltype,0)\shapeIndex = \shapeIndex
-            if(\walltype=2)
-            wl(\locationX+4,-\locationY, 3,0)\screenX =\screenX
-            wl(\locationX+4,-\locationY, 3,0)\screenY= \screenY
-            wl(\locationX+4,-\locationY, 3,0)\shapeIndex = \shapeIndex
-            wl(\locationX+4,-\locationY, 2,1)\screenX =wl(\locationX+4,-\locationY, 1,0)\screenX
-            wl(\locationX+4,-\locationY, 2,1)\screenY= wl(\locationX+4,-\locationY, 1,0)\screenY
-            wl(\locationX+4,-\locationY, 2,1)\shapeIndex = wl(\locationX+4,-\locationY, 1,0)\shapeIndex
-            
-            endif
-        else
-        wl(\locationX+4,-\locationY, \walltype,1)\screenX =\screenX
-            wl(\locationX+4,-\locationY, \walltype,1)\screenY= \screenY
-            wl(\locationX+4,-\locationY, \walltype,1)\shapeIndex = \shapeIndex
-        endif
-    wend
+  
 
 BLITZ
 End Statement
@@ -363,6 +365,8 @@ QAMIGA
     shapeIndex.w = #monstershapes
     if(Exists(fileName$))
         LoadShapes shapeIndex.w, fileName$
+    else
+        end
     end if
 BLITZ
 End Statement

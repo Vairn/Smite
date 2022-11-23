@@ -3,7 +3,7 @@ XINCLUDE "debug.bb2"
 XINCLUDE "types.bb2"
 
 XINCLUDE "Items.bb2"
-
+XINCLUDE "bitfont.bb2"
 function .l LoadMap{path.s}
     QAMIGA
     dummy.b =0
@@ -341,14 +341,18 @@ Statement drawRadar{}
   Shared bkgindex, currentBuffer
   ;BitPlanesBitMap currentBuffer, currentBuffer+5, %00011111
   ;use bitmap currentBuffer+5
+  Boxf 92,195,120,220,0
   px = gd\playerLocation MOD 32;
 	py = gd\playerLocation /32;div(int(pos), 32).quot;
   realFacing.b = gd\playerFacing
+  facingText.s=""
   if realFacing.b =0
   xn.b=0 : yn.b=-1
   xs.b=0 : ys.b=1
   xe.b=-1 : ye.b=0
   xw.b=1 : yw.b=0
+  facingText.s="N"
+  
   endif
   
   if realFacing.b = 3
@@ -356,6 +360,8 @@ Statement drawRadar{}
   ys.b=0 : xs.b=1
   ye.b=1 : xe.b=0
   yw.b=-1 : xw.b=0
+  facingText.s="W"
+  
   endif
   
   if realFacing.b = 2
@@ -363,6 +369,8 @@ Statement drawRadar{}
   xs.b=0 : ys.b=-1
   xe.b=1 : ye.b=0
   xw.b=-1 : yw.b=0
+  facingText.s="S"
+  
   endif
   
   if realFacing.b = 1
@@ -370,6 +378,8 @@ Statement drawRadar{}
   ys.b=0 : xs.b=-1
   ye.b=-1 : xe.b=0
   yw.b=1 : xw.b=0
+  facingText.s="E"
+  
   endif
   
   north.w = (((yn + py) & $1f) * 32) + ((xn + px) & $1F) 
@@ -400,6 +410,8 @@ Statement drawRadar{}
   else
     blit #UIWEST+1,92,195
   endif
+  
+  drawBitmapTextNoClear{106,207,facingText.s}
   ;use bitmap currentBuffer
 end Statement
 

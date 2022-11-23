@@ -151,7 +151,7 @@ Dim stringTable.s(255)
 ;Dim wallslookup.Wallset(6,4,32)
 ; Lists 
 ;Dim List currentScript.LevelScript(1024)
-dim List walls.Wallset(100)
+dim List walls.Wallset(1000)
 dim list decs.Decorations(10)
 dim list props.Prop(4)
 DEFTYPE .Wallset *wallsPtr

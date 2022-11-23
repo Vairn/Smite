@@ -34,21 +34,20 @@ Statement loadGameAssets{}
     loadItemGraphics{"items"}
     loadItemDetails{}
     LoadFrame{"assets/" + "playfield2.iff"}
-    loadWalls{"factory"}
+    loadWalls{"facttex"}
     LoadMonsters{}
     LoadMonsterGfx{"assets/Monsters.shapes"}
     LoadDecorations{"prop"}
     ;loadWalls{"doors"}
     dbugprintstring{"Doors"}
-    LoadDoors{"Doors"}
-    dbugprintstring{"Reset Walls"}
+    ;LoadDoors{"Doors"}
+    ;dbugprintstring{"Reset Walls"}
     InitDecorations{}
     InitProps{}
     ResetList walls()
 
     dbugprintstring{"Present Screen"}
     
-
     BLITZ
     
     use bitmap #DungeonFloorBitmap
@@ -112,7 +111,8 @@ Statement InitMainScreens{}
     mx.w = 0
     my.w = 0
     MouseArea 0,0,320,256
-    InitCopList 0,44,256,$11008,8,256,0
+    InitCopList 0,44,256,$11008,8,256,-4
+
     CreateDisplay 0
     DisplayPalette 0,1
     res.b = LoadBitmapFont{"assets/tiny.iff"}
@@ -122,6 +122,13 @@ Statement InitMainScreens{}
         dbugprintval{i}
         GetaSprite i, #UIItems+i
     next
+    
+    for ii=0 to 35
+        for i=0 to 7
+        DisplayRGB 0,1,i+ii*7,(200-(i*12)),(200-(i*12)),(200-(i*9))
+        next i
+    next ii
+
    
 End Statement
 
@@ -174,6 +181,10 @@ endif
     
     if doRedraw = 2
         ;!cycleBuffer{currentBuffer}
+        
+; Reset font colour
+    AGAPalRGB 1,1,255,255,255
+    DisplayPalette 0,1
         lastDrawn = 1-currentBuffer
         dbugprintstring{"Redraw " + str$(currentBuffer)}
         drawView{}   
@@ -190,13 +201,12 @@ endif
     end if
          drawBattery{} 
 
-
-; Reset font colour
-    AGAPalRGB 1,1,255,255,255
-    DisplayPalette 0,1
+      px = gd\playerLocation MOD 32;
+	py = gd\playerLocation/32;div(int(pos), 32).quot;
+    drawBitmapText{150,245, "X: " + str$(px) + " Y: " + str$(py)}
         
 end Statement
-
+ 
 Statement setGameState{newState}
     shared gameState
     dbugprintstring{"Changing Game State from: "+ str$(gameState)}

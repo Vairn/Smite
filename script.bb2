@@ -84,14 +84,24 @@ Statement doOpenDoor{x,y}
   Shared *currentLevel.Level
   Shared gd.GameData
   mazePos.w = ((y  & $1f) * 32) + (x & $1F) 
-  *currentLevel\walldata[mazePos.w*4] = 3
+  if *currentLevel\walldata[mazePos.w*4] = 2
+    *currentLevel\walldata[mazePos.w*4] = 3
+  end if
+  if *currentLevel\walldata[mazePos.w*4] = 4
+    *currentLevel\walldata[mazePos.w*4] = 5
+  end if
 End Statement
 
 Statement doCloseDoor{x,y}
   Shared *currentLevel.Level
   Shared gd.GameData
    mazePos.w = ((y  & $1f) * 32) + (x & $1F) 
-  *currentLevel\walldata[mazePos.w*4] = 2
+  if *currentLevel\walldata[mazePos.w*4] = 3
+    *currentLevel\walldata[mazePos.w*4] = 2
+  end if
+  if *currentLevel\walldata[mazePos.w*4] = 5
+    *currentLevel\walldata[mazePos.w*4] = 4
+  end if
 
 End Statement
 
@@ -100,8 +110,12 @@ Statement doAddMonster{}
 
 End Statement
 
-Statement doTeleport{}
+Statement doTeleport{newX.w, newY.w, newFacing.b}
   Shared gd.GameData
+  if newFacing > -1
+    gd\playerFacing = newFacing Mod 4
+  end if
+  gd\playerLocation = (( newY  & $1f) * 32) + (newX & $1F) 
 
 End Statement
 
@@ -112,12 +126,12 @@ End Statement
 
 Statement doMessage{x,y,text$}
   Shared gd.GameData
-
+  
 End Statement
 
 Statement doSetFlag{idx}
   Shared gd.GameData
-
+  gd\globalFlags[idx] = 1
 End Statement
 
 Statement doSound{}
@@ -127,7 +141,7 @@ End Statement
 
 Statement doClearFlag{idx}
   Shared gd.GameData
-
+  gd\globalFlags[idx] = 0
 End Statement
 
 Statement doEncounter{}
@@ -140,9 +154,9 @@ Statement doIdentify_items{}
 
 End Statement
 
-Statement doTurn{}
+Statement doTurn{newFacing.b}
   Shared gd.GameData
-
+  gd\playerFacing  = newFacing Mod 4
 End Statement
 
 Statement doLauncher{}
@@ -170,10 +184,12 @@ Statement doRemoveItem{}
 
 End Statement
 
-Statement doIf{}
+function doIf{}
   Shared gd.GameData
+  result.b = 0
 
-End Statement
+  function return result.b
+End function
 
 Statement doGosub{}
   Shared gd.GameData

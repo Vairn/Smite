@@ -1,6 +1,6 @@
 statement drawMonsterAtLocation{location, subloc,  *monster.MonsterInstance}
-    ;boxf 30,30,200,200,23
-    ;Blit #monstershapes, 30,30
+   blit #monstershapes,30,30
+    
 end statement
 Statement drawView{}
 
@@ -25,8 +25,8 @@ Statement drawView{}
     realFacing.b = gd\playerFacing
     BitPlanesBitMap #wallBuffer, 6, %00111111
     use bitmap 6
-
-    Boxf 0,00,240,176, 32
+    cls 32
+    ;Boxf 0,00,240,176, 32
 
    ; Blit bkgindex,0,0,%1
     BlockScroll bkgindex*240,0,240,176,0,0,#DungeonFloorBitmap 
@@ -70,10 +70,10 @@ Statement drawView{}
       resetlist aliveMonsters()
       realx.w = x+px
       realy.w = y+py
-      dbugprintstring{"RealX: " +Str$(realx) + " RealY: " +Str$(realy)}
+     ; dbugprintstring{"RealX: " +Str$(realx) + " RealY: " +Str$(realy)}
       while NextItem(aliveMonsters())
         
-        dbugprintstring{"MonX: " +Str$(aliveMonsters()\x) + " MonY: " +Str$(aliveMonsters()\y)}
+        ;dbugprintstring{"MonX: " +Str$(aliveMonsters()\x) + " MonY: " +Str$(aliveMonsters()\y)}
         
         if (aliveMonsters()\x = realx)
             if (aliveMonsters()\y = realy)
@@ -171,12 +171,15 @@ Statement drawView{}
         if (wmi.b = 4)
           wmi.b = 2
         end if
+       if (wmi.b = 5)
+          wmi.b = 3
+        end if
         if (wmi.b <> 0)
     
           ResetList walls()
           While(NextItem (walls()))
-            if(walls()\walltype = wmi or (walls()\walltype = 1 and wmi.b = 2 ) or (walls()\walltype = 2 and wmi.b=3))
-              tx.b =-walls()\locationX
+            if(walls()\walltype = wmi); or (walls()\walltype = 1 and wmi.b = 2 ) or (walls()\walltype = 2 and wmi.b=3))
+              tx.b =walls()\locationX
               ty.b= walls()\locationY
               if (tx = CMazePos(i)\xDelta) 
                 if (ty = CMazePos(i)\yDelta)
@@ -205,20 +208,20 @@ Statement drawView{}
           Wend
        
        
-        ;   tx.b = -CMazePos(i)\xDelta
-        ;   ty.b = CMazePos(i)\yDelta
-        ;   sx.w = wl(tx+4,-ty,wmi,1)\screenX
-        ;   sy.w = wl(tx+4,-ty,wmi,1)\screenY
-        ;   si.w = wl(tx+4,-ty,wmi,1)\shapeIndex
-        ;   if (si)
-        ;     Blit si,sx,sy,%1
-        ;   endif
-        ;   sx.w = wl(tx+4,-ty,wmi,0)\screenX
-        ;   sy.w = wl(tx+4,-ty,wmi,0)\screenY
-        ;   si.w = wl(tx+4,-ty,wmi,0)\shapeIndex
-        ;   if (si)
-        ;     Blit si,sx,sy,%1
-        ;   endif
+          ; tx.b = CMazePos(i)\xDelta
+          ; ty.b = CMazePos(i)\yDelta
+          ; sx.w = wl(tx+4,-ty,wmi,1)\screenX
+          ; sy.w = wl(tx+4,-ty,wmi,1)\screenY
+          ; si.w = wl(tx+4,-ty,wmi,1)\shapeIndex
+          ; if (si)
+          ;   Blit si,sx,sy,%1
+          ; endif
+          ; sx.w = wl(tx+4,-ty,wmi,0)\screenX
+          ; sy.w = wl(tx+4,-ty,wmi,0)\screenY
+          ; si.w = wl(tx+4,-ty,wmi,0)\shapeIndex
+          ; if (si)
+          ;   Blit si,sx,sy,%1
+          ; endif
           
         Endif
         ; props/decals are next    
@@ -231,7 +234,7 @@ Statement drawView{}
           ;Blit #UIItems + itemviews(i)-1, ix-8,iy-8,%01
           boxf ix-(2*propviews(i)),iy-(7*propviews(i)),ix+(3*propviews(i)), iy,64+propviews(i)
           end if
-        endif
+        endif 
 
         ; then the items
         if (itemviews(i) > 0 and i < 15)

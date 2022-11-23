@@ -63,29 +63,31 @@ Statement CreateLevelEvents{}
     ;data .b 9,25,5,5,11,100,0,4
     
 demoEvents:
-    data .b 21
+    data .b 24
     data .b 1,3,2,1,3,1,3,0
     data .b 2,6,2,1,4,1,6,0
-    data .b 1,1,5,5,9,5,240,1
-    data .b 1,2,5,5,9,5,240,2
+    data .b 1,1,5,5,9,5,238,1
+    data .b 1,2,5,5,9,5,238,2
     data .b 8,1,1,1,11,2,0,0
     data .b 4,1,1,5,12,7,4,22
     data .b 4,10,2,5,12,2,11,22
     data .b 30,1,5,5,10,0,0,0
-    data .b 4,15,5,5,9,5,240,13
-    data .b 4,16,5,5,9,5,240,14
-    data .b 4,27,5,5,9,5,240,15
-    data .b 12,29,5,5,9,5,240,16
-    data .b 14,23,5,5,9,5,240,17
-    data .b 9,23,5,5,9,5,240,13
-    data .b 18,23,5,5,9,5,240,18
-    data .b 4,23,5,5,9,5,240,19
-    data .b 28,3,5,5,9,5,240,22
-    data .b 4,25,5,5,9,5,240,25
+    data .b 4,15,5,5,9,5,238,13
+    data .b 4,16,5,5,9,5,238,14
+    data .b 4,27,5,5,9,5,238,15
+    data .b 12,29,5,5,9,5,238,16
+    data .b 14,23,5,5,9,5,238,17
+    data .b 9,23,5,5,9,5,238,13
+    data .b 18,23,5,5,9,5,238,18
+    data .b 4,23,5,5,9,5,238,19
+    data .b 28,3,5,5,9,5,238,22
+    data .b 4,25,5,5,9,5,238,25
     data .b 27,1,5,5,12,2,20,22
     data .b 25,16,5,5,12,2,23,22
     data .b 26,19,1,1,1,26,20,0
     data .b 2,6,2,1,4,1,6,0
+    data .b 1,7,5,5,14,1,10,3
+    data .b 2,10,5,5,14,2,7,1
 stringTable:
 ;           "==========================="
     data .b 26
@@ -94,7 +96,7 @@ stringTable:
     data .s "YOU FEEL A DRAFT." ;2 
     data .s "CHARGING BATTERY." ;3
     data .s "EVERY IN GAME ACTION THAT YOU TAKE USES ONE UNIT " ;4
-    data .s "OF ENERGY. THE STARTING CHARGE FOR THE BATTERY." ;5
+    data .s "OF ENERGY. THE STARTING CHARGE FOR THE BATTERY" ;5
     data .s "HAS ONLY 100 UNITS, SO 100 ACTIONS." ;6
     data .s "ONCE YOU HAVE USED UP ALL YOUR BATTERY YOU'RE DEAD.." ;7
     data .s "YOU CAN RECHARGE THE BATTERY AT ANY OF THE CHARGING" ;8
@@ -183,7 +185,8 @@ function processLevelEvents{}
                                     gd\player\sp+2
                                     le(i)\eventLocX-1
                                 endif
-
+                            case 13 ; button teleport.
+                                doTeleport{le(i)\eventLocX, le(i)\eventLocY, le(i)\eventVal}
                         End Select
                         function return 1
                         end if
@@ -251,7 +254,7 @@ statement processLevelEventsCell{}
                                     
                                     chrg.s + "CHARGING " + str$(le(i)\eventLocX-1) + " UNITS LEFT"
                                     ;drawBitmapText{5,240, stringTable(le(i)\eventVal)}
-                                    drawColouredText{5,240, 200,100,0, chrg.s}
+                                    drawColouredText{5,238, 200,100,0, chrg.s}
                                 endif
 
                             case 12
@@ -261,10 +264,12 @@ statement processLevelEventsCell{}
                                     ;dbugprintval{t}
                                     ;dbugprintval{le(i)\eventLocY+t}
                                     ;dbugprintstring{ stringTable(le(i)\eventLocY+t)}
-                                    drawBitmapTextNoClear{20, 40 + (8*t), stringTable(le(i)\eventLocY+t)}
+                                    drawBitmapTextNoClear{20, 42 + (7*t), stringTable(le(i)\eventLocY+t)}
                                 next
                                 le(i)\eventVal -1
                                 endif
+                            case 14 ; walk teleport.
+                                doTeleport{le(i)\eventLocX, le(i)\eventLocY, le(i)\eventVal}    
                         End Select
                         
                         end if
