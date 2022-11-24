@@ -4,8 +4,12 @@ NEWTYPE .Monster
   hp.w
   xp.w
   damage.b
-  frameIndex.w[6]
-
+  frameIndex.w[20]
+  screenX.w[20]
+  screenY.w[20]
+  width.w[20]
+  height.w[20]
+    
 End NEWTYPE
 
 NEWTYPE .Wallset

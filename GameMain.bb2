@@ -14,7 +14,7 @@ XINCLUDE "GameState.bb2"
 
 Statement loadGameAssets{}
     shared *currentLevel.Level, currentBuffer,  walls()
-    Bitmap #wallBuffer,250,186,6
+    Bitmap #wallBuffer,250,186,8
     bitmap #DungeonFloorBitmap, 480,180,5
     ; These populate the two arrays needed to draw the scene
     dbugprintstring{"Pre Fill"}
@@ -35,8 +35,8 @@ Statement loadGameAssets{}
     loadItemDetails{}
     LoadFrame{"assets/" + "playfield2.iff"}
     loadWalls{"facttex"}
-    LoadMonsters{}
-    LoadMonsterGfx{"assets/Monsters.shapes"}
+    LoadMonster{"Monster2"}
+    ;LoadMonsterGfx{"assets/Monsters.shapes"}
     LoadDecorations{"prop"}
     ;loadWalls{"doors"}
     dbugprintstring{"Doors"}
