@@ -1,6 +1,29 @@
 statement drawMonsterAtLocation{location, subloc,  *monster.MonsterInstance}
-   blit #monstershapes,30,30
+    Shared CMazeDr.MazeDir(), CMazePos.MazePos()
+    shared monsters()
     
+       dbugprintstring{"BLAH"}
+    resetlist monsters()
+    while(NextItem(monsters()))
+    y.b = CMazePos.MazePos(location)\yDelta
+    x.b = -CMazePos.MazePos(location)\xDelta
+
+    y+1
+    dbugprintval{y.b}
+    Select y.b
+      case 0
+        ClipBlit monsters()\frameIndex[4], monsters()\screenX[4]-(x.b*monsters()\width[4]),monsters()\screenY[4]
+      Case -1
+        ClipBlit monsters()\frameIndex[3], monsters()\screenX[3]-(x.b*monsters()\width[3]),monsters()\screenY[3]
+      case -2
+        ClipBlit monsters()\frameIndex[2], monsters()\screenX[2]-(x.b*monsters()\width[2]),monsters()\screenY[2]
+      case -3
+        ClipBlit monsters()\frameIndex[1], monsters()\screenX[1]-(x.b*monsters()\width[1]),monsters()\screenY[1]
+      case -4
+    End Select
+    
+    wend
+   dbugprintstring{"BLAH"}
 end statement
 Statement drawView{}
 
@@ -70,20 +93,22 @@ Statement drawView{}
       resetlist aliveMonsters()
       realx.w = x+px
       realy.w = y+py
-     ; dbugprintstring{"RealX: " +Str$(realx) + " RealY: " +Str$(realy)}
+      ;dbugprintstring{"RealX: " +Str$(realx) + " RealY: " +Str$(realy)}
       while NextItem(aliveMonsters())
         
         ;dbugprintstring{"MonX: " +Str$(aliveMonsters()\x) + " MonY: " +Str$(aliveMonsters()\y)}
         
         if (aliveMonsters()\x = realx)
             if (aliveMonsters()\y = realy)
+                mi=0
                 ;for mi = 0 to 3
-                 ;   dbugprintstring{"MATCHED " + str$(mi)}
+                    dbugprintstring{"MATCHED " + str$(mi)}
                     
-                    if (monsterviews(i,mi) = 0)
-                        monsterviews(i,mi) = &aliveMonsters()
+                    ;if (monsterviews(i,mi) = 0)
+                        monsterviews(i,mi) = 1;&aliveMonsters()
+
                   ;      goto skipmon
-                    end if
+                   ; end if
             ;next
             end if
         end if

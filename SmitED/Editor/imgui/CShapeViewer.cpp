@@ -8,6 +8,7 @@
 #include <iosfwd>
 #include "misc/cpp/imgui_stdlib.h"
 #include "../../libSmite/BlitzShape.h"
+#include "../../libSmite/common.h"
 
 
 SmitED::CShapeViewer::CShapeViewer()
@@ -70,12 +71,13 @@ void SmitED::CShapeViewer::update()
 					for (auto x = 0; x < width; x++)
 					{
 						auto index = sprite->chunkyBuffer[(y * width) + x];
-	
-						ImU32 col = ImGui::GetColorU32(IM_COL32(palette[index].r, palette[index].g,palette[index].b, 255));
+						
+							ImU32 col = ImGui::GetColorU32(IM_COL32(palette[index].r, palette[index].g, palette[index].b, 255));
 
-						auto st = ImVec2((x * 3), y * 3);
-						auto ed = ImVec2((x + 1) * 3, (y + 1) * 3);
-						draw_list->AddRectFilled(sp + st, sp + ed, col);
+							auto st = ImVec2((x * 3), y * 3);
+							auto ed = ImVec2((x + 1) * 3, (y + 1) * 3);
+							draw_list->AddRectFilled(sp + st, sp + ed, col);
+						
 					}
 				}
 			}
@@ -124,7 +126,7 @@ void SmitED::CShapeViewer::DoFileDialog_Open()
 			palette.clear();
 
 			std::string newfilename = result[0].substr(0, result[0].size() - 3) + "pal";
-			std::ifstream palFile(newfilename.c_str(), std::ios_base::binary);
+			/*std::ifstream palFile(newfilename.c_str(), std::ios_base::binary);
 			if (palFile.is_open())
 			{
 				pfd::notify("Loading Palette", "Found a matching Palette file.");
@@ -137,9 +139,8 @@ void SmitED::CShapeViewer::DoFileDialog_Open()
 				palFile >> size; palFile >> size; palFile >> size; palFile >> size;
 				//palFile >> size;
 				size /= 3;
-				std::cout << HDR[0] << HDR[1] << HDR[2] << HDR[3] << "\n";
-				int index = 0;
-				for(index=0;index<size;index++)
+				stdc::cout << HDR[0] << HDR[1] << HDR[2] << HDR[3] << "\n";
+			for(index=0;index<size;index++)
 				{
 					rgba_color col;
 					palFile >> col.r;
@@ -147,6 +148,33 @@ void SmitED::CShapeViewer::DoFileDialog_Open()
 					palFile >> col.b;
 					std::cout << "Added Colour " << std::to_string(col.r) << " " << std::to_string(col.g) << " " << std::to_string(col.b) << "\n";
 					palette.emplace_back(col); 
+					//index++;
+				}
+			}*/
+			FILE* fp;
+			fopen_s(&fp, newfilename.c_str(), "rb");
+			if(fp != nullptr)
+			{ 
+			fseek(fp, 0, SEEK_END);
+			int fsize = ftell(fp);
+			fseek(fp, 0, SEEK_SET);
+			
+				uint32_t count;
+				fseek(fp, 4, SEEK_SET);
+				fread(&count, 4, 1, fp);
+				count  = swap_uint32(count);
+				count /= 3;
+				int index=0;
+				for (index = 0; index < count; index++)
+				{
+					rgba_color col;
+					/*palFile >> col.r;
+					palFile >> col.g;
+					palFile >> col.b;
+					*/
+					fread(&col, 3, 1, fp);
+					std::cout << "Added Colour " << std::to_string(col.r) << " " << std::to_string(col.g) << " " << std::to_string(col.b) << "\n";
+					palette.emplace_back(col);
 					//index++;
 				}
 			}
@@ -190,7 +218,7 @@ void SmitED::CShapeViewer::DoFileDialog_Open()
 					}
 				}
 			}
- 			palFile.close();
+ 			//palFile.close();
 			
 		}
 		//std::cout << "Opened file " << result[0] << "\n";

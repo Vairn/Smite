@@ -781,7 +781,7 @@ void SmitED::CWallViewer::ReadTileInfo(SmitED::sWallSetTile* pTileInfo, const st
 
 void SmitED::CWallViewer::SaveTileset(std::string& result)
 {
-	uint8_t cCount = 32 ;// FreeImage_GetColorsUsed(pSrcImage);
+	uint8_t cCount = 64;// FreeImage_GetColorsUsed(pSrcImage);
 	std::ofstream fout(result, std::ios_base::binary);
 	fout << "WLL";
 	fout << (uint8_t)cCount;
