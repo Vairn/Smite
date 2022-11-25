@@ -14,7 +14,7 @@ XINCLUDE "GameState.bb2"
 
 Statement loadGameAssets{}
     shared *currentLevel.Level, currentBuffer,  walls()
-    Bitmap #wallBuffer,250,186,8
+    Bitmap #wallBuffer,250,186,6
     bitmap #DungeonFloorBitmap, 480,180,5
     ; These populate the two arrays needed to draw the scene
     dbugprintstring{"Pre Fill"}

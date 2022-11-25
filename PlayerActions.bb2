@@ -44,23 +44,23 @@ Function .b handleMovementKeys{}
     shared bkgindex
     realFacing.b = 0
 
-    if RawStatus ($4C) or RawStatus($11); Up
+    if RawStatus ($4C) or RawStatus($11) or RawStatus($3e); Up
         realFacing.b= (gd\playerFacing ) MOD 4
         gd\playerLocation =  mazeMove{gd\playerLocation, realFacing.b} ; Up Arrow
         Function Return True
     EndIf
-    if RawStatus ($4D) or RawStatus($21); Down
+    if RawStatus ($4D) or RawStatus($21) or RawStatus($1e) or RawStatus($2e);; Down
         realFacing.b= (gd\playerFacing +2) MOD 4
         gd\playerLocation =  mazeMove{gd\playerLocation, realFacing.b} ; Down Arrow
         Function Return True
     EndIf
-    if RawStatus ($46) or RawStatus($10); Turn Left
+    if RawStatus ($46) or RawStatus($10) or RawStatus($3d); Turn Left
         gd\playerFacing -1
         bkgindex+1
         bkgindex = bkgindex Mod 2
         Function Return True
     EndIf
-    if RawStatus ($5f) or RawStatus($12) ; Turn Right
+    if RawStatus ($5f) or RawStatus($12) or RawStatus($3f) ; Turn Right
         gd\playerFacing +1
         bkgindex+1
         bkgindex = bkgindex Mod 2
@@ -68,13 +68,13 @@ Function .b handleMovementKeys{}
         Function Return True
     EndIf
 
-    if RawStatus($4E) or RawStatus($22)
+    if RawStatus($4E) or RawStatus($22) or RawStatus($2f);
         realFacing.b= (gd\playerFacing +1) MOD 4
         gd\playerLocation =  mazeMove{gd\playerLocation, realFacing.b} ; Left Arrow
         Function Return True
     endif
 
-    if RawStatus($4F) or RawStatus($20)
+    if RawStatus($4F) or RawStatus($20) or RawStatus($2d);
     realFacing.b= (gd\playerFacing +3) MOD 4
         gd\playerLocation =  mazeMove{gd\playerLocation, realFacing.b} ; Right Arrow
         Function Return True
