@@ -1,17 +1,44 @@
 ; Monsters.bb2
+Function drel{d1,d2}
+    result = -1
+    if d2=0
+        if d1 = 0 then result = 0
+        if d1 = 1 then result = 3
+        if d1 = 2 then result = 2
+        if d1 = 3 then result = 1
+    end if
+
+    if d2=1
+        if d1 = 0 then result = 1
+        if d1 = 1 then result = 0
+        if d1 = 2 then result = 3
+        if d1 = 3 then result = 2
+    endif
+    
+    if d2=2
+        if d1 = 0 then result = 2
+        if d1 = 1 then result = 1
+        if d1 = 2 then result = 0
+        if d1 = 3 then result = 3
+    end if
+
+    
+    if d2=3
+        if d1 = 0 then result = 3
+        if d1 = 1 then result = 2
+        if d1 = 2 then result = 1
+        if d1 = 3 then result = 0
+    end if
+
+    Function return result
+    ; Not implemented yet.
+End Function
 
 Statement LoadMonster{fileName$}
     Shared monsters()
     Shared aliveMonsters()
     resetlist monsters()
-    AddItem monsters()
-    ; monsters()\name = "Patrol Droid"
-    ; monsters()\hp = 15
-    ; monsters()\xp = 10
-    ; monsters()\damage = 0
-    ; monsters()\frameIndex[0] = 0 :  monsters()\frameIndex[1] = 1 :  monsters()\frameIndex[2] = 2
-    ; monsters()\frameIndex[3] = 3 :  monsters()\frameIndex[4] = 0 :  monsters()\frameIndex[5] = 0 
-    
+
     AddItem monsters()
     monsters()\name = "Combat Droid"
     monsters()\hp = 25
@@ -20,17 +47,22 @@ Statement LoadMonster{fileName$}
     ; monsters()\frameIndex[0] = 4 :  monsters()\frameIndex[1] = 5 :  monsters()\frameIndex[2] = 6
     ; monsters()\frameIndex[3] = 7 :  monsters()\frameIndex[4] = 0 :  monsters()\frameIndex[5] = 0 
     QAMIGA
-    BitMap #spriteBitmap,240,176,6
-    Use BitMap #spriteBitmap
-    cls 0
     shapeIndex.w = #monstershapes
     MonstFile.s = "assets/" + fileName$+".monst"
     outfile.s = "assets/" + fileName$ + ".monshp"
     palfile.s = "assets/" + fileName$ + ".monpal"
     processed.s = "assets/" + fileName$ + ".moninf"
     if (ReadFile(0,processed.s))
+        LoadShapes #monstershapes, outfile.s
+        ;LoadPalette 1, palfile.s
+        ;AddItem monsters()
+        ReadMem 0, monsters(), SizeOf .Monster
+        CloseFile 0
     else
         if(ReadFile(0,MonstFile.s))
+            BitMap #spriteBitmap,240,176,6
+            Use BitMap #spriteBitmap
+            cls 0
             colourCount =0
             wallsetCount = 0
             tileCount =0
@@ -103,6 +135,12 @@ Statement LoadMonster{fileName$}
 
             SavePalette 2,palfile
             SaveShapes #monstershapes, shapeIndex, outfile
+            CloseFile 0
+            if OpenFile(0,processed.s)
+                    WriteMem 0, monsters(), SizeOf .Monster
+            endif
+            CloseFile 0
+   
         else
             ;CERR "Can't find matching Data for monster"
         endif

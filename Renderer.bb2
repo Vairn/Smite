@@ -12,13 +12,21 @@ statement drawMonsterAtLocation{location, subloc,  *monster.MonsterInstance}
     dbugprintval{y.b}
     Select y.b
       case 0
+    ;  if monsters()\frameIndex[4] <> 0
         ClipBlit monsters()\frameIndex[4], monsters()\screenX[4]-(x.b*monsters()\width[4]),monsters()\screenY[4]
+      ;  end if
       Case -1
+     ;   if monsters()\frameIndex[3] <> 0
         ClipBlit monsters()\frameIndex[3], monsters()\screenX[3]-(x.b*monsters()\width[3]),monsters()\screenY[3]
+     ;  end if
       case -2
+     ; if monsters()\frameIndex[2] <> 0
         ClipBlit monsters()\frameIndex[2], monsters()\screenX[2]-(x.b*monsters()\width[2]),monsters()\screenY[2]
+      ;  end if
       case -3
+     ; if monsters()\frameIndex[1] <> 0
         ClipBlit monsters()\frameIndex[1], monsters()\screenX[1]-(x.b*monsters()\width[1]),monsters()\screenY[1]
+      ;  end if
       case -4
     End Select
     
