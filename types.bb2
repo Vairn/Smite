@@ -236,3 +236,4 @@ eventCount =0
 Dim wl.Wallset(9,5,5,2)
 
 
+MS_current_track_id =-1

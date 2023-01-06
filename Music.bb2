@@ -1,0 +1,33 @@
+; Music.bb2
+
+Statement MS_load_module{file_name$, position.w}
+  SHARED MS_current_track_id
+  
+  ; If we're already playing the right track, don't restart it
+  If MS_current_track_id = id Then Statement Return
+
+  MS_current_track_id = id
+
+  DEFTYPE .b success
+  success = LoadTrackerModule(0, file_name$)
+  If success = True   
+    success = StartTracker(0)
+  Else
+    ; !DB_warn{"MS", "Could not load '" + file_name$ + "'"}
+  End If
+End Statement
+
+Statement MS_pause_module{id.w}
+  PauseModule
+End Statement
+
+Statement MS_unpause_module{id.w}
+  PauseModule
+End Statement
+
+Statement MS_kill_module{id.w}
+  SHARED MS_current_track_id
+  StopTracker
+  FreeTrackerModule id
+  If MS_current_track_id = id Then MS_current_track_id = -1
+End Statement

@@ -24,6 +24,18 @@ dbugprintstring{"InitMainScreens {"}
 InitMainScreens{}
 dbugprintstring{"InitMainScreens }"}
 
+tempInc.b =0
+tempFrame.b =0
+
+If NTSC
+  framemax.w = 60
+Else
+  framemax.w = 50
+End If
+
+Setint  5
+    tempFrame.b +1
+End SetInt
 
 BLITZ
 
@@ -39,8 +51,13 @@ Repeat
  ;   dbugprintval{FastFree}
     
 
-
+    if tempFrame > framemax
+        tempFrame =0
+        if doRedraw = 0 then doRedraw = 2
+    endif
+    
     mainLoop{}
+    
     if gameEnd = 2
     gameEnd =0
     setGameState{#gs_title}

@@ -1,6 +1,7 @@
 ;game main
 XINCLUDE "debug.bb2"
 XINCLUDE "types.bb2"
+XINCLUDE "Music.bb2"
 XINCLUDE "PlayerActions.bb2"
 XINCLUDE "Monster.bb2"
 XINCLUDE "Map.bb2"
@@ -12,10 +13,13 @@ XINCLUDE "NoBattery.bb2"
 XINCLUDE "Escaped.bb2"
 XINCLUDE "GameState.bb2"
 
+
 Statement loadGameAssets{}
     shared *currentLevel.Level, currentBuffer,  walls()
-    Bitmap #wallBuffer,250,186,6
-    bitmap #DungeonFloorBitmap, 480,180,5
+    Bitmap #wallBuffer,240,176,8
+    bitmap #DungeonFloorBitmap, 480,176,5
+    BitPlanesBitMap #wallBuffer, 6, %00011111
+    BitPlanesBitMap #wallBuffer, 7, %01111111
     ; These populate the two arrays needed to draw the scene
     dbugprintstring{"Pre Fill"}
     
@@ -35,7 +39,7 @@ Statement loadGameAssets{}
     loadItemDetails{}
     LoadFrame{"assets/" + "playfield2.iff"}
     loadWalls{"facttex"}
-    LoadMonster{"Monster2"}
+    LoadMonster{"Monster"}
     ;LoadMonsterGfx{"assets/Monsters.shapes"}
     LoadDecorations{"prop"}
     ;loadWalls{"doors"}
@@ -47,7 +51,7 @@ Statement loadGameAssets{}
     ResetList walls()
 
     dbugprintstring{"Present Screen"}
-    
+    MS_load_module{"assets/Suspense.mod",0}
     BLITZ
     
     use bitmap #DungeonFloorBitmap
@@ -65,7 +69,7 @@ Statement loadGameAssets{}
     ;ShowBitMap #guiframe
     drawView{}
     BlockScroll 0,0,320,256,0,0,#guiframe
-    BlockScroll 0,0,240,176,8,6,#wallBuffer
+    BlockScroll 0,0,240,176,0,0,#wallBuffer
     
     !cycleBuffer{currentBuffer}
     Cls 0
@@ -94,6 +98,7 @@ statement unloadGameAssets{}
     free bitmap #wallBuffer
     ;dbugprintstring {"Free Floors"}
     free bitmap #DungeonFloorBitmap
+    MS_kill_module{MS_current_track_id}
 
 end statement
 
@@ -181,10 +186,11 @@ endif
     
     if doRedraw = 2
         ;!cycleBuffer{currentBuffer}
-        
-; Reset font colour
-    AGAPalRGB 1,1,255,255,255
-    DisplayPalette 0,1
+        doMonsterLogic{}
+        ;doLevelLogic{}
+        ; Reset font colour
+        AGAPalRGB 1,1,255,255,255
+        DisplayPalette 0,1
         lastDrawn = 1-currentBuffer
         dbugprintstring{"Redraw " + str$(currentBuffer)}
         drawView{}   
