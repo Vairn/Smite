@@ -11,7 +11,7 @@
 const int8_t STANDARD_PALETTE[] = { 00,17,34,51,68,85,102,119,136,153,170,187,204,221,238,255 };
 const int8_t STANDARD_COLOR_SIZE = 16;
 const uint8_t STANDARD_PALETTE_VAL_DIF = 17;
-int16_t dwColorMapTable[16*16*16];
+int16_t dwColorMapTable[16 * 16 * 16];
 
 #define IMGUI_DEFINE_MATH_OPERATORS
 #include "imgui_internal.h"
@@ -203,24 +203,24 @@ SmitED::CWallViewer::~CWallViewer()
 
 void SmitED::CWallViewer::update()
 {
-	
+
 	static int iWall = 0;
-	 
+
 	begin();
-	
+
 	if (ImGui::BeginTabBar("##tabs", ImGuiTabBarFlags_None))
 	{
 		if (ImGui::BeginTabItem("Graphics"))
 		{
-		
+
 
 
 			ImGuiIO& io = ImGui::GetIO();
 			ImDrawList* draw_list = ImGui::GetWindowDrawList();
 			if (m_wallSetTiles.empty() == false)
 			{
-				
-				ImGui::SliderInt("Current Item Type", &m_uiCurrentTypeID, 0, m_wallSetTiles.size()-1);
+
+				ImGui::SliderInt("Current Item Type", &m_uiCurrentTypeID, 0, m_wallSetTiles.size() - 1);
 				auto currentSet = m_wallSetTiles[m_uiCurrentTypeID];
 				if (currentSet.size() > 0)
 				{
@@ -229,10 +229,10 @@ void SmitED::CWallViewer::update()
 					{
 						m_uiCurrentTileID = 0;
 					}
-					ImGui::SliderInt("Tile", &m_uiCurrentTileID, 0, currentSet.size()-1);
+					ImGui::SliderInt("Tile", &m_uiCurrentTileID, 0, currentSet.size() - 1);
 					ImVec2 sp = ImGui::GetCursorScreenPos();
 					auto tile = m_wallSetTiles[m_uiCurrentTypeID][m_uiCurrentTileID];
-		
+
 					ImVec2 canvas_sz = ImVec2(windowWidth * 3, windowHeight * 3);
 					ImGui::InvisibleButton("canvas", canvas_sz, ImGuiButtonFlags_MouseButtonLeft | ImGuiButtonFlags_MouseButtonRight);
 					for (auto y = 0; y < tile->coords[3]; y++)
@@ -242,23 +242,23 @@ void SmitED::CWallViewer::update()
 							//auto index = sprite->chunkyBuffer[(y * width) + x];
 
 							RGBQUAD rgb;
-							FreeImage_GetPixelColor(tile->pFrame, x, y, &rgb); 
+							FreeImage_GetPixelColor(tile->pFrame, x, y, &rgb);
 							ImU32 col = ImGui::GetColorU32(IM_COL32(rgb.rgbRed, rgb.rgbGreen, rgb.rgbBlue, 255));
 
 							int sx = tile->screen[0] + x;
 							int sy = tile->screen[1] + y;
 							auto st = ImVec2((sx * 3), sy * 3);
 							auto ed = ImVec2((sx + 1) * 3, (sy + 1) * 3);
-							if(st.x < 240*3)
+							if (st.x < 240 * 3)
 								draw_list->AddRectFilled(sp + st, sp + ed, col);
 						}
 					}
 					ImGui::InputScalar("Screen X:", ImGuiDataType_S16, &tile->screen[0]);
 					ImGui::SameLine();
-					ImGui::InputScalar("Screen Y:", ImGuiDataType_S16,&tile->screen[1]);
-					
+					ImGui::InputScalar("Screen Y:", ImGuiDataType_S16, &tile->screen[1]);
+
 					ImGui::InputScalar("Width:", ImGuiDataType_S16, &tile->coords[2]);
-					ImGui::SameLine(); 
+					ImGui::SameLine();
 					ImGui::InputScalar("Height:", ImGuiDataType_S16, &tile->coords[3]);
 
 					ImGui::InputScalar("Location X:", ImGuiDataType_S8, &tile->location[0]);
@@ -284,7 +284,7 @@ void SmitED::CWallViewer::update()
 		}
 		if (ImGui::BeginTabItem("Palette"))
 		{
-			
+
 			ImGui::EndTabItem();
 
 		}
@@ -317,7 +317,7 @@ void SmitED::CWallViewer::update()
 			save_file = std::make_shared<pfd::save_file>("Save file As", "C:\\", filters);
 		}
 
-		ImGui::EndTabBar(); 
+		ImGui::EndTabBar();
 
 	}
 
@@ -556,7 +556,7 @@ void SmitED::CWallViewer::RenderBackground(FIBITMAP* pDst)
 		{
 			auto idx = GetTypeIndex(tile->sName);
 			if (idx == 0)
-			//if (tlx == x && tly == y)
+				//if (tlx == x && tly == y)
 			{
 				//FreeImage_Paste(pScreenImage, tile->pFrame, tile->screen[0], tile->screen[1],254);
 				for (int16_t py = 0; py < tile->coords[3]; py++)
@@ -596,14 +596,14 @@ void SmitED::CWallViewer::RenderBackground(FIBITMAP* pDst)
 
 bool SmitED::CWallViewer::ImportJson(const char* sFilename)
 {
-	
+
 	std::ifstream is(sFilename);
-	
+
 	pt::read_json(sFilename, m_wallsetJson);
 	std::filesystem::path sImageName = sFilename;
 	sImageName.replace_extension(".png");
 
-	pSrcImage = FreeImage_Load(FIF_PNG,sImageName.string().c_str(), 0);
+	pSrcImage = FreeImage_Load(FIF_PNG, sImageName.string().c_str(), 0);
 	FreeImage_SetTransparentIndex(pSrcImage, 2);
 	std::filesystem::path sFolder = sFilename;
 	sFolder.replace_extension("");
@@ -615,12 +615,12 @@ bool SmitED::CWallViewer::ImportJson(const char* sFilename)
 	{
 		importVersion = 0;
 	}
-	
-	windowWidth = m_wallsetJson.get("resolution.width",0);
-	windowHeight = m_wallsetJson.get("resolution.height",0);
+
+	windowWidth = m_wallsetJson.get("resolution.width", 0);
+	windowHeight = m_wallsetJson.get("resolution.height", 0);
 	width = m_wallsetJson.get("width", 0);
 	depth = m_wallsetJson.get("depth", 0);
-	pScreenImage = FreeImage_Allocate(windowWidth, windowHeight,32);
+	pScreenImage = FreeImage_Allocate(windowWidth, windowHeight, 32);
 	auto layers = m_wallsetJson.get_child("layers");
 	//
 
@@ -641,7 +641,7 @@ bool SmitED::CWallViewer::ImportJson(const char* sFilename)
 			ReadTileInfo(pTileInfo, tile);
 			pTileInfo->sName = sName;
 			m_wallSetTiles[id].emplace_back(pTileInfo);
-			pTileInfo->pFrame = FreeImage_Copy(pSrcImage, pTileInfo->coords[0], pTileInfo->coords[1], pTileInfo->coords[0]+pTileInfo->coords[2], pTileInfo->coords[1]+pTileInfo->coords[3]);
+			pTileInfo->pFrame = FreeImage_Copy(pSrcImage, pTileInfo->coords[0], pTileInfo->coords[1], pTileInfo->coords[0] + pTileInfo->coords[2], pTileInfo->coords[1] + pTileInfo->coords[3]);
 			index++;
 
 			//if (pTileInfo->location[0] > 0 && pTileInfo->type.compare("side") == 0)
@@ -677,14 +677,14 @@ bool SmitED::CWallViewer::ImportJson(const char* sFilename)
 						}
 						if (pTileInfo->screen[0] + pTileInfo->coords[2] > 240)
 						{
-							auto newWidth = 240 - pTileInfo->screen[0] ;
-							
+							auto newWidth = 240 - pTileInfo->screen[0];
+
 
 							pTileInfo->coords[2] = newWidth;
 						}
-						if (pTileInfo->screen[0]>= 0 && pTileInfo->screen[0] <240)
+						if (pTileInfo->screen[0] >= 0 && pTileInfo->screen[0] < 240)
 						{
-						//if (pTileInfo->screen[0]>)
+							//if (pTileInfo->screen[0]>)
 							m_wallSetTiles[id].emplace_back(pTileInfo);
 							pTileInfo->pFrame = FreeImage_Copy(pSrcImage, pTileInfo->coords[0], pTileInfo->coords[1], pTileInfo->coords[0] + pTileInfo->coords[2], pTileInfo->coords[1] + pTileInfo->coords[3]);
 						}
@@ -713,16 +713,16 @@ bool SmitED::CWallViewer::ImportJson(const char* sFilename)
 					//index++;
 				}
 			}
-			
-			
+
+
 		}
 	}
 
-	for (auto &set:m_wallSetTiles)
+	for (auto& set : m_wallSetTiles)
 	{
 		auto itb = set.second.begin();
 		auto ite = set.second.end();
-		std::sort(itb,ite,sortWallset);
+		std::sort(itb, ite, sortWallset);
 		int index = 0;
 		//itb = set.second.begin();
 		//ite = set.second.end();
@@ -765,7 +765,7 @@ void SmitED::CWallViewer::ReadTileInfo(SmitED::sWallSetTile* pTileInfo, const st
 	else
 	{
 		pTileInfo->location[0] = tile.second.get("tile.x", 0);
-		
+
 		pTileInfo->location[1] = tile.second.get("tile.y", 0);
 	}
 	pTileInfo->screen[0] = tile.second.get("screen.x", 0);
@@ -799,11 +799,11 @@ void SmitED::CWallViewer::SaveTileset(std::string& result)
 		}
 
 	}
-	 //palette = FreeImage_GetPalette(pSrcImage);
+	//palette = FreeImage_GetPalette(pSrcImage);
 	for (int c = 0; c < cCount; c++)
 	{
-		fout << int8_t(ceil(palette[c].rgbRed ));
-		fout << int8_t(ceil(palette[c].rgbGreen ));
+		fout << int8_t(ceil(palette[c].rgbRed));
+		fout << int8_t(ceil(palette[c].rgbGreen));
 		fout << int8_t(ceil(palette[c].rgbBlue));
 	}
 
@@ -811,9 +811,9 @@ void SmitED::CWallViewer::SaveTileset(std::string& result)
 
 	uint16_t tilecount = 0;
 
-	for (const auto& tileItr:m_wallSetTiles)
+	for (const auto& tileItr : m_wallSetTiles)
 	{
-		for (const auto&tile:tileItr.second)
+		for (const auto& tile : tileItr.second)
 		{
 			auto idx = GetTypeIndex(tile->sName);
 			// ignore floors and ceilings
@@ -826,7 +826,7 @@ void SmitED::CWallViewer::SaveTileset(std::string& result)
 	fout << t02 << t01;
 
 	fout << (uint8_t)m_wallSetTiles.size();
-	for (const auto &tileItr:m_wallSetTiles)
+	for (const auto& tileItr : m_wallSetTiles)
 	{
 		fout << (uint8_t)tileItr.second.size();
 		for (auto tile : tileItr.second)
@@ -876,7 +876,7 @@ void SmitED::CWallViewer::SaveTileset(std::string& result)
 
 uint8_t SmitED::CWallViewer::GetTypeIndex(std::string& typeStr)
 {
-	
+
 	typeStr = str_tolower(typeStr);
 	if (typeStr.find("wall") != std::string::npos)
 		return 1;
@@ -892,7 +892,7 @@ uint8_t SmitED::CWallViewer::GetTypeIndex(std::string& typeStr)
 		return 3;
 	if (typeStr.find("door") != std::string::npos)
 		return 2;
-	
+
 	// all others are objects
 	return 5;
 }
