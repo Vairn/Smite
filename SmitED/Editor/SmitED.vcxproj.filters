@@ -63,6 +63,15 @@
     <ClCompile Include="imgui\CMonsterEditor.cpp">
       <Filter>windows</Filter>
     </ClCompile>
+    <ClCompile Include="..\libSmite\bitmap.cpp">
+      <Filter>libSmite</Filter>
+    </ClCompile>
+    <ClCompile Include="..\libSmite\palette.cpp">
+      <Filter>libSmite</Filter>
+    </ClCompile>
+    <ClCompile Include="..\libSmite\rgb.cpp">
+      <Filter>libSmite</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\External\imgui\imconfig.h">
@@ -133,6 +142,15 @@
     </ClInclude>
     <ClInclude Include="imgui\CMonsterEditor.h">
       <Filter>windows</Filter>
+    </ClInclude>
+    <ClInclude Include="..\libSmite\bitmap.h">
+      <Filter>libSmite</Filter>
+    </ClInclude>
+    <ClInclude Include="..\libSmite\palette.h">
+      <Filter>libSmite</Filter>
+    </ClInclude>
+    <ClInclude Include="..\libSmite\rgb.h">
+      <Filter>libSmite</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

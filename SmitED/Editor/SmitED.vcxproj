@@ -242,9 +242,12 @@
     <ClCompile Include="..\External\imgui\imgui_tables.cpp" />
     <ClCompile Include="..\External\imgui\imgui_widgets.cpp" />
     <ClCompile Include="..\External\imgui\misc\cpp\imgui_stdlib.cpp" />
+    <ClCompile Include="..\libSmite\bitmap.cpp" />
     <ClCompile Include="..\libSmite\BlitzShape.cpp" />
     <ClCompile Include="..\libSmite\common.cpp" />
     <ClCompile Include="..\libSmite\IScriptCommand.cpp" />
+    <ClCompile Include="..\libSmite\palette.cpp" />
+    <ClCompile Include="..\libSmite\rgb.cpp" />
     <ClCompile Include="..\libSmite\ScriptEncodeDecode.cpp" />
     <ClCompile Include="..\libSmite\typeDefs.cpp" />
     <ClCompile Include="imgui\CGUIResource.cpp" />
@@ -268,9 +271,12 @@
     <ClInclude Include="..\External\imgui\imstb_rectpack.h" />
     <ClInclude Include="..\External\imgui\imstb_textedit.h" />
     <ClInclude Include="..\External\imgui\imstb_truetype.h" />
+    <ClInclude Include="..\libSmite\bitmap.h" />
     <ClInclude Include="..\libSmite\BlitzShape.h" />
     <ClInclude Include="..\libSmite\common.h" />
     <ClInclude Include="..\libSmite\IScriptCommand.h" />
+    <ClInclude Include="..\libSmite\palette.h" />
+    <ClInclude Include="..\libSmite\rgb.h" />
     <ClInclude Include="..\libSmite\typeDefs.h" />
     <ClInclude Include="imgui\CGUIResource.h" />
     <ClInclude Include="imgui\CHexViewer.h" />
